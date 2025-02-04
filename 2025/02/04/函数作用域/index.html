@@ -13,7 +13,7 @@
 
 
 
-<title>hello | blog</title>
+<title>函数作用域 | blog</title>
 
 
 
@@ -196,7 +196,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">hello</h1>
+            <h1 class="post-title">函数作用域</h1>
             
                 <div class="post-meta">
                     
@@ -205,14 +205,14 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">二月 2, 2025&nbsp;&nbsp;15:54:42</a>
+                        Date: <a href="#">二月 4, 2025&nbsp;&nbsp;14:54:56</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/blog1/">blog1</a>
+                                <a href="/categories/c/">c++</a>
                             
                         </span>
                     
@@ -221,9 +221,57 @@
         </header>
 
         <div class="post-content">
-            <h1 id="The-First-one"><a href="#The-First-one" class="headerlink" title="The First one"></a>The First one</h1><p><strong>第一篇博客</strong></p>
-<hr>
-<h3 id="我是Gazettm"><a href="#我是Gazettm" class="headerlink" title="我是Gazettm"></a>我是Gazettm</h3><p>这是我的第一篇博客，也是2025年新的开始。以后或许我会在博客上面编辑一些东西什么的。</p>
+            <h1 id="函数作用域"><a href="#函数作用域" class="headerlink" title="函数作用域"></a>函数作用域</h1><h3 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h3><p>有这样一段代码，很明显可以看出这个代码的错误。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">swap1</span><span class="params">(<span class="type">int</span> a,<span class="type">int</span> b)</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> temp = b;</span><br><span class="line">	b = a;</span><br><span class="line">	a = temp;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line">	<span class="type">int</span> b = <span class="number">2</span>;</span><br><span class="line">	<span class="built_in">swap1</span>(a,b);</span><br><span class="line">	cout&lt;&lt;<span class="string">&quot;a is &quot;</span>&lt;&lt;a&lt;&lt;endl;</span><br><span class="line">	cout&lt;&lt;<span class="string">&quot;b is &quot;</span>&lt;&lt;b&lt;&lt;endl;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么，为什么。</p>
+<h3 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h3><p>我们要从内存开始说起。</p>
+<table>
+<thead>
+<tr>
+<th align="center">机械码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">全局变量</td>
+</tr>
+<tr>
+<td align="center">堆heap</td>
+</tr>
+<tr>
+<td align="center">栈stack</td>
+</tr>
+</tbody></table>
+<p>然后栈里面是这样的。</p>
+<table>
+<thead>
+<tr>
+<th align="center">…</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">…</td>
+</tr>
+<tr>
+<td align="center">swap函数</td>
+</tr>
+<tr>
+<td align="center">main函数</td>
+</tr>
+</tbody></table>
+<p>每个格子是栈帧，函数只在自己所在的栈帧处起作用。所以上面代码的错误是因为没有考虑到这里。然后我们可以看到这样的解决方法。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">swap1</span><span class="params">(<span class="type">int</span> &amp;a,<span class="type">int</span> &amp;b)</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> temp = b;</span><br><span class="line">	b = a;</span><br><span class="line">	a = temp;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line">	<span class="type">int</span> b = <span class="number">2</span>;</span><br><span class="line">	<span class="built_in">swap1</span>(a,b);</span><br><span class="line">	cout&lt;&lt;<span class="string">&quot;a is &quot;</span>&lt;&lt;a&lt;&lt;endl;</span><br><span class="line">	cout&lt;&lt;<span class="string">&quot;b is &quot;</span>&lt;&lt;b&lt;&lt;endl;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在a前面加一个取地址运算符&amp;可以解决这个问题。</p>
+<h3 id="与指针类似"><a href="#与指针类似" class="headerlink" title="与指针类似"></a>与指针类似</h3><p>这个方法与指针类似。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">swap2</span><span class="params">(<span class="type">int</span>* a, <span class="type">int</span>* b)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> temp = *b;</span><br><span class="line">    *b = *a;</span><br><span class="line">    *a = temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为swap1函数无法在自己的作用域之外起作用，所以就取输入进去的a和b的地址，直接从a和b的地址指向入手，改变原来的值。</p>
+<p>之前使用的是按值传递，而不是引用传递。</p>
+<ul>
+<li><strong>引用传递</strong>：你直接操作原始变量的内存地址，修改的就是原始值。</li>
+<li><strong>值传递</strong>：你操作的是原始值的拷贝，修改的是局部变量，原始变量的值不受影响。</li>
+</ul>
 
         </div>
 
@@ -238,7 +286,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://gazettm.github.io/2025/02/02/hello/">http://gazettm.github.io/2025/02/02/hello/</a></span>
+                        <span><a href="http://gazettm.github.io/2025/02/04/%E5%87%BD%E6%95%B0%E4%BD%9C%E7%94%A8%E5%9F%9F/">http://gazettm.github.io/2025/02/04/%E5%87%BD%E6%95%B0%E4%BD%9C%E7%94%A8%E5%9F%9F/</a></span>
                     </p>
                 
                 
@@ -252,7 +300,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/article/"># article</a>
+                        <a href="/tags/c/"># c++</a>
                     
                         
                 </span>
@@ -265,8 +313,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/02/04/%E5%87%BD%E6%95%B0%E4%BD%9C%E7%94%A8%E5%9F%9F/">函数作用域</a>
             
+            <a class="next" rel="next" href="/2025/02/02/hello/">hello</a>
             
         </section>
 
