@@ -127,6 +127,71 @@
                 <div class="container">
     
     
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
 
     
     <article class="post-wrap">
@@ -165,6 +230,18 @@
 <p>第三部分则是反色，解出来是-ad20</p>
 <p>第四部分被划了几下能直接扫出来，是-0327-288a235370ea}。</p>
 <p>结果是flag{a3c7e4e5-9b9d-ad20-0327-288a235370ea}</p>
+<h3 id="西湖论剑-misc-复现"><a href="#西湖论剑-misc-复现" class="headerlink" title="西湖论剑 misc 复现"></a>西湖论剑 misc 复现</h3><blockquote>
+<p>[!NOTE]</p>
+<p>题目名称：easydatalog<br>题目内容：请你对附件中的日志文件进行分析，找出“张三”的身份证号和手机号，譬如其身份证号是119795199308186673，手机号是73628276413，则提交的flag为“119795199308186673_73628276413”。<br>【Flag完整格式一般为：DASCTF{******}，只需要提交{}内的内容。若Flag为其它格式，则会在题目描述中单独说明。】<br>题目分值：已答出142次，初始分值500.0，当前分值396.47，解出分值394.99<br>题目难度：容易<br>相关附件：西湖论剑-easydatalog的附件.zip</p>
+</blockquote>
+<p>附件中有两个文件，一个access一个error，均为日志文件。重点看error.log。发现传了一个蚁剑的PHP Webshell。后面有一个压缩包和jpg文件。找到一个压缩包<a target="_blank" rel="noopener" href="https://imgse.com/i/pEl6BCR"><img src="https://s21.ax1x.com/2025/02/23/pEl6BCR.png" alt="pEl6BCR.png"></a>发现要密码。</p>
+<p><a target="_blank" rel="noopener" href="https://imgse.com/i/pEl6cDO"><img src="https://s21.ax1x.com/2025/02/23/pEl6cDO.png" alt="pEl6cDO.png"></a></p>
+<p>又发现一个图片。猜测是隐写。这个图片手动很难提取，因为非常长。</p>
+<p><a target="_blank" rel="noopener" href="https://imgse.com/i/pElcuM6"><img src="https://s21.ax1x.com/2025/02/23/pElcuM6.png" alt="pElcuM6.png"></a></p>
+<p>使用盲水印解密，解出来密码是dataPersonPass123987</p>
+<p>解压发现编码有问题，调整一下就可以出了。</p>
+<p><a target="_blank" rel="noopener" href="https://imgse.com/i/pElcGid"><img src="https://s21.ax1x.com/2025/02/23/pElcGid.png" alt="pElcGid.png"></a></p>
+<p>DASCTF{30601319731003117X_79159498824}</p>
 
         </div>
 
