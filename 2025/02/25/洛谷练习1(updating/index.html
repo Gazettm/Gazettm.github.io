@@ -13,7 +13,7 @@
 
 
 
-<title>CTF_1(weekly) | blog</title>
+<title>洛谷练习1(updating | blog</title>
 
 
 
@@ -196,7 +196,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">CTF_1(weekly)</h1>
+            <h1 class="post-title">洛谷练习1(updating</h1>
             
                 <div class="post-meta">
                     
@@ -205,14 +205,14 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">二月 23, 2025&nbsp;&nbsp;11:19:10</a>
+                        Date: <a href="#">二月 25, 2025&nbsp;&nbsp;13:57:56</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/CTF/">CTF</a>
+                                <a href="/categories/c/">c++</a>
                             
                         </span>
                     
@@ -221,27 +221,66 @@
         </header>
 
         <div class="post-content">
-            <p><strong>GKCTF2021</strong>（你知道apng吗）</p>
-<p>附件下载之后发现是一个apng</p>
-<p>使用apngdis_gui进行分解。</p>
-<p>这是第一个图用在线ps扭曲处理一下（图床要求，不能出现二维码相关，故模糊处理<a target="_blank" rel="noopener" href="https://imgse.com/i/pEl6k9I"><img src="https://s21.ax1x.com/2025/02/23/pEl6k9I.png" alt="pEl6k9I.png"></a></p>
-<p>处理成这样能扫出来前部分是flag{a3c7e4e5</p>
-<p>第二部分是浅色，用stegsolve扫出来是-9b9d</p>
-<p>第三部分则是反色，解出来是-ad20</p>
-<p>第四部分被划了几下能直接扫出来，是-0327-288a235370ea}。</p>
-<p>结果是flag{a3c7e4e5-9b9d-ad20-0327-288a235370ea}</p>
-<h3 id="西湖论剑-misc-复现"><a href="#西湖论剑-misc-复现" class="headerlink" title="西湖论剑 misc 复现"></a>西湖论剑 misc 复现</h3><blockquote>
-<p>[!NOTE]</p>
-<p>题目名称：easydatalog<br>题目内容：请你对附件中的日志文件进行分析，找出“张三”的身份证号和手机号，譬如其身份证号是119795199308186673，手机号是73628276413，则提交的flag为“119795199308186673_73628276413”。<br>【Flag完整格式一般为：DASCTF{******}，只需要提交{}内的内容。若Flag为其它格式，则会在题目描述中单独说明。】<br>题目分值：已答出142次，初始分值500.0，当前分值396.47，解出分值394.99<br>题目难度：容易<br>相关附件：西湖论剑-easydatalog的附件.zip</p>
-</blockquote>
-<p>附件中有两个文件，一个access一个error，均为日志文件。重点看error.log。发现传了一个蚁剑的PHP Webshell。后面有一个压缩包和jpg文件。找到一个压缩包<a target="_blank" rel="noopener" href="https://imgse.com/i/pEl6BCR"><img src="https://s21.ax1x.com/2025/02/23/pEl6BCR.png" alt="pEl6BCR.png"></a>发现要密码。</p>
-<p><a target="_blank" rel="noopener" href="https://imgse.com/i/pEl6cDO"><img src="https://s21.ax1x.com/2025/02/23/pEl6cDO.png" alt="pEl6cDO.png"></a></p>
-<p>又发现一个图片。猜测是隐写。这个图片手动很难提取，因为非常长。</p>
-<p><a target="_blank" rel="noopener" href="https://imgse.com/i/pElcuM6"><img src="https://s21.ax1x.com/2025/02/23/pElcuM6.png" alt="pElcuM6.png"></a></p>
-<p>使用盲水印解密，解出来密码是dataPersonPass123987</p>
-<p>解压发现编码有问题，调整一下就可以出了。</p>
-<p><a target="_blank" rel="noopener" href="https://imgse.com/i/pElcGid"><img src="https://s21.ax1x.com/2025/02/23/pElcGid.png" alt="pElcGid.png"></a></p>
-<p>DASCTF{30601319731003117X_79159498824}</p>
+            <h1 id="P1011-NOIP-1998-提高组-车站"><a href="#P1011-NOIP-1998-提高组-车站" class="headerlink" title="P1011 [NOIP 1998 提高组] 车站"></a>P1011 [NOIP 1998 提高组] 车站</h1><h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>火车从始发站（称为第 1 站）开出，在始发站上车的人数为 <em>a</em>，然后到达第 2 站，在第 2 站有人上、下车，但上、下车的人数相同，因此在第 2 站开出时（即在到达第 3 站之前）车上的人数保持为 <em>a</em> 人。从第 3 站起（包括第 3 站）上、下车的人数有一定规律：上车的人数都是前两站上车人数之和，而下车人数等于上一站上车人数，一直到终点站的前一站（第 <em>n</em>−1 站），都满足此规律。现给出的条件是：共有 <em>n</em> 个车站，始发站上车的人数为 <em>a</em>，最后一站下车的人数是 <em>m</em>（全部下车）。试问 <em>x</em> 站开出时车上的人数是多少？</p>
+<h3 id="输入格式"><a href="#输入格式" class="headerlink" title="输入格式"></a>输入格式</h3><p>输入只有一行四个整数，分别表示始发站上车人数 $a$，车站数 $n$，终点站下车人数 $m$ 和所求的站点编号 $x$。</p>
+<h3 id="输出格式"><a href="#输出格式" class="headerlink" title="输出格式"></a>输出格式</h3><p>输出一行一个整数表示答案：从 $x$ 站开出时车上的人数。</p>
+<h3 id="输入输出样例-1"><a href="#输入输出样例-1" class="headerlink" title="输入输出样例 #1"></a>输入输出样例 #1</h3><p>输入 #1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5 7 32 4</span><br></pre></td></tr></table></figure>
+
+<h3 id="输出-1"><a href="#输出-1" class="headerlink" title="输出 #1"></a>输出 #1</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">13</span><br></pre></td></tr></table></figure>
+
+<h3 id="说明-提示"><a href="#说明-提示" class="headerlink" title="说明&#x2F;提示"></a>说明&#x2F;提示</h3><p>对于全部的测试点，保证  1≤<em>a</em>≤20，1≤<em>x</em>≤<em>n</em>≤20，1≤<em>m</em>≤2×104。</p>
+<p>NOIP1998 提高组 第一题</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>首先列一个表格，表示一下样例输出的过程</p>
+<table>
+<thead>
+<tr>
+<th>站数</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>上</td>
+<td>a</td>
+<td>?</td>
+<td>a+?</td>
+<td>a+2?</td>
+<td>2a+3?</td>
+<td>3a+5?</td>
+<td>0</td>
+</tr>
+<tr>
+<td>下</td>
+<td>0</td>
+<td>?</td>
+<td>?</td>
+<td>a+?</td>
+<td>a+2?</td>
+<td>2a+3?</td>
+<td>4a+4?</td>
+</tr>
+<tr>
+<td>总</td>
+<td>a</td>
+<td>a</td>
+<td>2a</td>
+<td>2a+?</td>
+<td>3a+2?</td>
+<td>4a+4?</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<p>分析一下不难发现<strong>上</strong>为<strong>斐波那契数列</strong>。<strong>总</strong>为<em><strong>斐波那契数列-a+?</strong></em>。然后就可以写代码穷举?（这道题计算量不大可以这么做。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> a,n,m,x;</span><br><span class="line">	cin&gt;&gt;a&gt;&gt;n&gt;&gt;m&gt;&gt;x;</span><br><span class="line">	<span class="type">int</span> f[n] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	f[<span class="number">0</span>] = a,f[<span class="number">1</span>] = a,f[<span class="number">2</span>] = <span class="number">2</span>*a;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; <span class="number">1000</span>;i++)&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> p = <span class="number">3</span>;p &lt; n;p++)&#123;</span><br><span class="line">			f[p] = f[p<span class="number">-1</span>]+f[p<span class="number">-2</span>]-a+i;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(f[n<span class="number">-2</span>] == m)&#123;</span><br><span class="line">			cout&lt;&lt;f[x<span class="number">-1</span>];</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>不过没有考虑到n &#x3D; 1，2，3的情况也过了。若还有就在前面加上if，如果n符合条件直接输出即可。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这道题不是很难，属于普及-的题目。我对于斐波那契数列这道题直接采用了结论的办法来解出题。看了眼提交记录好像还是挺快挺短的。 <strong>15ms &#x2F; 680.00KB &#x2F; 290B C++14 (GCC 9)</strong></p>
 
         </div>
 
@@ -256,7 +295,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://gazettm.github.io/2025/02/23/CTF-1-weekly/">http://gazettm.github.io/2025/02/23/CTF-1-weekly/</a></span>
+                        <span><a href="http://gazettm.github.io/2025/02/25/%E6%B4%9B%E8%B0%B7%E7%BB%83%E4%B9%A01(updating/">http://gazettm.github.io/2025/02/25/%E6%B4%9B%E8%B0%B7%E7%BB%83%E4%B9%A01(updating/</a></span>
                     </p>
                 
                 
@@ -270,7 +309,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/CTF/"># CTF</a>
+                        <a href="/tags/c/"># c++</a>
                     
                         
                 </span>
@@ -283,10 +322,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/02/25/%E6%B4%9B%E8%B0%B7%E7%BB%83%E4%B9%A01(updating/">洛谷练习1(updating</a>
             
-            
-            <a class="next" rel="next" href="/2025/02/04/%E5%87%BD%E6%95%B0%E4%BD%9C%E7%94%A8%E5%9F%9F/">函数作用域</a>
+            <a class="next" rel="next" href="/2025/02/23/CTF-1-weekly/">CTF_1(weekly)</a>
             
         </section>
 
