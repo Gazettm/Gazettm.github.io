@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>链表与结构体学习 | blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">链表与结构体学习</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">三月 9, 2025&nbsp;&nbsp;19:38:59</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/c/">c++</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="链表与结构体的学习"><a href="#链表与结构体的学习" class="headerlink" title="链表与结构体的学习"></a>链表与结构体的学习</h1><h2 id="代码本身"><a href="#代码本身" class="headerlink" title="代码本身"></a>代码本身</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">stu</span>&#123;</span><br><span class="line">	string name;</span><br><span class="line">	<span class="type">int</span> number;</span><br><span class="line">	<span class="type">float</span> score;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">stu</span>* pnext;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">stuline</span>&#123;</span><br><span class="line">	stu* head;</span><br><span class="line">	<span class="built_in">stuline</span>() :<span class="built_in">head</span>(<span class="literal">nullptr</span>) &#123;&#125;;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">stuinsert</span><span class="params">(<span class="type">int</span> number,<span class="type">const</span> string &amp;name,<span class="type">float</span> score)</span></span>&#123;</span><br><span class="line">		stu * newstu = <span class="keyword">new</span> stu&#123;name,number,score,head&#125;;</span><br><span class="line">		head = newstu;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;输入学生的信息为: &quot;</span>&lt;&lt;name&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;number&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;score&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">stuupdate</span><span class="params">(<span class="type">int</span> number,<span class="type">float</span> newscore)</span></span>&#123;</span><br><span class="line">		stu * tp = head;</span><br><span class="line">		<span class="keyword">while</span>(tp -&gt; pnext != <span class="literal">nullptr</span>)&#123;</span><br><span class="line">			<span class="keyword">if</span>(tp -&gt; number == number)&#123;</span><br><span class="line">				tp -&gt; score = newscore;</span><br><span class="line">				cout&lt;&lt;<span class="string">&quot;已更新&quot;</span>;</span><br><span class="line">				<span class="keyword">return</span> ;</span><br><span class="line">			&#125;</span><br><span class="line">			tp = tp -&gt; pnext;</span><br><span class="line">		&#125;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;未找到，请检查输出&quot;</span>;</span><br><span class="line">		<span class="keyword">return</span> ;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">studelete</span><span class="params">(<span class="type">int</span> number)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(head == <span class="literal">nullptr</span>)&#123;</span><br><span class="line">			cout&lt;&lt;<span class="string">&quot;链表为空&quot;</span>&lt;&lt;endl;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		stu * tp1 = head;</span><br><span class="line">		stu * tp2 = <span class="literal">nullptr</span>;</span><br><span class="line">		<span class="keyword">while</span>(tp1 -&gt; pnext != <span class="literal">nullptr</span>)&#123;</span><br><span class="line">			<span class="keyword">if</span>(tp1 -&gt; number == number)&#123;</span><br><span class="line">				<span class="keyword">if</span>(tp2 == <span class="literal">nullptr</span>)&#123;</span><br><span class="line">				    head = tp1 -&gt; pnext;</span><br><span class="line">			    &#125;</span><br><span class="line">				<span class="keyword">else</span>&#123;</span><br><span class="line">					tp2 -&gt; pnext = tp1 -&gt; pnext; </span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">delete</span> tp1;</span><br><span class="line">				cout&lt;&lt;<span class="string">&quot;已删除&quot;</span>&lt;&lt;endl;</span><br><span class="line">				<span class="keyword">return</span> ;</span><br><span class="line">			&#125;</span><br><span class="line">			tp2 = tp1;</span><br><span class="line">			tp1 = tp1 -&gt; pnext;</span><br><span class="line">		&#125;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;未找到，请检查输入&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">stusort</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(head == <span class="literal">nullptr</span>||head -&gt; pnext == <span class="literal">nullptr</span>)<span class="keyword">return</span> ;</span><br><span class="line">		<span class="type">bool</span> flag;</span><br><span class="line">		<span class="keyword">do</span> &#123;</span><br><span class="line">			flag = <span class="literal">false</span>;</span><br><span class="line">			stu* tp1 = head;</span><br><span class="line">			<span class="keyword">while</span> (tp1-&gt;pnext != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">				stu* tp2 = tp1-&gt;pnext;</span><br><span class="line">				<span class="keyword">if</span> (tp1-&gt;score &lt; tp2-&gt;score) &#123;</span><br><span class="line">					<span class="built_in">swap</span>(tp1-&gt;name, tp2-&gt;name);</span><br><span class="line">					<span class="built_in">swap</span>(tp1-&gt;score, tp2-&gt;score);</span><br><span class="line">					<span class="built_in">swap</span>(tp1-&gt;number, tp2-&gt;number);</span><br><span class="line">					flag = <span class="literal">true</span>;</span><br><span class="line">				&#125;</span><br><span class="line">				tp1 = tp1-&gt;pnext;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">while</span> (flag); </span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;排序完成&quot;</span>&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">stushow</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (head == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">			cout &lt;&lt; <span class="string">&quot;学生列表为空。\n&quot;</span>;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">			cout &lt;&lt; <span class="string">&quot;当前学生信息：\n&quot;</span>;</span><br><span class="line">		stu * tp = head;</span><br><span class="line">		<span class="keyword">while</span> (tp != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">		    cout &lt;&lt; <span class="string">&quot;学号: &quot;</span> &lt;&lt; tp-&gt;number&lt;&lt; <span class="string">&quot;, 姓名: &quot;</span> &lt;&lt; tp-&gt;name&lt;&lt; <span class="string">&quot;, 成绩: &quot;</span> &lt;&lt; tp-&gt;score &lt;&lt; endl;</span><br><span class="line">			tp = tp-&gt;pnext;</span><br><span class="line">			&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">stuquit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		stu* tp1 = head;</span><br><span class="line">		<span class="keyword">while</span> (tp1 != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">			stu* tp2 = tp1-&gt;pnext;</span><br><span class="line">			<span class="keyword">delete</span> tp1;</span><br><span class="line">			tp1 = tp2;</span><br><span class="line">		&#125;</span><br><span class="line">		head = <span class="literal">nullptr</span>;</span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;学生列表已销毁&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	stuline thelist;</span><br><span class="line">	<span class="type">int</span> opt;</span><br><span class="line">	<span class="type">bool</span> flag = <span class="literal">true</span>;</span><br><span class="line">	<span class="keyword">while</span>(flag == <span class="literal">true</span>)&#123;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;******学生信息管理系统******&quot;</span>&lt;&lt;endl;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;输入1写入学生信息&quot;</span>&lt;&lt;endl;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;输入2修改学生成绩&quot;</span>&lt;&lt;endl;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;输入3删除学生信息&quot;</span>&lt;&lt;endl;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;输入4按成绩排序&quot;</span>&lt;&lt;endl;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;输入5输出当前学生信息&quot;</span>&lt;&lt;endl;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;输入6退出&quot;</span>&lt;&lt;endl;</span><br><span class="line">		cin&gt;&gt;opt;</span><br><span class="line">		<span class="keyword">if</span>(opt == <span class="number">1</span>)&#123;</span><br><span class="line">			<span class="type">int</span> number;</span><br><span class="line">			string name;</span><br><span class="line">			<span class="type">float</span> score;</span><br><span class="line">            cout&lt;&lt;<span class="string">&quot;请分别输入 学号 名称 成绩&quot;</span>&lt;&lt;endl;</span><br><span class="line">			cin&gt;&gt;number&gt;&gt;name&gt;&gt;score;</span><br><span class="line">			thelist.<span class="built_in">stuinsert</span>(number,name,score);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(opt == <span class="number">2</span>)&#123;</span><br><span class="line">			<span class="type">int</span> number;</span><br><span class="line">			<span class="type">float</span> newscore;</span><br><span class="line">			cout&lt;&lt;<span class="string">&quot;请输入要修改学生的学号&quot;</span>;</span><br><span class="line">			cin&gt;&gt;number;</span><br><span class="line">			cout&lt;&lt;<span class="string">&quot;请输入要修正的新成绩&quot;</span>;</span><br><span class="line">			cin&gt;&gt;newscore;</span><br><span class="line">			thelist.<span class="built_in">stuupdate</span>(number,newscore);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(opt == <span class="number">3</span>)&#123;</span><br><span class="line">		    <span class="type">int</span> number;</span><br><span class="line">			cout&lt;&lt;<span class="string">&quot;请输入要删除学生的学号&quot;</span>&lt;&lt;endl;</span><br><span class="line">			cin&gt;&gt;number;</span><br><span class="line">			thelist.<span class="built_in">studelete</span>(number);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(opt == <span class="number">4</span>)&#123;</span><br><span class="line">			thelist.<span class="built_in">stusort</span>();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(opt == <span class="number">5</span>)&#123;</span><br><span class="line">			thelist.<span class="built_in">stushow</span>();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(opt == <span class="number">6</span>)&#123;</span><br><span class="line">		    flag = <span class="literal">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span>&#123;</span><br><span class="line">			cout&lt;&lt;<span class="string">&quot;非法输入&quot;</span>&lt;&lt;endl;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	thelist.<span class="built_in">stuquit</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h2><h3 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">stu</span>&#123;</span><br><span class="line">	string name;</span><br><span class="line">	<span class="type">int</span> number;</span><br><span class="line">	<span class="type">float</span> score;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">stu</span>* pnext;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这一块结构体首先定义了一个stu类型的数据，包含了名字，学号和成绩，以及指向下一个数据的指针pnext。</p>
+<p>下方stuline结构体定义部分，先是引入了一个stu类型的指针head并初始化</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">stuline</span>() :<span class="built_in">head</span>(<span class="literal">nullptr</span>) &#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这一部分是构造函数。在调用stuline这个结构体时会自动使用。这里的作用就是把head初始化为空指针，表示为空。</p>
+<h3 id="各个函数分析"><a href="#各个函数分析" class="headerlink" title="各个函数分析"></a>各个函数分析</h3><h4 id="stuinsert"><a href="#stuinsert" class="headerlink" title="stuinsert"></a>stuinsert</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">stuinsert</span><span class="params">(<span class="type">int</span> number,<span class="type">const</span> string &amp;name,<span class="type">float</span> score)</span></span>&#123;</span><br><span class="line">		stu * newstu = <span class="keyword">new</span> stu&#123;name,number,score,head&#125;;</span><br><span class="line">		head = newstu;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;输入学生的信息为: &quot;</span>&lt;&lt;name&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;number&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;score&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里使用了一个函数用来在头插入指针。我们来逐步分析一下这个过程</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">newstu←head</td>
+</tr>
+<tr>
+<td align="center">↓</td>
+</tr>
+<tr>
+<td align="center">nullptr</td>
+</tr>
+</tbody></table>
+<p>先是创建了一个新的学生，将输入的学号名字和成绩都给它，然后指向头，由于这时候head指向空，所以该node指向了空。然后将head指向了newstu。</p>
+<p>那么再新建一个stu对象，就会产生这样的链表</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">newstu3←head</td>
+</tr>
+<tr>
+<td align="center">↓</td>
+</tr>
+<tr>
+<td align="center">newstu2</td>
+</tr>
+<tr>
+<td align="center">↓</td>
+</tr>
+<tr>
+<td align="center">newstu1</td>
+</tr>
+<tr>
+<td align="center">↓</td>
+</tr>
+<tr>
+<td align="center">nullptr</td>
+</tr>
+</tbody></table>
+<p>新建的会到在上面建立然后head会指向新的。因此这里head指针的作用就是为了定位，<strong>头插入</strong>一个新数据。</p>
+<h4 id="stuupdate"><a href="#stuupdate" class="headerlink" title="stuupdate"></a>stuupdate</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">stuupdate</span><span class="params">(<span class="type">int</span> number,<span class="type">float</span> newscore)</span></span>&#123;</span><br><span class="line">		stu * tp = head;</span><br><span class="line">		<span class="keyword">while</span>(tp -&gt; pnext != <span class="literal">nullptr</span>)&#123;</span><br><span class="line">			<span class="keyword">if</span>(tp -&gt; number == number)&#123;</span><br><span class="line">				tp -&gt; score = newscore;</span><br><span class="line">				cout&lt;&lt;<span class="string">&quot;已更新&quot;</span>;</span><br><span class="line">				<span class="keyword">return</span> ;</span><br><span class="line">			&#125;</span><br><span class="line">			tp = tp -&gt; pnext;</span><br><span class="line">		&#125;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;未找到，请检查输出&quot;</span>;</span><br><span class="line">		<span class="keyword">return</span> ;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这一块是一个遍历，遍历之后更新学生的新数据，没什么好说的。</p>
+<h4 id="studelete"><a href="#studelete" class="headerlink" title="studelete"></a>studelete</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">studelete</span><span class="params">(<span class="type">int</span> number)</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(head == <span class="literal">nullptr</span>)&#123;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;链表为空&quot;</span>&lt;&lt;endl;</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	stu * tp1 = head;</span><br><span class="line">	stu * tp2 = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="keyword">while</span>(tp1 -&gt; pnext != <span class="literal">nullptr</span>)&#123;</span><br><span class="line">		<span class="keyword">if</span>(tp1 -&gt; number == number)&#123;</span><br><span class="line">			<span class="keyword">if</span>(tp2 == <span class="literal">nullptr</span>)&#123;</span><br><span class="line">			    head = tp1 -&gt; pnext;</span><br><span class="line">		    &#125;</span><br><span class="line">			<span class="keyword">else</span>&#123;</span><br><span class="line">				tp2 -&gt; pnext = tp1 -&gt; pnext; </span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">delete</span> tp1;</span><br><span class="line">			cout&lt;&lt;<span class="string">&quot;已删除&quot;</span>&lt;&lt;endl;</span><br><span class="line">			<span class="keyword">return</span> ;</span><br><span class="line">		&#125;</span><br><span class="line">		tp2 = tp1;</span><br><span class="line">		tp1 = tp1 -&gt; pnext;</span><br><span class="line">	&#125;</span><br><span class="line">	cout&lt;&lt;<span class="string">&quot;未找到，请检查输入&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里涉及到了定义两个新的指针来定位的作用，同时遍历寻找要删除的学生。</p>
+<p>若要删除的是头，那么指向头的下一个，删除头。</p>
+<p>若要删除的是中间的，则涉及两个新指针。</p>
+<p>比如下面这张图要删除newstu2。</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">tp1→newstu3←head</td>
+</tr>
+<tr>
+<td align="center">↓</td>
+</tr>
+<tr>
+<td align="center">newstu2</td>
+</tr>
+<tr>
+<td align="center">↓</td>
+</tr>
+<tr>
+<td align="center">newstu1</td>
+</tr>
+<tr>
+<td align="center">↓</td>
+</tr>
+<tr>
+<td align="center">nullptr</td>
+</tr>
+</tbody></table>
+<p>会先遍历到这个位置</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">tp2→newstu3←head</td>
+</tr>
+<tr>
+<td align="center">↓</td>
+</tr>
+<tr>
+<td align="center">tp1→newstu2</td>
+</tr>
+<tr>
+<td align="center">↓</td>
+</tr>
+<tr>
+<td align="center">newstu1</td>
+</tr>
+<tr>
+<td align="center">↓</td>
+</tr>
+<tr>
+<td align="center">nullptr</td>
+</tr>
+</tbody></table>
+<p>然后把tp2的下一个node修改成tp1的下一个node，跳过tp1，删除node。</p>
+<p>如果要删除的在头，那么先让头变成tp1指向的下一个node，再删除tp1。</p>
+<h4 id="stusort"><a href="#stusort" class="headerlink" title="stusort"></a>stusort</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">stusort</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(head == <span class="literal">nullptr</span>||head -&gt; pnext == <span class="literal">nullptr</span>)<span class="keyword">return</span> ;</span><br><span class="line">	<span class="type">bool</span> flag;</span><br><span class="line">	<span class="keyword">do</span> &#123;</span><br><span class="line">		flag = <span class="literal">false</span>;</span><br><span class="line">		stu* tp1 = head;</span><br><span class="line">		<span class="keyword">while</span> (tp1-&gt;pnext != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">			stu* tp2 = tp1-&gt;pnext;</span><br><span class="line">			<span class="keyword">if</span> (tp1-&gt;score &lt; tp2-&gt;score) &#123;</span><br><span class="line">				<span class="built_in">swap</span>(tp1-&gt;name, tp2-&gt;name);</span><br><span class="line">				<span class="built_in">swap</span>(tp1-&gt;score, tp2-&gt;score);</span><br><span class="line">				<span class="built_in">swap</span>(tp1-&gt;number, tp2-&gt;number);</span><br><span class="line">				flag = <span class="literal">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			tp1 = tp1-&gt;pnext;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">while</span> (flag); </span><br><span class="line">	cout&lt;&lt;<span class="string">&quot;排序完成&quot;</span>&lt;&lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个的作用是排序。使用了一个bool类型变量flag。因为是冒泡排序，所以应该是双循环，这个do while结构可以代替。意思是如果上一次遍历中没有排序，那么就可以return，因为已经排序完成了，如果上一次遍历中排序了，那么就再排序一次。</p>
+<p>还有一个注意的是不改变node的pnext而修改node本身的值。</p>
+<h4 id="stushow"><a href="#stushow" class="headerlink" title="stushow"></a>stushow</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">stushow</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (head == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">			cout &lt;&lt; <span class="string">&quot;学生列表为空。\n&quot;</span>;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">			cout &lt;&lt; <span class="string">&quot;当前学生信息：\n&quot;</span>;</span><br><span class="line">		stu * tp = head;</span><br><span class="line">		<span class="keyword">while</span> (tp != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">		    cout &lt;&lt; <span class="string">&quot;学号: &quot;</span> &lt;&lt; tp-&gt;number&lt;&lt; <span class="string">&quot;, 姓名: &quot;</span> &lt;&lt; tp-&gt;name&lt;&lt; <span class="string">&quot;, 成绩: &quot;</span> &lt;&lt; tp-&gt;score &lt;&lt; endl;</span><br><span class="line">			tp = tp-&gt;pnext;</span><br><span class="line">			&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个就是遍历然后打印，没什么好说的。</p>
+<h4 id="stuquit"><a href="#stuquit" class="headerlink" title="stuquit"></a>stuquit</h4><pre><code>void stuquit() &#123;
+	stu* tp1 = head;
+	while (tp1 != nullptr) &#123;
+		stu* tp2 = tp1-&gt;pnext;
+		delete tp1;
+		tp1 = tp2;
+	&#125;
+	head = nullptr;
+	cout &lt;&lt; &quot;学生列表已销毁&quot;;
+&#125;
+</code></pre>
+<p>这个的作用是遍历然后删除每一个节点，手动清空链表。</p>
+<p>注 这里为了防止没有输入6导致链表没有清空，所以把这个函数放到了程序后面使其每次都可以清空。</p>
+<h3 id="main主体"><a href="#main主体" class="headerlink" title="main主体"></a>main主体</h3><p>main主体也没什么好说的。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这些代码主要练习了关于单向链表和指针以及结构体的知识。只有自己动手画一画，敲一敲才能够真正理解。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/03/09/%E9%93%BE%E8%A1%A8%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/">http://gazettm.github.io/2025/03/09/%E9%93%BE%E8%A1%A8%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/c/"># c++</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/02/25/%E6%B4%9B%E8%B0%B7%E7%BB%83%E4%B9%A01(updating/">洛谷练习1(updating</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
