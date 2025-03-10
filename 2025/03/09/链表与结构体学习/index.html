@@ -355,17 +355,8 @@
 <h4 id="stushow"><a href="#stushow" class="headerlink" title="stushow"></a>stushow</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">stushow</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (head == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">			cout &lt;&lt; <span class="string">&quot;学生列表为空。\n&quot;</span>;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">			cout &lt;&lt; <span class="string">&quot;当前学生信息：\n&quot;</span>;</span><br><span class="line">		stu * tp = head;</span><br><span class="line">		<span class="keyword">while</span> (tp != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">		    cout &lt;&lt; <span class="string">&quot;学号: &quot;</span> &lt;&lt; tp-&gt;number&lt;&lt; <span class="string">&quot;, 姓名: &quot;</span> &lt;&lt; tp-&gt;name&lt;&lt; <span class="string">&quot;, 成绩: &quot;</span> &lt;&lt; tp-&gt;score &lt;&lt; endl;</span><br><span class="line">			tp = tp-&gt;pnext;</span><br><span class="line">			&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这个就是遍历然后打印，没什么好说的。</p>
-<h4 id="stuquit"><a href="#stuquit" class="headerlink" title="stuquit"></a>stuquit</h4><pre><code>void stuquit() &#123;
-	stu* tp1 = head;
-	while (tp1 != nullptr) &#123;
-		stu* tp2 = tp1-&gt;pnext;
-		delete tp1;
-		tp1 = tp2;
-	&#125;
-	head = nullptr;
-	cout &lt;&lt; &quot;学生列表已销毁&quot;;
-&#125;
-</code></pre>
+<h4 id="stuquit"><a href="#stuquit" class="headerlink" title="stuquit"></a>stuquit</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">stuquit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	stu* tp1 = head;</span><br><span class="line">	<span class="keyword">while</span> (tp1 != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">		stu* tp2 = tp1-&gt;pnext;</span><br><span class="line">		<span class="keyword">delete</span> tp1;</span><br><span class="line">		tp1 = tp2;</span><br><span class="line">	&#125;</span><br><span class="line">	head = <span class="literal">nullptr</span>;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;学生列表已销毁&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这个的作用是遍历然后删除每一个节点，手动清空链表。</p>
 <p>注 这里为了防止没有输入6导致链表没有清空，所以把这个函数放到了程序后面使其每次都可以清空。</p>
 <h3 id="main主体"><a href="#main主体" class="headerlink" title="main主体"></a>main主体</h3><p>main主体也没什么好说的。</p>
