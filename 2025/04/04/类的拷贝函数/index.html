@@ -13,7 +13,7 @@
 
 
 
-<title>类组合 | Gazettm&#39;s Blog</title>
+<title>类的拷贝函数 | Gazettm&#39;s Blog</title>
 
 
 
@@ -196,7 +196,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">类组合</h1>
+            <h1 class="post-title">类的拷贝函数</h1>
             
                 <div class="post-meta">
                     
@@ -205,7 +205,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">四月 2, 2025&nbsp;&nbsp;22:32:30</a>
+                        Date: <a href="#">四月 4, 2025&nbsp;&nbsp;13:37:22</a>
                         </span>
                     
                     
@@ -221,69 +221,21 @@
         </header>
 
         <div class="post-content">
-            <h1 id="类的组合"><a href="#类的组合" class="headerlink" title="类的组合"></a>类的组合</h1><h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Engine</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">Engine</span>(<span class="type">int</span> hp) &#123;</span><br><span class="line">		horsepower = hp;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">Engine_start</span><span class="params">()</span></span>&#123;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;engine starts &quot;</span>&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="type">int</span> <span class="title">Engine_power</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> horsepower;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="type">int</span> horsepower;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Car</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">Car</span>(<span class="type">int</span> hp): <span class="built_in">engine_a</span>(<span class="number">50</span>)&#123;&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">Car_start</span><span class="params">()</span></span>&#123;</span><br><span class="line">		engine_a.<span class="built_in">Engine_start</span>();</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;the car begin work&quot;</span>&lt;&lt;endl;</span><br><span class="line">		cout&lt;&lt;<span class="string">&quot;the power of car is : &quot;</span>&lt;&lt; engine_a.<span class="built_in">Engine_power</span>();</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	Engine engine_a;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="function">Car <span class="title">XiaoMi_SU7</span><span class="params">(<span class="number">50</span>)</span></span>;</span><br><span class="line">	XiaoMi_SU<span class="number">7.</span><span class="built_in">Car_start</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+            <h1 id="类的拷贝函数"><a href="#类的拷贝函数" class="headerlink" title="类的拷贝函数"></a>类的拷贝函数</h1><h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyString</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">MyString</span>(string a = <span class="string">&quot;&quot;</span>)&#123;</span><br><span class="line">		String = a;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">MyString</span>(<span class="type">const</span> MyString&amp; other)&#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;String = other.String;</span><br><span class="line">	&#125;</span><br><span class="line">	~<span class="built_in">MyString</span>()&#123;&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">ShowString</span><span class="params">()</span></span>&#123;</span><br><span class="line">		cout&lt;&lt;String&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	string String;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="function">MyString <span class="title">a</span><span class="params">(<span class="string">&quot;Hello&quot;</span>)</span></span>;</span><br><span class="line">	MyString b = a;</span><br><span class="line">	b.<span class="built_in">ShowString</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>类的组合就是一个类中包含另一个类的对象作为成员变量。与<strong>继承</strong>（“is-a”关系）不同，组合强调“<strong>使用</strong>”而不是“<strong>扩展</strong>”。</p>
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><table>
-<thead>
-<tr>
-<th align="center">特性</th>
-<th align="center">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">生命周期</td>
-<td align="center">被组合对象随着主对象创建和销毁</td>
-</tr>
-<tr>
-<td align="center">封装性强</td>
-<td align="center">组合更符合“封装”的原则</td>
-</tr>
-<tr>
-<td align="center">松耦合</td>
-<td align="center">可以灵活替换组合的对象</td>
-</tr>
-<tr>
-<td align="center">不支持多态</td>
-<td align="center">除非使用指针或者引用作为组合成员</td>
-</tr>
-</tbody></table>
-<h2 id="与继承的对比"><a href="#与继承的对比" class="headerlink" title="与继承的对比"></a>与继承的对比</h2><table>
-<thead>
-<tr>
-<th align="center">特性</th>
-<th align="center">组合（Composition）</th>
-<th align="center">继承（Inheritance）</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">关系</td>
-<td align="center">has-a</td>
-<td align="center">is-a</td>
-</tr>
-<tr>
-<td align="center">耦合性</td>
-<td align="center">低（松耦合）</td>
-<td align="center">高</td>
-</tr>
-<tr>
-<td align="center">可替换性</td>
-<td align="center">高</td>
-<td align="center">低</td>
-</tr>
-<tr>
-<td align="center">多态性</td>
-<td align="center">×（默认不支持）</td>
-<td align="center">√（支持虚函数）</td>
-</tr>
-<tr>
-<td align="center">封装性</td>
-<td align="center">更强</td>
-<td align="center">相对弱</td>
-</tr>
-</tbody></table>
-<h2 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h2><p>类之间不属于“是一个”的关系（如 Car 和 Engine）  </p>
-<p>你希望在一个类中使用另一个类的功能，但不想暴露其全部实现 </p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>创立了一个<code>MyString</code>的类，设立了传参。主要来看拷贝函数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">MyString</span>(<span class="type">const</span> MyString&amp; other)&#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;String = other.String;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>拷贝函数格式。</p>
+<p>这里的<code>other</code>实际上是已经存在的（作为参传递），<code>this</code>指针指向了新创建的类对象。</p>
+<p>意思为从创立的对象中获取副本然后赋值给新创建的对象。</p>
+<h2 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h2><h3 id="为什么要有复制构造函数？"><a href="#为什么要有复制构造函数？" class="headerlink" title="为什么要有复制构造函数？"></a><strong>为什么要有复制构造函数？</strong></h3><p>默认的构造函数（如果没有显式定义）是浅拷贝（shallow copy）。浅拷贝会将对象的每个成员逐一复制给新对象。但对于包含指针成员的类，浅拷贝可能会导致多个对象共享同一块内存，进而出现 <strong>悬空指针</strong> 或 <strong>双重释放</strong> 问题。所以，如果一个类中包含了动态分配的内存（例如 <code>new</code> 分配的内存），通常需要自定义一个深拷贝（deep copy）构造函数，以避免这种问题。</p>
+<h3 id="什么是深拷贝？"><a href="#什么是深拷贝？" class="headerlink" title="什么是深拷贝？"></a><strong>什么是深拷贝？</strong></h3><p>深拷贝（deep copy）会确保每个对象的资源都有自己的独立副本，尤其是指针成员。如果 <code>MyString</code> 类包含动态分配的内存（例如通过 <code>new</code> 分配的字符数组），那么复制构造函数应该为新对象分配新内存，并将内容复制到新内存中，而不是简单地复制指针。</p>
+<p>注意：在使用动态分配时需要记住析构函数必须要<code>delete</code></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>以下情景会使用到。</p>
+<p>1.通过一个已存在的对象初始化新对象：例如，<code>MyString b = a;</code></p>
+<p>2.通过值传递或返回的方式将对象传递给函数：例如，<code>MyString func(MyString obj) &#123; return obj; &#125;</code></p>
+<p>3.当函数返回一个对象时，通常会调用复制构造函数进行返回值优化。</p>
 
         </div>
 
@@ -298,7 +250,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://gazettm.github.io/2025/04/02/%E7%B1%BB%E7%BB%84%E5%90%88/">http://gazettm.github.io/2025/04/02/%E7%B1%BB%E7%BB%84%E5%90%88/</a></span>
+                        <span><a href="http://gazettm.github.io/2025/04/04/%E7%B1%BB%E7%9A%84%E6%8B%B7%E8%B4%9D%E5%87%BD%E6%95%B0/">http://gazettm.github.io/2025/04/04/%E7%B1%BB%E7%9A%84%E6%8B%B7%E8%B4%9D%E5%87%BD%E6%95%B0/</a></span>
                     </p>
                 
                 
@@ -325,10 +277,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/04/04/%E7%B1%BB%E7%9A%84%E6%8B%B7%E8%B4%9D%E5%87%BD%E6%95%B0/">类的拷贝函数</a>
             
-            
-            <a class="next" rel="next" href="/2025/04/02/%E7%B1%BB%E4%B8%AD%E9%9D%99%E6%80%81%E6%88%90%E5%91%98/">类中静态成员</a>
+            <a class="next" rel="next" href="/2025/04/02/%E7%B1%BB%E7%BB%84%E5%90%88/">类组合</a>
             
         </section>
 
