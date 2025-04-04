@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>运算符重载 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">运算符重载</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 4, 2025&nbsp;&nbsp;21:25:27</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/c/">c++</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="运算符重载"><a href="#运算符重载" class="headerlink" title="运算符重载"></a>运算符重载</h1><h2 id="二元运算符重载"><a href="#二元运算符重载" class="headerlink" title="二元运算符重载"></a>二元运算符重载</h2><h3 id="1-成员函数重载"><a href="#1-成员函数重载" class="headerlink" title="1.成员函数重载"></a>1.成员函数重载</h3><p>一个参数</p>
+<h4 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyString</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">MyString</span>(string a = <span class="string">&quot;&quot;</span>) : <span class="built_in">String</span>(a)&#123;&#125;</span><br><span class="line">	</span><br><span class="line">	~<span class="built_in">MyString</span>()&#123;&#125;</span><br><span class="line">	</span><br><span class="line">	MyString <span class="keyword">operator</span>+(<span class="type">const</span> MyString&amp; b)<span class="type">const</span>&#123;</span><br><span class="line">		string tmp = <span class="string">&quot;&quot;</span>;</span><br><span class="line">		tmp = String + b.String;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">MyString</span>(tmp);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">PrintString</span><span class="params">()</span></span>&#123;</span><br><span class="line">		cout&lt;&lt;String&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	string String;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="function">MyString <span class="title">a</span><span class="params">(<span class="string">&quot;Hello?&quot;</span>)</span></span>;</span><br><span class="line">	<span class="function">MyString <span class="title">b</span><span class="params">(<span class="string">&quot;How are you&quot;</span>)</span></span>;</span><br><span class="line">	MyString c = a + b;</span><br><span class="line">	c.<span class="built_in">PrintString</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hello?How are you</span><br></pre></td></tr></table></figure>
+
+<h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MyString <span class="keyword">operator</span>+(<span class="type">const</span> MyString&amp; b)<span class="type">const</span>&#123;</span><br><span class="line">		string tmp = <span class="string">&quot;&quot;</span>;</span><br><span class="line">		tmp = String + b.String;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">MyString</span>(tmp);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>定义了一个返回<code>MyString</code>类型变量的函数。特殊的成员函数为<code>operator+</code>说明对运算符进行重新定义。<code>const</code>这里同样是为了防止对传入参数进行修改，<code>&amp;</code>引用传递避免拷贝浪费不必要的资源。</p>
+<p>使用变量<code>tmp</code>作为临时参数，最后返回一个<code>MyString</code>类的对象并赋值为<code>tmp</code>（结果为重载后的运算符左右两个对象的相加）</p>
+<p>左操作符必须是类对象。</p>
+<h3 id="2-友元函数重载"><a href="#2-友元函数重载" class="headerlink" title="2.友元函数重载"></a>2.友元函数重载</h3><p>两个参数</p>
+<p>可以让左右操作数都不是类成员（甚至左操作数可以是其他类型，比如 int +  Complex）。更灵活，适合实现<strong>非对称重载</strong>（如 int + Complex）</p>
+<h4 id="源代码-1"><a href="#源代码-1" class="headerlink" title="源代码"></a>源代码</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyString</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">MyString</span>(string a = <span class="string">&quot;&quot;</span>) : <span class="built_in">String</span>(a)&#123;&#125;</span><br><span class="line">	</span><br><span class="line">	~<span class="built_in">MyString</span>()&#123;&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">friend</span> MyString <span class="keyword">operator</span>+(<span class="type">const</span> string &amp;a,<span class="type">const</span> MyString &amp;b);</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">PrintString</span><span class="params">()</span></span>&#123;</span><br><span class="line">		cout&lt;&lt;String&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	string String;</span><br><span class="line">&#125;;</span><br><span class="line">MyString <span class="keyword">operator</span>+(<span class="type">const</span> string &amp;a,<span class="type">const</span> MyString &amp;b)&#123;</span><br><span class="line">	string tmp = <span class="string">&quot;&quot;</span>;</span><br><span class="line">	tmp = a + b.String;</span><br><span class="line">	<span class="keyword">return</span> tmp;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	string a = <span class="string">&quot;Hello,&quot;</span>;</span><br><span class="line">	<span class="function">MyString <span class="title">b</span><span class="params">(<span class="string">&quot;How are you?&quot;</span>)</span></span>;</span><br><span class="line">	MyString c = a + b;</span><br><span class="line">	c.<span class="built_in">PrintString</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hello?How are you</span><br></pre></td></tr></table></figure>
+
+<h4 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h4><p>在<code>MyString</code>类中声明了一个<code>MyString</code>类型的友元函数重载运算符+。</p>
+<p>友元函数能够让运算符+的左边为其他类型的变量，更加灵活。</p>
+<h2 id="一元运算符重载"><a href="#一元运算符重载" class="headerlink" title="一元运算符重载"></a>一元运算符重载</h2><h3 id="1-成员函数重载-1"><a href="#1-成员函数重载-1" class="headerlink" title="1.成员函数重载"></a>1.成员函数重载</h3><p>0个参数</p>
+<h4 id="源代码-2"><a href="#源代码-2" class="headerlink" title="源代码"></a>源代码</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyInt</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">MyInt</span>(<span class="type">int</span> a = <span class="number">0</span>) : <span class="built_in">vlue</span>(a)&#123;&#125;</span><br><span class="line">	</span><br><span class="line">	~<span class="built_in">MyInt</span>()&#123;&#125;</span><br><span class="line">	</span><br><span class="line">	MyInt <span class="keyword">operator</span>-()<span class="type">const</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">MyInt</span>(-vlue);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">PrintInt</span><span class="params">()</span></span>&#123;</span><br><span class="line">		cout&lt;&lt;vlue&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="type">int</span> vlue;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="function">MyInt <span class="title">a</span><span class="params">(<span class="number">100</span>)</span></span>;</span><br><span class="line">	MyInt b = -a;</span><br><span class="line">	b.<span class="built_in">PrintInt</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-2"><a href="#输出-2" class="headerlink" title="输出"></a>输出</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-<span class="number">100</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="分析-2"><a href="#分析-2" class="headerlink" title="分析"></a>分析</h4><p>定义了一个成员函数重载<code>-</code>一元运算符。其他不进行说明。</p>
+<h3 id="2-友元函数重载-1"><a href="#2-友元函数重载-1" class="headerlink" title="2.友元函数重载"></a>2.友元函数重载</h3><p>1个参数</p>
+<h4 id="源代码-3"><a href="#源代码-3" class="headerlink" title="源代码"></a>源代码</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyFlag</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">MyFlag</span>(<span class="type">const</span> <span class="type">bool</span>&amp; a) : <span class="built_in">flag</span>(a)&#123;&#125;</span><br><span class="line">	~<span class="built_in">MyFlag</span>()&#123;&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">friend</span> MyFlag <span class="keyword">operator</span>!(<span class="type">const</span> MyFlag&amp; f1lg);</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">PrintFlag</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(flag == <span class="literal">true</span>)&#123;</span><br><span class="line">			cout&lt;&lt;<span class="string">&quot;true&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span>&#123;</span><br><span class="line">			cout&lt;&lt;<span class="string">&quot;false&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="type">bool</span> flag;</span><br><span class="line">&#125;;</span><br><span class="line">MyFlag <span class="keyword">operator</span>!(<span class="type">const</span> MyFlag&amp; f1lg)&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">MyFlag</span>(!f1lg.flag);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="function">MyFlag <span class="title">flag</span><span class="params">(<span class="literal">true</span>)</span></span>;</span><br><span class="line">	MyFlag a = !flag;</span><br><span class="line">	a.<span class="built_in">PrintFlag</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-3"><a href="#输出-3" class="headerlink" title="输出"></a>输出</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">false</span><br></pre></td></tr></table></figure>
+
+<h4 id="分析-3"><a href="#分析-3" class="headerlink" title="分析"></a>分析</h4><p>友元函数参数声明为<code>MyFlag</code>类型，对该类型进行操作并返回相反的布尔值。</p>
+<h3 id="3-自增运算符-前缀和后缀"><a href="#3-自增运算符-前缀和后缀" class="headerlink" title="3.自增运算符 前缀和后缀"></a>3.自增运算符 前缀和后缀</h3><h4 id="源代码-4"><a href="#源代码-4" class="headerlink" title="源代码"></a>源代码</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span> </span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std; </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Counter</span> &#123; </span><br><span class="line">	<span class="keyword">public</span>: </span><br><span class="line">	<span class="built_in">Counter</span>(<span class="type">int</span> c = <span class="number">0</span>) : <span class="built_in">Count</span>(c) &#123;&#125; </span><br><span class="line">	Counter&amp; <span class="keyword">operator</span>++() &#123; </span><br><span class="line">		++Count; </span><br><span class="line">		<span class="keyword">return</span> *<span class="keyword">this</span>; </span><br><span class="line">	&#125; </span><br><span class="line">	Counter <span class="keyword">operator</span>++(<span class="type">int</span>) &#123; </span><br><span class="line">		Counter temp = *<span class="keyword">this</span>; </span><br><span class="line">		Count++; </span><br><span class="line">		<span class="keyword">return</span> temp; </span><br><span class="line">	&#125; </span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">show</span><span class="params">()</span> <span class="type">const</span> </span>&#123; </span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;Count: &quot;</span> &lt;&lt; Count &lt;&lt; endl; </span><br><span class="line">	&#125; </span><br><span class="line">	<span class="keyword">private</span>: </span><br><span class="line">	<span class="type">int</span> Count; </span><br><span class="line">&#125;; </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="function">Counter <span class="title">c</span><span class="params">(<span class="number">5</span>)</span></span>; </span><br><span class="line">	++c;      </span><br><span class="line">	c.<span class="built_in">show</span>();</span><br><span class="line">	c++;      </span><br><span class="line">	c.<span class="built_in">show</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-4"><a href="#输出-4" class="headerlink" title="输出"></a>输出</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Count: 6</span></span><br><span class="line"><span class="function"><span class="title">Count</span>: 7</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="分析-4"><a href="#分析-4" class="headerlink" title="分析"></a>分析</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Counter&amp; <span class="keyword">operator</span>++() &#123; </span><br><span class="line">		++Count; </span><br><span class="line">		<span class="keyword">return</span> *<span class="keyword">this</span>; </span><br><span class="line">	&#125; <span class="comment">//前自增</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Counter <span class="keyword">operator</span>++(<span class="type">int</span>) &#123; </span><br><span class="line">		Counter temp = *<span class="keyword">this</span>; </span><br><span class="line">		Count++; </span><br><span class="line">		<span class="keyword">return</span> temp; </span><br><span class="line">	&#125; <span class="comment">//后自增</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看出来前自增使用了&amp;，这是因为两者作用不同。前自增使用&amp;是引用传递 ，因为前自增是先自增之后返回值，这里使用引用传递，先加了自身，然后返回了<code>*this</code>即为本身，避免了内存资源的浪费，提升性能。</p>
+<p>后自增不用&amp;是因为机制不同。后自增是先返回值后自增，所以必须使用一个<code>temp</code>来先对操作前的对象进行复制，然后该对象就要自增了。最后返回的是<code>temp</code></p>
+<p>后自增中的<code>int</code>仅仅作为区分。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/04/04/%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD/">http://gazettm.github.io/2025/04/04/%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/c/"># c++</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/04/04/%E5%8F%8B%E5%85%83/">友元</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
