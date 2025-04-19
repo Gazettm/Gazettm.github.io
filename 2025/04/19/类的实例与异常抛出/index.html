@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>类的实例与异常抛出 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">类的实例与异常抛出</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 19, 2025&nbsp;&nbsp;21:29:35</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/c/">c++</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="类的实例与异常抛出"><a href="#类的实例与异常抛出" class="headerlink" title="类的实例与异常抛出"></a>类的实例与异常抛出</h1><h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><h3 id="Array-h"><a href="#Array-h" class="headerlink" title="Array.h"></a><code>Array.h</code></h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _ARRAY_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _ARRAY_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Array</span>&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">enum</span> &#123;SIZE=<span class="number">1000</span>&#125;;</span><br><span class="line">	<span class="type">int</span> data[SIZE]; </span><br><span class="line">	<span class="type">int</span> size;       </span><br><span class="line">	</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">Array</span>();</span><br><span class="line">	<span class="built_in">Array</span>(<span class="type">const</span> Array&amp;rhs);</span><br><span class="line">	<span class="built_in">Array</span>(<span class="type">int</span> <span class="type">const</span> a[],<span class="type">int</span> n);</span><br><span class="line">	<span class="built_in">Array</span>(<span class="type">int</span> count,<span class="type">int</span> value);</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">insert</span><span class="params">(<span class="type">int</span> pos,<span class="type">int</span> value)</span></span>;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">remove</span><span class="params">(<span class="type">int</span> pos)</span></span>;</span><br><span class="line">	<span class="function"><span class="type">int</span> <span class="title">at</span><span class="params">(<span class="type">int</span> pos)</span><span class="type">const</span></span>;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">modify</span><span class="params">(<span class="type">int</span> pos,<span class="type">int</span> newValue)</span></span>;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">disp</span><span class="params">()</span><span class="type">const</span></span>;</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getSize</span><span class="params">()</span><span class="type">const</span></span>&#123;<span class="keyword">return</span> size;&#125;</span><br><span class="line">	</span><br><span class="line">	Array&amp; <span class="keyword">operator</span> = (<span class="type">const</span> Array&amp;rhs);</span><br><span class="line">	</span><br><span class="line">	<span class="type">int</span>&amp; <span class="keyword">operator</span> [] (<span class="type">int</span> pos);</span><br><span class="line">	<span class="type">const</span> <span class="type">int</span>&amp; <span class="keyword">operator</span> [] (<span class="type">int</span> pos)<span class="type">const</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> Array&amp;lhs,<span class="type">const</span> Array&amp;rhs);</span><br><span class="line"></span><br><span class="line"><span class="type">bool</span> <span class="keyword">operator</span> == (<span class="type">const</span> Array&amp;lhs,<span class="type">const</span> Array&amp;rhs);</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> Array <span class="keyword">operator</span> + (<span class="type">const</span> Array&amp;lhs,<span class="type">const</span> Array&amp;rhs);</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> std::ostream;</span><br><span class="line">ostream&amp; <span class="keyword">operator</span> &lt;&lt; (ostream&amp;os,<span class="type">const</span> Array&amp;rhs);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Array-cpp"><a href="#Array-cpp" class="headerlink" title="Array.cpp"></a><code>Array.cpp</code></h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Array.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdexcept&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> std::invalid_argument;</span><br><span class="line"><span class="keyword">using</span> std::overflow_error;</span><br><span class="line">Array::<span class="built_in">Array</span>(): <span class="built_in">size</span>(<span class="number">0</span>) &#123;&#125;</span><br><span class="line">Array::<span class="built_in">Array</span>(<span class="type">const</span> Array&amp; rhs): <span class="built_in">size</span>(rhs.size) &#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size; ++i) &#123;</span><br><span class="line">		data[i] = rhs.data[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Array::<span class="built_in">Array</span>(<span class="type">int</span> <span class="type">const</span> a[], <span class="type">int</span> n)&#123;</span><br><span class="line">	<span class="keyword">if</span> (n &lt; <span class="number">0</span> || n &gt; SIZE) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	size = n;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size; ++i) &#123;</span><br><span class="line">		data[i] = a[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">Array::<span class="built_in">Array</span>(<span class="type">int</span> count, <span class="type">int</span> value)&#123;</span><br><span class="line">	<span class="keyword">if</span> (count &lt; <span class="number">0</span> || count &gt; SIZE) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	size = count;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size; ++i) &#123;</span><br><span class="line">		data[i] = value;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Array::insert</span><span class="params">(<span class="type">int</span> pos, <span class="type">int</span> value)</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt; size) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (size &gt;= SIZE) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">overflow_error</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = size; i &gt; pos; --i) &#123;</span><br><span class="line">		data[i] = data[i - <span class="number">1</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	data[pos] = value;</span><br><span class="line">	++size;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Array::remove</span><span class="params">(<span class="type">int</span> pos)</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt;= size) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = pos; i &lt; size - <span class="number">1</span>; ++i) &#123;</span><br><span class="line">		data[i] = data[i + <span class="number">1</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	--size;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">Array::at</span><span class="params">(<span class="type">int</span> pos)</span> <span class="type">const</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt;= size) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> data[pos];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Array::modify</span><span class="params">(<span class="type">int</span> pos, <span class="type">int</span> newValue)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt;= size) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	data[pos] = newValue;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Array::disp</span><span class="params">()</span> <span class="type">const</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size; ++i) &#123;</span><br><span class="line">		std::cout &lt;&lt; data[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">Array&amp; Array::<span class="keyword">operator</span> = (<span class="type">const</span> Array&amp;rhs)&#123;</span><br><span class="line">	size = rhs.size;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; size;i++)&#123;</span><br><span class="line">		data[i] = rhs.data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span>&amp; Array::<span class="keyword">operator</span> [] (<span class="type">int</span> pos)&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">this</span> -&gt; data[pos];</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span>&amp; Array::<span class="keyword">operator</span> [] (<span class="type">int</span> pos)<span class="type">const</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">this</span> -&gt; data[pos];</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> Array&amp;lhs,<span class="type">const</span> Array&amp;rhs)&#123;</span><br><span class="line">	<span class="type">int</span> minSize = std::<span class="built_in">min</span>(lhs.<span class="built_in">getSize</span>(), rhs.<span class="built_in">getSize</span>());</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; minSize; ++i) &#123;</span><br><span class="line">		<span class="keyword">if</span> (lhs.<span class="built_in">at</span>(i) &lt; rhs.<span class="built_in">at</span>(i)) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (lhs.<span class="built_in">at</span>(i) &gt; rhs.<span class="built_in">at</span>(i)) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> lhs.<span class="built_in">getSize</span>() &lt; rhs.<span class="built_in">getSize</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">bool</span> <span class="keyword">operator</span> == (<span class="type">const</span> Array&amp;lhs,<span class="type">const</span> Array&amp;rhs)&#123;</span><br><span class="line">	<span class="type">bool</span> flag = <span class="literal">false</span>;</span><br><span class="line">	<span class="keyword">if</span>(lhs.<span class="built_in">getSize</span>() == rhs.<span class="built_in">getSize</span>())&#123;</span><br><span class="line">		flag = <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> flag;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">const</span> Array <span class="keyword">operator</span> + (<span class="type">const</span> Array&amp;lhs,<span class="type">const</span> Array&amp;rhs)&#123;</span><br><span class="line">	<span class="type">int</span> tsize = lhs.<span class="built_in">getSize</span>()+rhs.<span class="built_in">getSize</span>();</span><br><span class="line">	<span class="type">int</span> tdata[tsize];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; lhs.<span class="built_in">getSize</span>();i++)&#123;</span><br><span class="line">		tdata[i] = lhs.<span class="built_in">at</span>(i);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; rhs.<span class="built_in">getSize</span>(); ++i)&#123;</span><br><span class="line">		tdata[lhs.<span class="built_in">getSize</span>() + i] = rhs.<span class="built_in">at</span>(i);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">Array <span class="title">temp</span><span class="params">(tdata,tsize)</span></span>;</span><br><span class="line">	<span class="keyword">return</span> temp;</span><br><span class="line">&#125;</span><br><span class="line">ostream&amp; <span class="keyword">operator</span> &lt;&lt; (ostream&amp;os,<span class="type">const</span> Array&amp;rhs)&#123;</span><br><span class="line">	rhs.<span class="built_in">disp</span>();</span><br><span class="line">	<span class="keyword">return</span> os;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="main-cpp"><a href="#main-cpp" class="headerlink" title="main.cpp"></a><code>main.cpp</code></h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Array.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> n,m;</span><br><span class="line">	cin&gt;&gt;n&gt;&gt;m;</span><br><span class="line">	<span class="function">Array <span class="title">a</span><span class="params">(n,<span class="number">0</span>)</span>,<span class="title">b</span><span class="params">(m,<span class="number">0</span>)</span></span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;n;++i) cin&gt;&gt;a[i];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;m;++i) cin&gt;&gt;b[i];</span><br><span class="line">	cout&lt;&lt;a&lt;&lt;endl;</span><br><span class="line">	cout&lt;&lt;b&lt;&lt;endl;</span><br><span class="line">	cout&lt;&lt;(a==b)&lt;&lt;endl;</span><br><span class="line">	cout&lt;&lt;(a&lt;b)&lt;&lt;endl;</span><br><span class="line">	Array c;</span><br><span class="line">	c = a = a + b;</span><br><span class="line">	cout&lt;&lt;c&lt;&lt;endl;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>主要对<code>array.cpp</code>进行分析</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Array::<span class="built_in">Array</span>(): <span class="built_in">size</span>(<span class="number">0</span>) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对<code>Array</code>进行初始化，初始元素为0个</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Array::<span class="built_in">Array</span>(<span class="type">const</span> Array&amp; rhs): <span class="built_in">size</span>(rhs.size) &#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size; ++i) &#123;</span><br><span class="line">		data[i] = rhs.data[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>构造函数拷贝。用<code>size(rhs.size)</code>把元素个数先赋值，然后用循环把<code>data</code>数组成员变量复制</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Array::<span class="built_in">Array</span>(<span class="type">int</span> <span class="type">const</span> a[], <span class="type">int</span> n)&#123;</span><br><span class="line">	<span class="keyword">if</span> (n &lt; <span class="number">0</span> || n &gt; SIZE) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	size = n;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size; ++i) &#123;</span><br><span class="line">		data[i] = a[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>构造函数，要求前面是数组，后面是数组个数。前面的数组用来给<code>data</code>赋值，后面的n用来给<code>size</code>赋值</p>
+<p>如果个数<code>n</code>不合法，那么就抛出异常<code>throw invalid_argument(__func__);</code>此处<code>invalid_argument</code>指的是异常类型，<code>__func__</code>是指带上该构造函数表示该函数异常。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Array::<span class="built_in">Array</span>(<span class="type">int</span> count, <span class="type">int</span> value)&#123;</span><br><span class="line">	<span class="keyword">if</span> (count &lt; <span class="number">0</span> || count &gt; SIZE) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	size = count;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size; ++i) &#123;</span><br><span class="line">		data[i] = value;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>构造函数，前面是数后面是该数字的个数，意思为把<code>data</code>数组中前<code>count</code>个元素赋值为<code>value</code>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Array::insert</span><span class="params">(<span class="type">int</span> pos, <span class="type">int</span> value)</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt; size) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (size &gt;= SIZE) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">overflow_error</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = size; i &gt; pos; i--) &#123;</span><br><span class="line">		data[i] = data[i - <span class="number">1</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	data[pos] = value;</span><br><span class="line">	++size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>成员函数，用来在第<code>pos</code>个元素之后插入一个元素<code>value</code>，之后把<code>size</code>的值加一表示数组元素个数增加1。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Array::remove</span><span class="params">(<span class="type">int</span> pos)</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt;= size) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = pos; i &lt; size - <span class="number">1</span>; i++) &#123;</span><br><span class="line">		data[i] = data[i + <span class="number">1</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	--size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>成员函数，用来在第<code>pos</code>个元素处删除一个元素，之后把size的值减一表示数组元素个数减少1。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">Array::at</span><span class="params">(<span class="type">int</span> pos)</span> <span class="type">const</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt;= size) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> data[pos];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>成员函数，用来返回第<code>pos</code>个元素的值。const表示不能修改成员变量，出于安全考虑。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Array::modify</span><span class="params">(<span class="type">int</span> pos, <span class="type">int</span> newValue)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt;= size) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">invalid_argument</span>(__func__);</span><br><span class="line">	&#125;</span><br><span class="line">	data[pos] = newValue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>成员函数，用于更新第pos个元素的值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Array::disp</span><span class="params">()</span> <span class="type">const</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size; ++i) &#123;</span><br><span class="line">		std::cout &lt;&lt; data[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>display</code>函数，用来输出<code>Array</code>中的数组。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Array&amp; Array::<span class="keyword">operator</span> = (<span class="type">const</span> Array&amp;rhs)&#123;</span><br><span class="line">	size = rhs.size;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; size;i++)&#123;</span><br><span class="line">		data[i] = rhs.data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>成员函数运算符重载，等于号为赋值。把左边的<code>Array</code>类中的<code>size</code>和数组全复制过去。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>&amp; Array::<span class="keyword">operator</span> [] (<span class="type">int</span> pos)&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">this</span> -&gt; data[pos];</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span>&amp; Array::<span class="keyword">operator</span> [] (<span class="type">int</span> pos)<span class="type">const</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">this</span> -&gt; data[pos];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>成员函数运算符重载，方括号运算符。对<code>Array</code>使用方括号运算符，里面的<code>pos</code>指<code>data[pos]</code>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> Array&amp;lhs,<span class="type">const</span> Array&amp;rhs)&#123;</span><br><span class="line">	<span class="type">int</span> minSize = std::<span class="built_in">min</span>(lhs.<span class="built_in">getSize</span>(), rhs.<span class="built_in">getSize</span>());</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; minSize; ++i) &#123;</span><br><span class="line">		<span class="keyword">if</span> (lhs.<span class="built_in">at</span>(i) &lt; rhs.<span class="built_in">at</span>(i)) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (lhs.<span class="built_in">at</span>(i) &gt; rhs.<span class="built_in">at</span>(i)) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> lhs.<span class="built_in">getSize</span>() &lt; rhs.<span class="built_in">getSize</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运算符重载，这个<code>&lt;</code>比较符号是一个比较复杂的比较。会先比较前几个元素，若前几个元素相同的话则比较大小。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> <span class="keyword">operator</span> == (<span class="type">const</span> Array&amp;lhs,<span class="type">const</span> Array&amp;rhs)&#123;</span><br><span class="line">	<span class="type">bool</span> flag = <span class="literal">false</span>;</span><br><span class="line">	<span class="keyword">if</span>(lhs.<span class="built_in">getSize</span>() == rhs.<span class="built_in">getSize</span>())&#123;</span><br><span class="line">		flag = <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> flag;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运算符重载，等于号，判断元素个数是否相等。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> Array <span class="keyword">operator</span> + (<span class="type">const</span> Array&amp;lhs,<span class="type">const</span> Array&amp;rhs)&#123;</span><br><span class="line">	<span class="type">int</span> tsize = lhs.<span class="built_in">getSize</span>()+rhs.<span class="built_in">getSize</span>();</span><br><span class="line">	<span class="type">int</span> tdata[tsize];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; lhs.<span class="built_in">getSize</span>();i++)&#123;</span><br><span class="line">		tdata[i] = lhs.<span class="built_in">at</span>(i);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; rhs.<span class="built_in">getSize</span>(); ++i)&#123;</span><br><span class="line">		tdata[lhs.<span class="built_in">getSize</span>() + i] = rhs.<span class="built_in">at</span>(i);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">Array <span class="title">temp</span><span class="params">(tdata,tsize)</span></span>;</span><br><span class="line">	<span class="keyword">return</span> temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运算符重载，用于两个<code>array</code>类的相加。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ostream&amp; <span class="keyword">operator</span> &lt;&lt; (ostream&amp;os,<span class="type">const</span> Array&amp;rhs)&#123;</span><br><span class="line">	rhs.<span class="built_in">disp</span>();</span><br><span class="line">	<span class="keyword">return</span> os;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出运算符重载，用于展示<code>Array</code>中的元素。</p>
+<h2 id="输入"><a href="#输入" class="headerlink" title="输入"></a>输入</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">3</span> <span class="number">3</span></span><br><span class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">3</span></span><br><span class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">3</span></span><br><span class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">3</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/04/19/%E7%B1%BB%E7%9A%84%E5%AE%9E%E4%BE%8B%E4%B8%8E%E5%BC%82%E5%B8%B8%E6%8A%9B%E5%87%BA/">http://gazettm.github.io/2025/04/19/%E7%B1%BB%E7%9A%84%E5%AE%9E%E4%BE%8B%E4%B8%8E%E5%BC%82%E5%B8%B8%E6%8A%9B%E5%87%BA/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/c/"># c++</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/04/17/%E4%BA%8C%E7%BA%A7%E6%8C%87%E9%92%88%E4%B8%8E%E7%9F%A9%E9%98%B5/">二级指针与矩阵</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
