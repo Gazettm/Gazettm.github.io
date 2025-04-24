@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>test-in-2025-4-24 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">test-in-2025-4-24</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 24, 2025&nbsp;&nbsp;20:49:49</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/c/">c++</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="test-in-2025-4-24"><a href="#test-in-2025-4-24" class="headerlink" title="test-in-2025-4-24"></a>test-in-2025-4-24</h1><p>4月24的测试题</p>
+<h2 id="4-24-3"><a href="#4-24-3" class="headerlink" title="4_24-3"></a>4_24-3</h2><p>要求写一个BigInt类实现大数运算。</p>
+<h3 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BigInt</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">BigInt</span>()&#123;&#125;</span><br><span class="line">	<span class="built_in">BigInt</span>(string x):<span class="built_in">a</span>(x)&#123;&#125;</span><br><span class="line">    <span class="function">string <span class="title">getBigInt</span><span class="params">()</span><span class="type">const</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">setBigInt</span><span class="params">(string x)</span></span>&#123;</span><br><span class="line">		a = x;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">friend</span> ostream&amp;<span class="keyword">operator</span>&lt;&lt;(ostream&amp;output,BigInt&amp;a)&#123;</span><br><span class="line">		output&lt;&lt;a.<span class="built_in">getBigInt</span>();</span><br><span class="line">		<span class="keyword">return</span> output;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">friend</span> istream&amp;<span class="keyword">operator</span>&gt;&gt;(istream&amp;input,BigInt&amp;a)&#123;</span><br><span class="line">		string t;</span><br><span class="line">		input&gt;&gt;t;</span><br><span class="line">		a.<span class="built_in">setBigInt</span>(t);</span><br><span class="line">		<span class="keyword">return</span> input;</span><br><span class="line">	&#125;</span><br><span class="line">	BigInt <span class="keyword">operator</span>=(<span class="type">const</span> BigInt&amp;w)&#123;</span><br><span class="line">		a = w.<span class="built_in">getBigInt</span>();</span><br><span class="line">		<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	string a;</span><br><span class="line">&#125;;</span><br><span class="line">BigInt <span class="keyword">operator</span>+(BigInt&amp;a,BigInt&amp;b)&#123;</span><br><span class="line">    string s1 = a.<span class="built_in">getBigInt</span>();</span><br><span class="line">	string s2 = b.<span class="built_in">getBigInt</span>();</span><br><span class="line">	<span class="type">int</span> st1 = s<span class="number">1.l</span>ength();</span><br><span class="line">	<span class="type">int</span> st2 = s<span class="number">2.l</span>ength();</span><br><span class="line">	<span class="type">int</span> p1 = <span class="number">0</span>,p2 = <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> k[<span class="number">100</span>] = &#123;<span class="number">0</span>&#125;,k1[<span class="number">100</span>] = &#123;<span class="number">0</span>&#125;,k2[<span class="number">100</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	<span class="type">bool</span> flag = <span class="literal">false</span>;</span><br><span class="line">	<span class="type">int</span> siz =  <span class="built_in">max</span>(st1,st2);</span><br><span class="line">	string news = <span class="string">&quot;&quot;</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = st1<span class="number">-1</span>;i &gt;= <span class="number">0</span>;i--)&#123;</span><br><span class="line">		k1[p1] = s1[i] - <span class="number">48</span>;</span><br><span class="line">		p1++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = st2<span class="number">-1</span>;i &gt;= <span class="number">0</span>;i--)&#123;</span><br><span class="line">		k2[p2] = s2[i] - <span class="number">48</span>;</span><br><span class="line">		p2++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; <span class="number">100</span>;i++)&#123;</span><br><span class="line">		k[i] = k1[i] + k2[i];</span><br><span class="line">		<span class="keyword">if</span>(flag == <span class="literal">true</span>)&#123;</span><br><span class="line">			k[i]++;</span><br><span class="line">			flag = <span class="literal">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(k[i] &gt;= <span class="number">10</span>)&#123;</span><br><span class="line">			k[i]-=<span class="number">10</span>;</span><br><span class="line">			flag = <span class="literal">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = siz;i &gt;= <span class="number">0</span>;i--)&#123;</span><br><span class="line">		<span class="keyword">if</span>(k[siz] == <span class="number">0</span>&amp;&amp;i == siz)</span><br><span class="line">			i--;</span><br><span class="line">		news += k[i] + <span class="number">48</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">BigInt <span class="title">newbig</span><span class="params">(news)</span></span>;</span><br><span class="line">	<span class="keyword">return</span> newbig;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	BigInt t1,t2;</span><br><span class="line">	BigInt t3;</span><br><span class="line">	cin&gt;&gt;t1&gt;&gt;t2;</span><br><span class="line">	t3 = t1+t2;</span><br><span class="line">	cout&lt;&lt;t3;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="重点分析"><a href="#重点分析" class="headerlink" title="重点分析"></a>重点分析</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">string <span class="title">getBigInt</span><span class="params">()</span><span class="type">const</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在此处加上<code>const</code>，意为该函数内部成员变量不能修改，能够在下面的运算符重载<code>=</code>中使用。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">BigInt <span class="keyword">operator</span>=(<span class="type">const</span> BigInt&amp;w)&#123;</span><br><span class="line">		a = w.<span class="built_in">getBigInt</span>();</span><br><span class="line">		<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为重载&#x3D;中，<code>const BigInt&amp;w</code>，所以引用值<code>w</code>必须不能通过任何方式修改，所以为了使用<code>getBigInt</code>函数，要在上面加上<code>const</code>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">BigInt <span class="keyword">operator</span>+(BigInt&amp;a,BigInt&amp;b)&#123;</span><br><span class="line">    string s1 = a.<span class="built_in">getBigInt</span>();</span><br><span class="line">	string s2 = b.<span class="built_in">getBigInt</span>();</span><br><span class="line">	<span class="type">int</span> st1 = s<span class="number">1.l</span>ength();</span><br><span class="line">	<span class="type">int</span> st2 = s<span class="number">2.l</span>ength();</span><br><span class="line">	<span class="type">int</span> p1 = <span class="number">0</span>,p2 = <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> k[<span class="number">100</span>] = &#123;<span class="number">0</span>&#125;,k1[<span class="number">100</span>] = &#123;<span class="number">0</span>&#125;,k2[<span class="number">100</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	<span class="type">bool</span> flag = <span class="literal">false</span>;</span><br><span class="line">	<span class="type">int</span> siz =  <span class="built_in">max</span>(st1,st2);</span><br><span class="line">	string news = <span class="string">&quot;&quot;</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = st1<span class="number">-1</span>;i &gt;= <span class="number">0</span>;i--)&#123;</span><br><span class="line">		k1[p1] = s1[i] - <span class="number">48</span>;</span><br><span class="line">		p1++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = st2<span class="number">-1</span>;i &gt;= <span class="number">0</span>;i--)&#123;</span><br><span class="line">		k2[p2] = s2[i] - <span class="number">48</span>;</span><br><span class="line">		p2++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; <span class="number">100</span>;i++)&#123;</span><br><span class="line">		k[i] = k1[i] + k2[i];</span><br><span class="line">		<span class="keyword">if</span>(flag == <span class="literal">true</span>)&#123;</span><br><span class="line">			k[i]++;</span><br><span class="line">			flag = <span class="literal">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(k[i] &gt;= <span class="number">10</span>)&#123;</span><br><span class="line">			k[i]-=<span class="number">10</span>;</span><br><span class="line">			flag = <span class="literal">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = siz;i &gt;= <span class="number">0</span>;i--)&#123;</span><br><span class="line">		<span class="keyword">if</span>(k[siz] == <span class="number">0</span>&amp;&amp;i == siz)</span><br><span class="line">			i--;</span><br><span class="line">		news += k[i] + <span class="number">48</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">BigInt <span class="title">newbig</span><span class="params">(news)</span></span>;</span><br><span class="line">	<span class="keyword">return</span> newbig;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该代码的重点就在于重载+怎么实现。</p>
+<p>考试时写不出来，感觉还是因为没有事先想过。在解题时一定要先想思路，没有思路硬解是解不出来的。</p>
+<p>首先拷贝了两个要相加的字符串，然后用两个数组分割，注意这里数组的低位是字符串的高位，这样方便处理数组里面的数字，即从0遍历到100，进位更好处理。</p>
+<p>然后使用了新数组表示两数组相加，然后设置了flag来表示是否进位。</p>
+<p>因为数组有100位，所以结果的字符串要判断输出多少位，这里使用的是</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = siz;i &gt;= <span class="number">0</span>;i--)&#123;</span><br><span class="line">		<span class="keyword">if</span>(k[siz] == <span class="number">0</span>&amp;&amp;i == siz)</span><br><span class="line">			i--;</span><br><span class="line">		news += k[i] + <span class="number">48</span>;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>若数组的<code>siz</code>位是0则跳过。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/04/24/test-in-2025-4-24/">http://gazettm.github.io/2025/04/24/test-in-2025-4-24/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/c/"># c++</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/04/19/%E7%B1%BB%E7%9A%84%E5%AE%9E%E4%BE%8B%E4%B8%8E%E5%BC%82%E5%B8%B8%E6%8A%9B%E5%87%BA/">类的实例与异常抛出</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
