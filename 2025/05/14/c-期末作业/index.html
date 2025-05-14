@@ -13,7 +13,7 @@
 
 
 
-<title>素数1 | Gazettm&#39;s Blog</title>
+<title>c++期末作业 | Gazettm&#39;s Blog</title>
 
 
 
@@ -196,7 +196,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">素数1</h1>
+            <h1 class="post-title">c++期末作业</h1>
             
                 <div class="post-meta">
                     
@@ -205,14 +205,14 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">五月 3, 2025&nbsp;&nbsp;22:41:23</a>
+                        Date: <a href="#">五月 14, 2025&nbsp;&nbsp;21:24:26</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/math/">math</a>
+                                <a href="/categories/c/">c++</a>
                             
                         </span>
                     
@@ -221,12 +221,15 @@
         </header>
 
         <div class="post-content">
-            <h1 id="数论-素数1"><a href="#数论-素数1" class="headerlink" title="数论 : 素数1"></a>数论 : 素数1</h1><h2 id="素数引理1"><a href="#素数引理1" class="headerlink" title="素数引理1"></a>素数引理1</h2><p>引理1</p>
-<p>若a∈Z+,a ≥ 2 ,q &gt; 1 and q ∈ Z+,q是 a 的最小因子, 则 q 为素数 且 当a为合数时,q ≤  sqrt(a)</p>
-<p>证明: 设q为合数, q &#x3D; d d’ , q＞ d,d’ ≥ 2 , ∴ d | q, q | a, ∴ d | a, 则 q 不是 a 的最小因子</p>
-<p>当 a 为合数时 a &#x3D; q q’,q ≤ q’ q² ≤ q q’ &#x3D; a ∴ q ≤  sqrt(a)</p>
-<h2 id="c-中的使用"><a href="#c-中的使用" class="headerlink" title="c++中的使用"></a>c++中的使用</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isPrime</span><span class="params">(<span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(n &lt;= <span class="number">1</span>)<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">2</span>;i * i &lt;= n;i++)&#123;</span><br><span class="line">		<span class="keyword">if</span>(n % i == <span class="number">0</span>)&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> x;</span><br><span class="line">	cin&gt;&gt;x;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">2</span>;i &lt; x;i++)&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="built_in">isPrime</span>(i))&#123;</span><br><span class="line">			cout&lt;&lt;i&lt;&lt;<span class="string">&quot; &quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+            <h1 id="c-期末作业"><a href="#c-期末作业" class="headerlink" title="c++期末作业"></a>c++期末作业</h1><h2 id="2025-5-14"><a href="#2025-5-14" class="headerlink" title="2025-5-14"></a>2025-5-14</h2><h3 id="任务"><a href="#任务" class="headerlink" title="任务"></a>任务</h3><p>确认了任务为kali-linux下的五子棋图形化游戏。</p>
+<p>1.用vim编程，g++编译，Makefile生成可执行文件</p>
+<p>2.用Qt库实现c++的图形化操作</p>
+<p>今天完成了kali-linux的更新，获取了github的密钥对kali虚拟机进行了远程连接并创建了仓库，进行了Vim，g++与Makefile的测试，效果不错。</p>
+<h3 id="远程连接"><a href="#远程连接" class="headerlink" title="远程连接"></a>远程连接</h3><p>在linux中创建文件夹c++，在文件夹打开终端后git init初始化仓库，用<code>git add .</code>来放入缓存区，之后<code>git commit -m &quot;test&quot;</code>进行第一次提交，commit附加信息为test。</p>
+<p><code>git remote add origin https://github.com/Gazettm/Final-Assignment-of-cpp.git</code>链接到远程库</p>
+<p>注意（还是用<code>git remote add origin git@github.com:Gazettm/Final_Assignment_of_Cpp.git</code>比较好，生成ssh密钥添加到github能直接提交不需要账号密码）</p>
+<p><code>git push -u origin main</code>这是将本地修改推送到远程仓库</p>
+<p>之后用<code>git push</code>提交</p>
 
         </div>
 
@@ -241,7 +244,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://gazettm.github.io/2025/05/03/%E7%B4%A0%E6%95%B01/">http://gazettm.github.io/2025/05/03/%E7%B4%A0%E6%95%B01/</a></span>
+                        <span><a href="http://gazettm.github.io/2025/05/14/c-%E6%9C%9F%E6%9C%AB%E4%BD%9C%E4%B8%9A/">http://gazettm.github.io/2025/05/14/c-%E6%9C%9F%E6%9C%AB%E4%BD%9C%E4%B8%9A/</a></span>
                     </p>
                 
                 
@@ -255,7 +258,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/math/"># math</a>
+                        <a href="/tags/c/"># c++</a>
                     
                         
                 </span>
@@ -268,10 +271,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/05/14/c-%E6%9C%9F%E6%9C%AB%E4%BD%9C%E4%B8%9A/">c++期末作业</a>
             
-            
-            <a class="next" rel="next" href="/2025/04/26/BigInt%E7%B1%BB%E5%AE%9E%E7%8E%B0%E6%AD%A3%E5%A4%A7%E6%95%B0-%EF%BC%8C-%EF%BC%8C-%E8%BF%90%E7%AE%97/">BigInt类实现正大数+，-，*运算</a>
+            <a class="next" rel="next" href="/2025/05/03/%E7%B4%A0%E6%95%B01/">素数1</a>
             
         </section>
 
