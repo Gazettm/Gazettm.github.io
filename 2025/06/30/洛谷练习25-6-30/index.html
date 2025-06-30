@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>洛谷练习25-6-30 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">洛谷练习25-6-30</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">六月 30, 2025&nbsp;&nbsp;23:32:51</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/c/">c++</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="P1563-NOIP-2016-提高组-玩具谜题"><a href="#P1563-NOIP-2016-提高组-玩具谜题" class="headerlink" title="P1563 [NOIP 2016 提高组] 玩具谜题"></a>P1563 [NOIP 2016 提高组] 玩具谜题</h1><h2 id="题目背景"><a href="#题目背景" class="headerlink" title="题目背景"></a>题目背景</h2><p>NOIP2016 提高组 D1T1</p>
+<h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>小南有一套可爱的玩具小人，它们各有不同的职业。</p>
+<p>有一天，这些玩具小人把小南的眼镜藏了起来。小南发现玩具小人们围成了一个圈，它们有的面朝圈内，有的面朝圈外。如下图：</p>
+<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/0u7em9pi.png" alt="img"></p>
+<p>这时 singer 告诉小南一个谜题：“眼镜藏在我左数第 3 个玩具小人的右数第 1 个玩具小人的左数第 2 个玩具小人那里。”</p>
+<p>小南发现，这个谜题中玩具小人的朝向非常关键，因为朝内和朝外的玩具小人的左右方向是相反的：面朝圈内的玩具小人，它的左边是顺时针方向，右边是逆时针方向；而面向圈外的玩具小人，它的左边是逆时针方向，右边是顺时针方向。</p>
+<p>小南一边艰难地辨认着玩具小人，一边数着:</p>
+<p>singer 朝内，左数第 3 个是 archer。</p>
+<p>archer 朝外，右数第 1 个是 thinker。</p>
+<p>thinker 朝外，左数第 2 个是 writer。</p>
+<p>所以眼镜藏在 writer 这里！</p>
+<p>虽然成功找回了眼镜，但小南并没有放心。如果下次有更多的玩具小人藏他的眼镜，或是谜题的长度更长，他可能就无法找到眼镜了。所以小南希望你写程序帮他解决类似的谜题。这样的谜題具体可以描述为：</p>
+<p>有 <em>n</em> 个玩具小人围成一圈，已知它们的职业和朝向。现在第 1 个玩具小人告诉小南一个包含 <em>m</em> 条指令的谜题，其中第 <em>z</em> 条指令形如“向左数&#x2F;右数第 <em>s</em> 个玩具小人”。你需要输出依次数完这些指令后，到达的玩具小人的职业。</p>
+<h2 id="输入格式"><a href="#输入格式" class="headerlink" title="输入格式"></a>输入格式</h2><p>输入的第一行包含两个正整数 <em>n</em>,<em>m</em>，表示玩具小人的个数和指令的条数。</p>
+<p>接下来 <em>n</em> 行，每行包含一个整数和一个字符串，以逆时针为顺序给出每个玩具小人的朝向和职业。其中 0 表示朝向圈内，1 表示朝向圈外。保证不会出现其他的数。字符串长度不超过 10 且仅由英文字母构成，字符串不为空，并且字符串两两不同。整数和字符串之间用一个空格隔开。</p>
+<p>接下来 <em>m</em> 行，其中第 <em>i</em> 行包含两个整数 <em>a<del>i</del></em>,<em>s<del>i</del></em>，表示第 <em>i</em> 条指令。若 <em>a<del>i</del></em>&#x3D;0，表示向左数 <em>s<del>i</del></em> 个人；若 <em>a<del>i</del></em>&#x3D;1，表示向右数 <em>s<del>i</del></em> 个人。 保证 <em>a<del>i</del></em> 不会出现其他的数，1≤<em>s<del>i</del></em>&lt;<em>n</em>。</p>
+<h2 id="输出格式"><a href="#输出格式" class="headerlink" title="输出格式"></a>输出格式</h2><p>输出一个字符串，表示从第一个读入的小人开始，依次数完 <em>m</em> 条指令后到达的小人的职业。</p>
+<h2 id="输入输出样例"><a href="#输入输出样例" class="headerlink" title="输入输出样例"></a>输入输出样例</h2><p><strong>输入 #1</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">7 3</span><br><span class="line">0 singer</span><br><span class="line">0 reader</span><br><span class="line">0 mengbier </span><br><span class="line">1 thinker</span><br><span class="line">1 archer</span><br><span class="line">0 writer</span><br><span class="line">1 mogician </span><br><span class="line">0 3</span><br><span class="line">1 1</span><br><span class="line">0 2</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出 #1</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">writer</span><br></pre></td></tr></table></figure>
+
+<p><strong>输入 #2</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">10 10</span><br><span class="line">1 C</span><br><span class="line">0 r</span><br><span class="line">0 P</span><br><span class="line">1 d</span><br><span class="line">1 e</span><br><span class="line">1 m</span><br><span class="line">1 t</span><br><span class="line">1 y</span><br><span class="line">1 u</span><br><span class="line">0 V</span><br><span class="line">1 7</span><br><span class="line">1 1</span><br><span class="line">1 4</span><br><span class="line">0 5</span><br><span class="line">0 3</span><br><span class="line">0 1</span><br><span class="line">1 6</span><br><span class="line">1 2</span><br><span class="line">0 8</span><br><span class="line">0 4</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出 #2</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y</span><br></pre></td></tr></table></figure>
+
+<h2 id="说明-提示"><a href="#说明-提示" class="headerlink" title="说明&#x2F;提示"></a>说明&#x2F;提示</h2><p><strong>样例 1 说明</strong></p>
+<p>这组数据就是【题目描述】中提到的例子。</p>
+<p><strong>子任务</strong></p>
+<p>子任务会给出部分测试数据的特点。如果你在解决题目中遇到了困难，可以尝试只解决一部分测试数据。</p>
+<p>每个测试点的数据规模及特点如下表:</p>
+<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/7su06u3r.png" alt="img"></p>
+<p>其中一些简写的列意义如下:</p>
+<ul>
+<li>全朝内：若为 √，表示该测试点保证所有的玩具小人都朝向圈内；</li>
+<li>全左数：若为 √，表示该测试点保证所有的指令都向左数，即对任意的 1≤<em>z</em>≤<em>m</em>,<em>a<del>i</del></em>&#x3D;0；</li>
+<li><em>s</em>&#x3D;1：若为 √，表示该测试点保证所有的指令都只数 1 个，即对任意的 1≤<em>z</em>≤<em>m</em>,<em>s<del>i</del></em>&#x3D;1；</li>
+</ul>
+<p>职业长度为 1：若为 √，表示该测试点保证所有玩具小人的职业一定是一个长度为 1 的字符串。</p>
+<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">node</span>&#123;</span><br><span class="line">	<span class="type">int</span> number;</span><br><span class="line">	string name;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">node</span>* pnext;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">node</span>* plast;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> n,m;</span><br><span class="line">	<span class="type">int</span> num,times,temp;</span><br><span class="line">	cin&gt;&gt;n&gt;&gt;m;</span><br><span class="line">	node a[n];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">		cin&gt;&gt;a[i].number&gt;&gt;a[i].name;</span><br><span class="line">		<span class="keyword">if</span>(i != n) a[i].pnext = &amp;a[i<span class="number">+1</span>];</span><br><span class="line">		<span class="keyword">if</span>(i != <span class="number">0</span>) a[i].plast = &amp;a[i<span class="number">-1</span>];</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	a[n<span class="number">-1</span>].pnext = &amp;a[<span class="number">0</span>];</span><br><span class="line">	a[<span class="number">0</span>].plast = &amp;a[n<span class="number">-1</span>];</span><br><span class="line">	node* now = &amp;a[<span class="number">0</span>];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; m;i++)&#123;</span><br><span class="line">		cin&gt;&gt;num&gt;&gt;times;</span><br><span class="line">		temp = (now -&gt; number + num) % <span class="number">2</span>;</span><br><span class="line">		<span class="keyword">if</span>(temp == <span class="number">1</span>)&#123;</span><br><span class="line">			times = times % n;</span><br><span class="line">			<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; times;i++)&#123;</span><br><span class="line">				now = now -&gt; pnext;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(temp == <span class="number">0</span>)&#123;</span><br><span class="line">			times = times % n;</span><br><span class="line">			<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; times;i++)&#123;</span><br><span class="line">				now = now -&gt; plast;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	cout&lt;&lt;now -&gt; name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个是写的双向链表题解，由于时间超时不通过。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="type">int</span> a[<span class="number">100001</span>];</span><br><span class="line">string b[<span class="number">1000001</span>];</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> n,m,temp,number,times;</span><br><span class="line">	cin&gt;&gt;n&gt;&gt;m;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">		cin&gt;&gt;a[i]&gt;&gt;b[i];</span><br><span class="line">	&#125;</span><br><span class="line">	temp = a[<span class="number">0</span>];</span><br><span class="line">	<span class="type">int</span> ind = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; m;i++)&#123;</span><br><span class="line">		cin&gt;&gt;number&gt;&gt;times;</span><br><span class="line">		times = times % n;</span><br><span class="line">		temp = (number + a[ind]) % <span class="number">2</span>;</span><br><span class="line">		<span class="keyword">if</span>(temp == <span class="number">0</span>)&#123;</span><br><span class="line">			ind = (ind - times) % n;</span><br><span class="line">			<span class="keyword">if</span>(ind &lt; <span class="number">0</span>)ind += n;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(temp == <span class="number">1</span>)&#123;</span><br><span class="line">			ind = (ind + times) % n;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	cout&lt;&lt;b[ind];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个为题解，可以通过</p>
+<h1 id="P1601-A-B-Problem（高精）"><a href="#P1601-A-B-Problem（高精）" class="headerlink" title="P1601 A+B Problem（高精）"></a>P1601 A+B Problem（高精）</h1><h2 id="题目描述-1"><a href="#题目描述-1" class="headerlink" title="题目描述"></a>题目描述</h2><p>高精度加法，相当于 a+b problem，<strong>不用考虑负数</strong>。</p>
+<h2 id="输入格式-1"><a href="#输入格式-1" class="headerlink" title="输入格式"></a>输入格式</h2><p>分两行输入。<em>a</em>,<em>b</em>≤10^500^。</p>
+<h2 id="输出格式-1"><a href="#输出格式-1" class="headerlink" title="输出格式"></a>输出格式</h2><p>输出只有一行，代表 <em>a</em>+<em>b</em> 的值。</p>
+<h2 id="输入输出样例-1"><a href="#输入输出样例-1" class="headerlink" title="输入输出样例"></a>输入输出样例</h2><p><strong>输入 #1</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出 #1</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2</span><br></pre></td></tr></table></figure>
+
+<p><strong>输入 #2</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1001</span><br><span class="line">9099</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出 #2</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10100</span><br></pre></td></tr></table></figure>
+
+<h2 id="说明-提示-1"><a href="#说明-提示-1" class="headerlink" title="说明&#x2F;提示"></a>说明&#x2F;提示</h2><p>20% 的测试数据，0≤<em>a</em>,<em>b</em>≤10^9^；</p>
+<p>40% 的测试数据，0≤<em>a</em>,<em>b</em>≤10^18^。</p>
+<h2 id="题解-1"><a href="#题解-1" class="headerlink" title="题解"></a>题解</h2><p>详情见</p>
+<h1 id="P1303-A-B-Problem"><a href="#P1303-A-B-Problem" class="headerlink" title="P1303 A*B Problem"></a>P1303 A*B Problem</h1><h2 id="题目背景-1"><a href="#题目背景-1" class="headerlink" title="题目背景"></a>题目背景</h2><p>高精度乘法模板题。</p>
+<h2 id="题目描述-2"><a href="#题目描述-2" class="headerlink" title="题目描述"></a>题目描述</h2><p>给出两个非负整数，求它们的乘积。</p>
+<h2 id="输入格式-2"><a href="#输入格式-2" class="headerlink" title="输入格式"></a>输入格式</h2><p>输入共两行，每行一个非负整数。</p>
+<h2 id="输出格式-2"><a href="#输出格式-2" class="headerlink" title="输出格式"></a>输出格式</h2><p>输出一个非负整数表示乘积。</p>
+<h2 id="输入输出样例-2"><a href="#输入输出样例-2" class="headerlink" title="输入输出样例"></a>输入输出样例</h2><p><strong>输入 #1</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 </span><br><span class="line">2</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出 #1</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2</span><br></pre></td></tr></table></figure>
+
+<h2 id="说明-提示-2"><a href="#说明-提示-2" class="headerlink" title="说明&#x2F;提示"></a>说明&#x2F;提示</h2><p>每个非负整数不超过 10^2000^。</p>
+<h2 id="题解-2"><a href="#题解-2" class="headerlink" title="题解"></a>题解</h2><p>详情见</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/06/30/%E6%B4%9B%E8%B0%B7%E7%BB%83%E4%B9%A025-6-30/">http://gazettm.github.io/2025/06/30/%E6%B4%9B%E8%B0%B7%E7%BB%83%E4%B9%A025-6-30/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/c/"># c++</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/06/29/%E6%B4%9B%E8%B0%B7%E7%BB%83%E4%B9%A025-6-29/">洛谷练习25-6-29</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
