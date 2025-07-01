@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>洛谷练习25-7-1 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">洛谷练习25-7-1</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">七月 1, 2025&nbsp;&nbsp;17:39:52</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/c/">c++</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="P4924-1007-魔法少女小Scarlet"><a href="#P4924-1007-魔法少女小Scarlet" class="headerlink" title="P4924 [1007] 魔法少女小Scarlet"></a>P4924 [1007] 魔法少女小Scarlet</h1><h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>Scarlet 最近学会了一个数组魔法，她会在 <em>n</em>×<em>n</em> 二维数组上将一个奇数阶方阵按照顺时针或者逆时针旋转 90∘。</p>
+<p>首先，Scarlet 会把 1 到 <em>n</em>2 的正整数按照从左往右，从上至下的顺序填入初始的二维数组中，然后她会施放一些简易的魔法。</p>
+<p>Scarlet 既不会什么分块特技，也不会什么 Splay 套 Splay，她现在提供给你她的魔法执行顺序，想让你来告诉她魔法按次执行完毕后的二维数组。</p>
+<h2 id="输入格式"><a href="#输入格式" class="headerlink" title="输入格式"></a>输入格式</h2><p>第一行两个整数 <em>n</em>,<em>m</em>，表示方阵大小和魔法施放次数。</p>
+<p>接下来 <em>m</em> 行，每行 4 个整数 <em>x</em>,<em>y</em>,<em>r</em>,<em>z</em>，表示在这次魔法中，Scarlet 会把以第 <em>x</em> 行第 <em>y</em> 列为中心的 2<em>r</em>+1 阶矩阵按照某种时针方向旋转，其中 <em>z</em>&#x3D;0 表示顺时针，<em>z</em>&#x3D;1 表示逆时针。</p>
+<h2 id="输出格式"><a href="#输出格式" class="headerlink" title="输出格式"></a>输出格式</h2><p>输出 <em>n</em> 行，每行 <em>n</em> 个用空格隔开的数，表示最终所得的矩阵</p>
+<h2 id="输入输出样例"><a href="#输入输出样例" class="headerlink" title="输入输出样例"></a>输入输出样例</h2><p><strong>输入 #1</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">5 4</span><br><span class="line">2 2 1 0</span><br><span class="line">3 3 1 1</span><br><span class="line">4 4 1 0</span><br><span class="line">3 3 2 1</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出 #1</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">5 10 3 18 15</span><br><span class="line">4 19 8 17 20</span><br><span class="line">1 14 23 24 25</span><br><span class="line">6 9 2 7 22</span><br><span class="line">11 12 13 16 21</span><br></pre></td></tr></table></figure>
+
+<h2 id="说明-提示"><a href="#说明-提示" class="headerlink" title="说明&#x2F;提示"></a>说明&#x2F;提示</h2><p>对于50%的数据，满足 <em>r</em>&#x3D;1</p>
+<p>对于100%的数据 1≤<em>n</em>,<em>m</em>≤500，满足 1≤<em>x</em>−<em>r</em>≤<em>x</em>+<em>r</em>≤<em>n</em>,1≤<em>y</em>−<em>r</em>≤<em>y</em>+<em>r</em>≤<em>n</em>。</p>
+<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> n,m;</span><br><span class="line">	<span class="type">int</span> x,y,r,z;</span><br><span class="line">	cin&gt;&gt;n&gt;&gt;m;</span><br><span class="line">	<span class="type">int</span> a[n][n];</span><br><span class="line">	<span class="type">int</span> result[n][n];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>;j &lt; n;j++)&#123;</span><br><span class="line">			a[i][j]=i*n+j<span class="number">+1</span>;</span><br><span class="line">			result[i][j] = i*n+j<span class="number">+1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> op = <span class="number">0</span>;op &lt; m;op++)&#123;</span><br><span class="line">		cin&gt;&gt;x&gt;&gt;y&gt;&gt;r&gt;&gt;z;</span><br><span class="line">		<span class="type">int</span> len = <span class="number">2</span>*r<span class="number">+1</span>;</span><br><span class="line">		<span class="type">int</span> fix_x = x-r<span class="number">-1</span>;</span><br><span class="line">		<span class="type">int</span> fix_y = y-r<span class="number">-1</span>;</span><br><span class="line">		<span class="keyword">if</span>(z == <span class="number">0</span>)&#123;</span><br><span class="line">			<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">				<span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>;j &lt; len;j++)&#123;</span><br><span class="line">					result[j+fix_x][len-i<span class="number">-1</span>+fix_y] = a[i+fix_x][j+fix_y];</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">				<span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>;j &lt; len;j++)&#123;</span><br><span class="line">					result[len-j<span class="number">-1</span>+fix_x][i+fix_y] = a[i+fix_x][j+fix_y];</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">			<span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>;j &lt; n;j++)&#123;</span><br><span class="line">				a[i][j] = result[i][j];</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>;j &lt; n;j++)&#123;</span><br><span class="line">			cout&lt;&lt;result[i][j]&lt;&lt;<span class="string">&quot; &quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		cout&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>本题的核心在于矩阵的旋转。</p>
+<p>1.确定旋转中心</p>
+<p>2.确定旋转半径</p>
+<p>3.确定旋转算法</p>
+<table>
+<thead>
+<tr>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em><strong>5</strong></em></td>
+<td><em><strong>6</strong></em></td>
+<td><em><strong>7</strong></em></td>
+<td><em><strong>8</strong></em></td>
+</tr>
+<tr>
+<td>9</td>
+<td>10</td>
+<td>11</td>
+<td>12</td>
+</tr>
+<tr>
+<td>13</td>
+<td>14</td>
+<td>15</td>
+<td>16</td>
+</tr>
+</tbody></table>
+<p>首先先尝试一下对表格所有的地方进行旋转</p>
+<table>
+<thead>
+<tr>
+<th>13</th>
+<th>9</th>
+<th><em><strong>5</strong></em></th>
+<th>1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>14</td>
+<td>10</td>
+<td><em><strong>6</strong></em></td>
+<td>2</td>
+</tr>
+<tr>
+<td>15</td>
+<td>11</td>
+<td><em><strong>7</strong></em></td>
+<td>3</td>
+</tr>
+<tr>
+<td>16</td>
+<td>12</td>
+<td><em><strong>8</strong></em></td>
+<td>4</td>
+</tr>
+</tbody></table>
+<p>观察加粗斜体的部分，为(2,1) -&gt; (1,3) , (2,2) -&gt; (2,3) , (2,3) -&gt; (3,3) , (2,4) -&gt; (4,3)</p>
+<p>n为矩阵长度的话，<code>arr[i][j]</code> -&gt; <code>arr[n-1-j][i]</code></p>
+<p>所以可以类比着，在有旋转中心与半径时，对部分的矩阵进行旋转。</p>
+<p><code>result[j+fix_x][len-i-1+fix_y] = a[i+fix_x][j+fix_y];</code></p>
+<p><code>fix_x</code>为修正旋转中心的值，确保旋转矩阵的范围。剩下的思想与对所有地方旋转思想相同。</p>
+<h1 id="P1328-NOIP-2014-提高组-生活大爆炸版石头剪刀布"><a href="#P1328-NOIP-2014-提高组-生活大爆炸版石头剪刀布" class="headerlink" title="P1328 [NOIP 2014 提高组] 生活大爆炸版石头剪刀布"></a>P1328 [NOIP 2014 提高组] 生活大爆炸版石头剪刀布</h1><h2 id="题目背景"><a href="#题目背景" class="headerlink" title="题目背景"></a>题目背景</h2><p>NOIP2014 提高组 D1T1</p>
+<h2 id="题目描述-1"><a href="#题目描述-1" class="headerlink" title="题目描述"></a>题目描述</h2><p>石头剪刀布是常见的猜拳游戏：石头胜剪刀，剪刀胜布，布胜石头。如果两个人出拳一样，则不分胜负。在《生活大爆炸》第二季第 8 集中出现了一种石头剪刀布的升级版游戏。</p>
+<p>升级版游戏在传统的石头剪刀布游戏的基础上，增加了两个新手势：</p>
+<p>斯波克:《星际迷航》主角之一。</p>
+<p>蜥蜴人:《星际迷航》中的反面角色。</p>
+<p>这五种手势的胜负关系如表一所示,表中列出的是甲对乙的游戏结果。</p>
+<p><img src="https://cdn.luogu.com.cn/upload/pic/1346.png" alt="img"></p>
+<p>现在，小 A 和小 B 尝试玩这种升级版的猜拳游戏。已知他们的出拳都是有周期性规律的，但周期长度不一定相等。例如：如果小 A 以 <code>石头-布-石头-剪刀-蜥蜴人-斯波克</code> 长度为 6 的周期出拳,那么他的出拳序列就是 <code>石头-布-石头-剪刀-蜥蜴人-斯波克-石头-布-石头-剪刀-蜥蜴人-斯波克-...</code>，而如果小 B 以 <code>剪刀-石头-布-斯波克-蜥蜴人</code> 长度为 5 的周期出拳,那么他出拳的序列就是 <code>剪刀-石头-布-斯波克-蜥蜴人-剪刀-石头-布-斯波克-蜥蜴人-...</code>。</p>
+<p>已知小 A 和小 B 一共进行 <em>N</em> 次猜拳。每一次赢的人得 1 分，输的得 0 分；平局两人都得 0 分。现请你统计 <em>N</em> 次猜拳结束之后两人的得分。</p>
+<h2 id="输入格式-1"><a href="#输入格式-1" class="headerlink" title="输入格式"></a>输入格式</h2><p>第一行包含三个整数：<em>N</em>,<em>N<del>A</del></em>,<em>N<del>B</del></em>，分别表示共进行 <em>N</em> 次猜拳、小 A 出拳的周期长度，小 B 出拳的周期长度。数与数之间以一个空格分隔。</p>
+<p>第二行包含 <em>N<del>A</del></em> 个整数,表示小 A 出拳的规律,第三行包含 <em>N<del>B</del></em> 个整数，表示小 B 出拳的规律。其中，0 表示 <code>剪刀</code>，1 表示 <code>石头</code>，2 表示 <code>布</code>，3 表示 <code>蜥蜴人</code>，4 表示 <code>斯波克</code>。数与数之间以一个空格分隔。</p>
+<h2 id="输出格式-1"><a href="#输出格式-1" class="headerlink" title="输出格式"></a>输出格式</h2><p>输出一行，包含两个整数，以一个空格分隔，分别表示小 A、小 B 的得分。</p>
+<h2 id="输入输出样例-1"><a href="#输入输出样例-1" class="headerlink" title="输入输出样例"></a>输入输出样例</h2><p><strong>输入 #1</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">10 5 6</span><br><span class="line">0 1 2 3 4</span><br><span class="line">0 3 4 2 1 0</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出 #1</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">6 2</span><br></pre></td></tr></table></figure>
+
+<p><strong>输入 #2</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">9 5 5</span><br><span class="line">0 1 2 3 4</span><br><span class="line">1 0 3 2 4</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出 #2</strong>复制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4 4</span><br></pre></td></tr></table></figure>
+
+<h2 id="说明-提示-1"><a href="#说明-提示-1" class="headerlink" title="说明&#x2F;提示"></a>说明&#x2F;提示</h2><p>对于 100% 的数据，0&lt;<em>N</em>≤200,0&lt;<em>N<del>A</del></em>≤200,0&lt;<em>N<del>B</del></em>≤200 。</p>
+<h2 id="题解-1"><a href="#题解-1" class="headerlink" title="题解"></a>题解</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> k[<span class="number">5</span>][<span class="number">5</span>] = &#123;</span><br><span class="line">		&#123;<span class="number">0</span>,<span class="number">-1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">-1</span>&#125;,</span><br><span class="line">		&#123;<span class="number">1</span>,<span class="number">0</span>,<span class="number">-1</span>,<span class="number">1</span>,<span class="number">-1</span>&#125;,</span><br><span class="line">		&#123;<span class="number">-1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">-1</span>,<span class="number">1</span>&#125;,</span><br><span class="line">		&#123;<span class="number">-1</span>,<span class="number">-1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>&#125;,</span><br><span class="line">		&#123;<span class="number">1</span>,<span class="number">1</span>,<span class="number">-1</span>,<span class="number">-1</span>,<span class="number">0</span>&#125;</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="type">int</span> m,T_a,T_b,score_a = <span class="number">0</span>,score_b = <span class="number">0</span>;</span><br><span class="line">	cin&gt;&gt;m&gt;&gt;T_a&gt;&gt;T_b;</span><br><span class="line">	<span class="type">int</span> a[T_a],b[T_b];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; T_a;i++)cin&gt;&gt;a[i];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; T_b;i++)cin&gt;&gt;b[i];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; m;i++)&#123;</span><br><span class="line">		<span class="type">int</span> temp =k[a[i % T_a]][b[i % T_b]];</span><br><span class="line">		<span class="keyword">if</span>(temp == <span class="number">0</span>)</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		<span class="keyword">if</span>(temp == <span class="number">-1</span>)</span><br><span class="line">			score_b++;</span><br><span class="line">		<span class="keyword">if</span>(temp == <span class="number">1</span>)</span><br><span class="line">			score_a++;</span><br><span class="line">	&#125;</span><br><span class="line">	cout&lt;&lt;score_a&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;score_b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>画表表示三种情况，进行逐个操作，十分简单的一道题。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/07/01/%E6%B4%9B%E8%B0%B7%E7%BB%83%E4%B9%A025-7-1/">http://gazettm.github.io/2025/07/01/%E6%B4%9B%E8%B0%B7%E7%BB%83%E4%B9%A025-7-1/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/c/"># c++</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/06/30/%E6%B4%9B%E8%B0%B7%E7%BB%83%E4%B9%A025-6-30/">洛谷练习25-6-30</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
