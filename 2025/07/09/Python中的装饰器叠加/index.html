@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>Python中的装饰器叠加 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Python中的装饰器叠加</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">七月 9, 2025&nbsp;&nbsp;0:32:47</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/python/">python</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Python中的装饰器叠加"><a href="#Python中的装饰器叠加" class="headerlink" title="Python中的装饰器叠加"></a>Python中的装饰器叠加</h1><h2 id="装饰器"><a href="#装饰器" class="headerlink" title="装饰器"></a>装饰器</h2><h3 id="何为装饰器"><a href="#何为装饰器" class="headerlink" title="何为装饰器"></a>何为装饰器</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decorator</span>(<span class="params">func</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args,**kwargs</span>):</span><br><span class="line">        start_time = time.time()</span><br><span class="line">        result = func(*args,**kwargs)</span><br><span class="line">        end_time = time.time()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;func.__name__&#125;</span> execution time is <span class="subst">&#123;end_time - start_time&#125;</span> seconds&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br></pre></td></tr></table></figure>
+
+<p>形如这样，接受一个函数，返回一个函数并在该函数身上加入一些额外的东西，这样可以让我们在不改动函数源码的情况下，动态调整函数的功能。</p>
+<h3 id="形式"><a href="#形式" class="headerlink" title="形式"></a>形式</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@decorator</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">exponentiation_by_squaring</span>(<span class="params">m,n</span>):</span><br><span class="line">    r = <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> n != <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">if</span> n % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            r *= m</span><br><span class="line">        m *= m</span><br><span class="line">        n //= <span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> r</span><br></pre></td></tr></table></figure>
+
+<p>可以直接在定义的函数上面加上<code>@name</code>来直接对定义的这个函数使用装饰器。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exponentiation_by_squaring execution <span class="keyword">time</span> is 0.0 seconds</span><br><span class="line">117936325775673167257548580655883402841153788138013763386756446882675755074754651627691460161801836485670886719711370153117830769685149769767544820357271751364043603968</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">exponentiation_by_squaring</span>(<span class="params">m,n</span>):</span><br><span class="line">    r = <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> n != <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">if</span> n % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            r *= m</span><br><span class="line">        m *= m</span><br><span class="line">        n //= <span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    example = decorator(exponentiation_by_squaring)</span><br><span class="line">    result = example(<span class="number">2</span>,<span class="number">555</span>)</span><br><span class="line">    <span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+<p>这样也可以进行装饰。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exponentiation_by_squaring execution <span class="keyword">time</span> is 0.0 seconds</span><br><span class="line">117936325775673167257548580655883402841153788138013763386756446882675755074754651627691460161801836485670886719711370153117830769685149769767544820357271751364043603968</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="装饰器叠加"><a href="#装饰器叠加" class="headerlink" title="装饰器叠加"></a>装饰器叠加</h2><h3 id="错误例子1"><a href="#错误例子1" class="headerlink" title="错误例子1"></a>错误例子1</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">times</span>(<span class="params">f</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrap</span>(<span class="params">n</span>):</span><br><span class="line">        start_time = time.time()</span><br><span class="line">        result = f(n)</span><br><span class="line">        end_time = time.time()</span><br><span class="line">        wrap.total_time += end_time - start_time</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    wrap.total_time = <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> wrap</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fib</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span> <span class="keyword">or</span> n == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="keyword">else</span> :</span><br><span class="line">        <span class="keyword">return</span> fib(n-<span class="number">2</span>) + fib(n-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">count</span>(<span class="params">f</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">counted</span>(<span class="params">n</span>):</span><br><span class="line">        counted.call_count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> f(n)</span><br><span class="line">    counted.call_count = <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> counted</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">memo</span>(<span class="params">f</span>):</span><br><span class="line">    cache = &#123;&#125;</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">memorized</span>(<span class="params">n</span>):</span><br><span class="line">        <span class="keyword">if</span> n <span class="keyword">not</span> <span class="keyword">in</span> cache:</span><br><span class="line">            cache[n] = f(n)</span><br><span class="line">        <span class="keyword">return</span> cache[n]</span><br><span class="line">    <span class="keyword">return</span> memorized</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    fib = times(fib)</span><br><span class="line">    fib = count(fib)</span><br><span class="line">    <span class="built_in">print</span>(fib(<span class="number">30</span>))</span><br><span class="line">    <span class="built_in">print</span>(fib.call_count)</span><br><span class="line">    <span class="built_in">print</span>(fib.total_time)</span><br><span class="line"></span><br><span class="line">    fib = memo(fib)</span><br><span class="line">    fib = times(fib)</span><br><span class="line">    fib = count(fib)</span><br><span class="line">    <span class="built_in">print</span>(fib(<span class="number">100</span>))</span><br><span class="line">    <span class="built_in">print</span>(fib.call_count)</span><br><span class="line">    <span class="built_in">print</span>(fib.total_time)</span><br></pre></td></tr></table></figure>
+
+<p>在装饰器叠加时，对于函数中的属性，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;xxx.py&quot;</span>, line 37, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    <span class="built_in">print</span>(fib.total_time)</span><br><span class="line">          ^^^^^^^^^^^^^^</span><br><span class="line">AttributeError: <span class="string">&#x27;function&#x27;</span> object has no attribute <span class="string">&#x27;total_time&#x27;</span></span><br><span class="line">832040</span><br><span class="line">2692537</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里会输出一些错误信息，为什么呢？</p>
+<h4 id="解释"><a href="#解释" class="headerlink" title="解释"></a>解释</h4><ol>
+<li><strong>装饰器顺序</strong>：从下往上应用，最内层装饰器最先执行</li>
+<li><strong>属性访问</strong>：只能访问最外层装饰器的属性，除非保存中间引用</li>
+<li><strong>引用覆盖</strong>：每次重新赋值都会丢失前一个装饰器层的引用</li>
+</ol>
+<p>也就是说每次声明之后，属性就会变化。如果想要属性不变化，那么就必须使用<code>from functools import wraps</code>中的<code>@warps</code>来修饰修饰器中的内部函数。</p>
+<h3 id="正确例子1"><a href="#正确例子1" class="headerlink" title="正确例子1"></a>正确例子1</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">times</span>(<span class="params">f</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrap</span>(<span class="params">n</span>):</span><br><span class="line">        start_time = time.time()</span><br><span class="line">        result = f(n)</span><br><span class="line">        end_time = time.time()</span><br><span class="line">        wrap.total_time += end_time - start_time</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    wrap.total_time = <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> wrap</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fib</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span> <span class="keyword">or</span> n == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="keyword">else</span> :</span><br><span class="line">        <span class="keyword">return</span> fib(n-<span class="number">2</span>) + fib(n-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">count</span>(<span class="params">f</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">counted</span>(<span class="params">n</span>):</span><br><span class="line">        counted.call_count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> f(n)</span><br><span class="line">    counted.call_count = <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> counted</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">memo</span>(<span class="params">f</span>):</span><br><span class="line">    cache = &#123;&#125;</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">memorized</span>(<span class="params">n</span>):</span><br><span class="line">        <span class="keyword">if</span> n <span class="keyword">not</span> <span class="keyword">in</span> cache:</span><br><span class="line">            cache[n] = f(n)</span><br><span class="line">        <span class="keyword">return</span> cache[n]</span><br><span class="line">    <span class="keyword">return</span> memorized</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    fib = times(fib)</span><br><span class="line">    fib1 = fib</span><br><span class="line">    fib = count(fib)</span><br><span class="line">    <span class="built_in">print</span>(fib(<span class="number">30</span>))</span><br><span class="line">    <span class="built_in">print</span>(fib.call_count)</span><br><span class="line">    <span class="built_in">print</span>(fib1.total_time)</span><br><span class="line"></span><br><span class="line">    fib = memo(fib)</span><br><span class="line">    fib = times(fib)</span><br><span class="line">    fib2 = fib</span><br><span class="line">    fib = count(fib)</span><br><span class="line">    <span class="built_in">print</span>(fib(<span class="number">100</span>))</span><br><span class="line">    <span class="built_in">print</span>(fib.call_count)</span><br><span class="line">    <span class="built_in">print</span>(fib2.total_time)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">832040</span><br><span class="line">2692537</span><br><span class="line">11.456800937652588</span><br><span class="line">354224848179261915075</span><br><span class="line">199</span><br><span class="line">0.0</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="解释-1"><a href="#解释-1" class="headerlink" title="解释"></a>解释</h4><p>使用了<code>fib1</code>和<code>fib2</code>来存储当前的时间属性，防止无法访问到内层属性。</p>
+<h3 id="错误例子2"><a href="#错误例子2" class="headerlink" title="错误例子2"></a>错误例子2</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">import</span> time</span></span><br><span class="line"><span class="function">from functools <span class="keyword">import</span> wraps</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">def <span class="title">times</span><span class="params">(f)</span>:</span></span><br><span class="line"><span class="function">    @wraps(f)</span></span><br><span class="line"><span class="function">    def wrap(n):</span></span><br><span class="line"><span class="function">        start_time =</span> time.<span class="built_in">time</span>()</span><br><span class="line">        result = <span class="built_in">f</span>(n)</span><br><span class="line">        end_time = time.<span class="built_in">time</span>()</span><br><span class="line">        wrap.total_time += end_time - start_time</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    wrap.total_time = <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> wrap</span><br><span class="line"></span><br><span class="line">def <span class="built_in">fib</span>(n):</span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span> <span class="keyword">or</span> n == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="keyword">else</span> :</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">fib</span>(n<span class="number">-2</span>) + <span class="built_in">fib</span>(n<span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">def <span class="built_in">count</span>(f):</span><br><span class="line">    @<span class="built_in">wraps</span>(f)</span><br><span class="line">    def <span class="built_in">counted</span>(n):</span><br><span class="line">        counted.call_count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">f</span>(n)</span><br><span class="line">    counted.call_count = <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> counted</span><br><span class="line"></span><br><span class="line">def <span class="built_in">memo</span>(f):</span><br><span class="line">    cache = &#123;&#125;</span><br><span class="line">    @<span class="built_in">wraps</span>(f)</span><br><span class="line">    def <span class="built_in">memorized</span>(n):</span><br><span class="line">        <span class="keyword">if</span> n <span class="keyword">not</span> in cache:</span><br><span class="line">            cache[n] = <span class="built_in">f</span>(n)</span><br><span class="line">        <span class="keyword">return</span> cache[n]</span><br><span class="line">    <span class="keyword">return</span> memorized</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    fib = <span class="built_in">times</span>(fib)</span><br><span class="line">    fib = <span class="built_in">count</span>(fib)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">fib</span>(<span class="number">30</span>))</span><br><span class="line">    <span class="built_in">print</span>(fib.call_count)</span><br><span class="line">    <span class="built_in">print</span>(fib.total_time)</span><br><span class="line"></span><br><span class="line">    fib = <span class="built_in">memo</span>(fib)</span><br><span class="line">    fib = <span class="built_in">times</span>(fib)</span><br><span class="line">    fib = <span class="built_in">count</span>(fib)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">fib</span>(<span class="number">100</span>))</span><br><span class="line">    <span class="built_in">print</span>(fib.call_count)</span><br><span class="line">    <span class="built_in">print</span>(fib.total_time)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">832040</span></span><br><span class="line"><span class="number">2692537</span></span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">354224848179261915075</span></span><br><span class="line"><span class="number">199</span></span><br><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="解释-2"><a href="#解释-2" class="headerlink" title="解释"></a>解释</h4><p>在使用了<code>@wraps(f)</code>修饰内部函数之后，发现<code>total_time</code>的值全变成了0。由于<code>warps</code>的特性，在调用函数的时候，属性会被覆盖重新计算，因此先调用<code>times</code>修饰<code>fib</code>之后，再调用<code>total_time</code>修饰，会导致重新调用<code>wrap.total_time = 0</code>，所以调用的<code>print(fib.total_time)</code>其实是外层继承的属性，而非内层。只有内层的<code>total_time</code>增加了。</p>
+<p>如果修改为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">fib = times(fib)</span><br><span class="line">   fib.total_time = <span class="number">1</span></span><br><span class="line">   fib = count(fib)</span><br><span class="line">   <span class="built_in">print</span>(fib(<span class="number">30</span>))</span><br><span class="line">   <span class="built_in">print</span>(fib.call_count)</span><br><span class="line">   <span class="built_in">print</span>(fib.total_time)</span><br></pre></td></tr></table></figure>
+
+<p>那么打印出来的就会是</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">832040</span><br><span class="line">2692537</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<p>所以这种方法更适合继承静态的属性。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/07/09/Python%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E5%8F%A0%E5%8A%A0/">http://gazettm.github.io/2025/07/09/Python%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E5%8F%A0%E5%8A%A0/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/python/"># python</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/07/07/%E6%B4%9B%E8%B0%B7%E7%BB%83%E4%B9%A025-7-7/">洛谷练习25-7-7</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
