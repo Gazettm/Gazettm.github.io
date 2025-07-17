@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>SQL入门 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">SQL入门</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">七月 17, 2025&nbsp;&nbsp;15:22:49</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/SQL/">SQL</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="SQL入门"><a href="#SQL入门" class="headerlink" title="SQL入门"></a>SQL入门</h1><p>learn from CS61A</p>
+<h2 id="sqlite3"><a href="#sqlite3" class="headerlink" title="sqlite3"></a>sqlite3</h2><h3 id="Table"><a href="#Table" class="headerlink" title="Table"></a>Table</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.open NewDB.db</span><br></pre></td></tr></table></figure>
+
+<p>这样做是创建一个<code>database</code>类型的文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">create table parents as</span><br><span class="line">	select &#x27;abraham&#x27; as parent, &#x27;barack&#x27; as child union</span><br><span class="line">	select &#x27;abraham&#x27;, &#x27;clinton&#x27; union</span><br><span class="line">	select &#x27;delano&#x27;, &#x27;herbert&#x27; union</span><br><span class="line">	select &#x27;fillmore&#x27;, &#x27;abraham&#x27; union</span><br><span class="line">	select &#x27;fillmore&#x27;, &#x27;delano&#x27; union</span><br><span class="line">	select &#x27;fillmore&#x27;, &#x27;grover&#x27; union</span><br><span class="line">	select &#x27;eisenhower&#x27;, &#x27;fillmore&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>这样做是创建一个表格，使用了<code>union</code>语法去联合。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from parents;</span><br></pre></td></tr></table></figure>
+
+<p>这样会在终端窗口中显示parents的所有列的信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">abraham|barack</span><br><span class="line">abraham|clinton</span><br><span class="line">delano|herbert</span><br><span class="line">eisenhower|fillmore</span><br><span class="line">fillmore|abraham</span><br><span class="line">fillmore|delano</span><br><span class="line">fillmore|grover</span><br></pre></td></tr></table></figure>
+
+<p>还可以创建一个grandparents的表格，利用select … from … where语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">create table grandparents as</span><br><span class="line">	select a.parent as grandog, b.child as grandpup</span><br><span class="line">		from parents as a, parents as b</span><br><span class="line">		where b.parent = a.child</span><br></pre></td></tr></table></figure>
+
+<p>查询一下会列出下列信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">eisenhower|abraham</span><br><span class="line">eisenhower|delano</span><br><span class="line">eisenhower|grover</span><br><span class="line">fillmore|barack</span><br><span class="line">fillmore|clinton</span><br><span class="line">fillmore|herbert</span><br></pre></td></tr></table></figure>
+
+<p>表示了爷孙关系</p>
+<h3 id="Aggregation"><a href="#Aggregation" class="headerlink" title="Aggregation"></a>Aggregation</h3><p>聚合函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE IF NOT EXISTS animals as </span><br><span class="line">    select &#x27;dog&#x27; as kind, 4 as legs, 20 as weight union</span><br><span class="line">    select &#x27;cat&#x27;        , 4        , 10           union</span><br><span class="line">    select &#x27;ferret&#x27;     , 4        , 10           union</span><br><span class="line">    select &#x27;parrot&#x27;     , 2        , 6            union</span><br><span class="line">    select &#x27;penguin&#x27;    , 2        , 10           union</span><br><span class="line">    select &#x27;t_rex&#x27;      , 2        , 12000;</span><br></pre></td></tr></table></figure>
+
+<p>我们创建以下表格</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT sum(weight), max(weight) from animals</span><br><span class="line">    where kind &lt;&gt; &#x27;t_rex&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><code>sum</code>为聚合函数用于求和，<code>max</code>也是聚合函数用于求最大值，使用<code>where</code>进行筛选，<code>&lt;&gt;</code>为different的意思，当</p>
+<p>是霸王龙的时候就排除</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(56, 20)</span><br></pre></td></tr></table></figure>
+
+<p>输入以下指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT count(distinct legs),count(*) from animals</span><br></pre></td></tr></table></figure>
+
+<p>distinct为指定唯一值，表格中的<code>legs</code>的值只有4和2，所以<code>count</code>之后只有两种，而count(*)则意为一共有多少个表格</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(2, 6)</span><br></pre></td></tr></table></figure>
+
+<p>输入以下指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT legs, count(*) from animals group by legs</span><br></pre></td></tr></table></figure>
+
+<p>按照腿的数量分组，而腿只有4和2，所以第一列被分为了4和2，count(*)也是按照组的计算，所以第一列为该组腿的个数，第二列为所有数据中有多少组有这么多腿</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(2, 3)</span><br><span class="line">(4, 3)</span><br></pre></td></tr></table></figure>
+
+<p>输入以下指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT weight, count(*) from animals group by weight having count(*) &gt; 1</span><br></pre></td></tr></table></figure>
+
+<p>跟上一个一样，但是又使用了having筛选组，当组数量大于1时才显示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(10, 3)</span><br></pre></td></tr></table></figure>
+
+<h2 id="sqlite-in-Python"><a href="#sqlite-in-Python" class="headerlink" title="sqlite in Python"></a>sqlite in Python</h2><p>通过python的sqlite3库，我们可以链接到sql创建的数据库</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"></span><br><span class="line">connection = sqlite3.connect(<span class="string">&#x27;Lecture_36DB.db&#x27;</span>)</span><br><span class="line">cursor = connection.cursor()</span><br><span class="line"></span><br><span class="line">cursor.execute(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">CREATE TABLE IF NOT EXISTS dogs as </span></span><br><span class="line"><span class="string">    select &#x27;abraham&#x27; as parent, &#x27;barack&#x27; as child union</span></span><br><span class="line"><span class="string">    select &#x27;abraham&#x27;, &#x27;clinton&#x27; union</span></span><br><span class="line"><span class="string">    select &#x27;delano&#x27;, &#x27;herbert&#x27; union</span></span><br><span class="line"><span class="string">    select &#x27;fillmore&#x27;, &#x27;abraham&#x27; union</span></span><br><span class="line"><span class="string">    select &#x27;fillmore&#x27;, &#x27;delano&#x27; union</span></span><br><span class="line"><span class="string">    select &#x27;fillmore&#x27;, &#x27;grover&#x27; union</span></span><br><span class="line"><span class="string">    select &#x27;eisenhower&#x27;, &#x27;fillmore&#x27;;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>)</span><br><span class="line">connection.commit()</span><br><span class="line"></span><br><span class="line">cursor.execute(<span class="string">&#x27;SELECT * FROM dogs&#x27;</span>)</span><br><span class="line">rows = cursor.fetchall()</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line">    <span class="built_in">print</span>(row)</span><br><span class="line"></span><br><span class="line">cursor.execute(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">create table if not exists cities as</span></span><br><span class="line"><span class="string">    select 38 as latitude, 122 as longitude, &#x27;berkeley&#x27; as name union</span></span><br><span class="line"><span class="string">    select 42,             71,               &#x27;Cambridge&#x27;        union</span></span><br><span class="line"><span class="string">    select 45,             93,               &#x27;Minneapolis&#x27;      union</span></span><br><span class="line"><span class="string">    select 33,             117,              &#x27;San Diego&#x27;        union</span></span><br><span class="line"><span class="string">    select 26,             80,               &#x27;Miami&#x27;            union</span></span><br><span class="line"><span class="string">    select 90,             0,                &#x27;North pole&#x27;;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>)</span><br><span class="line">connection.commit()</span><br><span class="line"></span><br><span class="line">cursor.execute(<span class="string">&#x27;SELECT * FROM cities&#x27;</span>)</span><br><span class="line">rows = cursor.fetchall()</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line">    <span class="built_in">print</span>(row)</span><br><span class="line"></span><br><span class="line">cursor.execute(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">create table if not exists distances as</span></span><br><span class="line"><span class="string">    select a.name as first, b.name as second,</span></span><br><span class="line"><span class="string">        60*(b.latitude - a.latitude) as distance</span></span><br><span class="line"><span class="string">        from cities as a, cities as b;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>)</span><br><span class="line">connection.commit()</span><br><span class="line"></span><br><span class="line">cursor.execute(<span class="string">&#x27;SELECT * FROM distances&#x27;</span>)</span><br><span class="line">rows = cursor.fetchall()</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line">    <span class="built_in">print</span>(row)</span><br><span class="line"></span><br><span class="line">connection.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以上是一个例子。</p>
+<p>但是这样的效率太低了，我们可以使用更简单的办法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"></span><br><span class="line">connection = sqlite3.connect(<span class="string">&#x27;Lecture_36DB.db&#x27;</span>)</span><br><span class="line">cursor = connection.cursor()</span><br><span class="line"></span><br><span class="line">cursor.execute(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">CREATE TABLE IF NOT EXISTS users (</span></span><br><span class="line"><span class="string">    id INTEGER PRIMARY KEY,</span></span><br><span class="line"><span class="string">    name TEXT NOT NULL,</span></span><br><span class="line"><span class="string">    age INTEGER</span></span><br><span class="line"><span class="string">)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">cursor.execute(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">INSERT OR REPLACE INTO users (id, name, age) VALUES (?, ?, ?)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>, (<span class="number">1</span>, <span class="string">&#x27;Alice&#x27;</span>, <span class="number">25</span>))</span><br><span class="line">cursor.execute(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">INSERT INTO users (id, name, age) VALUES (?, ?, ?)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>, (<span class="number">5</span>, <span class="string">&#x27;Bob&#x27;</span>, <span class="number">30</span>))</span><br><span class="line">connection.commit()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;所有用户信息：&quot;</span>)</span><br><span class="line">cursor.execute(<span class="string">&#x27;SELECT * FROM users&#x27;</span>)</span><br><span class="line">rows = cursor.fetchall()</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line">    <span class="built_in">print</span>(row)</span><br><span class="line"></span><br><span class="line">cursor.execute(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">UPDATE users SET age = ? WHERE name = ?</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>, (<span class="number">26</span>, <span class="string">&#x27;Alice&#x27;</span>))</span><br><span class="line">connection.commit()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n更新后的用户信息：&quot;</span>)</span><br><span class="line">cursor.execute(<span class="string">&#x27;SELECT * FROM users&#x27;</span>)</span><br><span class="line">rows = cursor.fetchall()</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line">    <span class="built_in">print</span>(row)</span><br><span class="line"></span><br><span class="line">cursor.execute(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">DELETE FROM users WHERE name = ?</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>, (<span class="string">&#x27;Bob&#x27;</span>,))</span><br><span class="line">connection.commit()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n删除后的用户信息：&quot;</span>)</span><br><span class="line">cursor.execute(<span class="string">&#x27;SELECT * FROM users&#x27;</span>)</span><br><span class="line">rows = cursor.fetchall()</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line">    <span class="built_in">print</span>(row)</span><br><span class="line"></span><br><span class="line">connection.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE IF NOT EXISTS users (</span><br><span class="line">    id INTEGER PRIMARY KEY,</span><br><span class="line">    name TEXT NOT NULL,</span><br><span class="line">    age INTEGER</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>来创建一个有三个类型数据的表格，然后通过<code>insert into</code>来进行插入，用<code>delete</code>关键字来进行删除等</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/07/17/SQL%E5%85%A5%E9%97%A8/">http://gazettm.github.io/2025/07/17/SQL%E5%85%A5%E9%97%A8/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/SQL/"># SQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/07/15/%E5%B0%BE%E9%80%92%E5%BD%92/">尾递归</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
