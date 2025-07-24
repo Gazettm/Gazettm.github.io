@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>并查集 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">并查集</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">七月 24, 2025&nbsp;&nbsp;21:21:15</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/algorithm/">algorithm</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Union-Find"><a href="#Union-Find" class="headerlink" title="Union-Find"></a>Union-Find</h1><p>并查集是一种数据结构，用于合并与检查某两个东西是否相连</p>
+<p>这里我们把优化的过程都写出来，具体可以直接看Weight Quick Union+path compression的部分</p>
+<p><img src="https://raw.githubusercontent.com/Gazettm/my_images/refs/heads/main/algorithm/2-1.png"></p>
+<h2 id="Quick-Find"><a href="#Quick-Find" class="headerlink" title="Quick Find"></a>Quick Find</h2><p><img src="https://raw.githubusercontent.com/Gazettm/my_images/refs/heads/main/algorithm/2-2.png"></p>
+<p>在QuickFind中，我们可以使用数组id[]的方式来储存。</p>
+<ol>
+<li><p>每当合并a，b的时候，遍历所有的节点，把与b节点id值相同的所有id改为与a的id相同的值</p>
+</li>
+<li><p>当查找时直接比较id值是否一样</p>
+<p>比如对上图使用union(1,6)，会把所有id值为0的改成id值为1的。</p>
+<p>下面时代码实现</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdIn;</span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdOut;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">QuickFindUF</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span>[] id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">QuickFindUF</span><span class="params">(<span class="type">int</span> N)</span>&#123;</span><br><span class="line">        id = <span class="keyword">new</span> <span class="title class_">int</span>[N];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; N; i++)&#123;</span><br><span class="line">            id[i] = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">connected</span><span class="params">(<span class="type">int</span> p,<span class="type">int</span> q)</span></span><br><span class="line">    &#123;   <span class="keyword">return</span> id[p] == id[q];  &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> p,<span class="type">int</span> q)</span></span><br><span class="line">    &#123;   <span class="type">int</span> <span class="variable">pid</span> <span class="operator">=</span> id[p];</span><br><span class="line">        <span class="type">int</span> <span class="variable">qid</span> <span class="operator">=</span> id[q];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; id.length; i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(id[i] == pid)&#123;</span><br><span class="line">                id[i] = qid;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">N</span> <span class="operator">=</span> StdIn.readInt();</span><br><span class="line">        <span class="type">QuickFindUF</span> <span class="variable">uf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">QuickFindUF</span>(N);</span><br><span class="line">        <span class="keyword">while</span>(!StdIn.isEmpty())&#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">p</span> <span class="operator">=</span> StdIn.readInt();</span><br><span class="line">            <span class="type">int</span> <span class="variable">q</span> <span class="operator">=</span> StdIn.readInt();</span><br><span class="line">            <span class="keyword">if</span>(!uf.connected(p,q))&#123;</span><br><span class="line">                uf.union(p,q);</span><br><span class="line">                StdOut.println(p + <span class="string">&quot; &quot;</span> + q);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种方式效率并不高，因为每次union的时候都会遍历一遍节点。</p>
+<h2 id="Quick-Union"><a href="#Quick-Union" class="headerlink" title="Quick Union"></a>Quick Union</h2><p><img src="https://raw.githubusercontent.com/Gazettm/my_images/refs/heads/main/algorithm/2-3.png"></p>
+<p>在Quick Union中，我们把数据结构优化成树。节点的id[]指向上一个节点。</p>
+<ol>
+<li><p>当union的时候，我们如果两者的根节点不同，那么就让其中其中一个节点的根指向另一个节点的根。</p>
+</li>
+<li><p>当find的时候，我们只需要看root一样不一样就行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">QuickUnionUF</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span>[] id;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">QuickUnionUF</span><span class="params">(<span class="type">int</span> N)</span>&#123;</span><br><span class="line">        id = <span class="keyword">new</span> <span class="title class_">int</span>[N];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; N; i++)&#123;id[i] = i;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">root</span><span class="params">(<span class="type">int</span> p)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span>(p != id[p])&#123;</span><br><span class="line">            p = id[p];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">connected</span><span class="params">(<span class="type">int</span> p, <span class="type">int</span> q)</span></span><br><span class="line">    &#123;   <span class="keyword">return</span> root(p) == root(q);  &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> p, <span class="type">int</span> q)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">rootP</span> <span class="operator">=</span> root(p);</span><br><span class="line">        <span class="type">int</span> <span class="variable">rootQ</span> <span class="operator">=</span> root(q);</span><br><span class="line">        <span class="keyword">if</span> (rootP != rootQ) &#123;</span><br><span class="line">            id[rootP] = rootQ;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>但是这种方法仍然很不好，因为最差的情况是n，并不稳定。</p>
+<h3 id="Improvement-1"><a href="#Improvement-1" class="headerlink" title="Improvement 1"></a>Improvement 1</h3><p><img src="https://raw.githubusercontent.com/Gazettm/my_images/refs/heads/main/algorithm/2-4.png"></p>
+<p>在QuicUnion的基础之上，我们可以进行一个加权。我们知道，一个大树与一个小树，让大树合并到小树里面，会增加很多高度，那么让小树合并到大树里面，就可以很好避免这种情况。（注意这里说的是树的大小即为节点的个数，而不是树的高度。</p>
+<p>我们可以加一个size[]来确定该树的大小，初始化全为1，若q并入p中，p的大小就增加size[p]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WeightedQuickUnionUF</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span>[] id;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span>[] size;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">WeightedQuickUnionUF</span><span class="params">(<span class="type">int</span> N)</span>&#123;</span><br><span class="line">        size = <span class="keyword">new</span> <span class="title class_">int</span>[N];</span><br><span class="line">        id = <span class="keyword">new</span> <span class="title class_">int</span>[N];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; N; i++)&#123;</span><br><span class="line">            id[i] = i;</span><br><span class="line">            size[i] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">root</span><span class="params">(<span class="type">int</span> p)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span>(p != id[p])&#123;</span><br><span class="line">            p = id[p];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">connected</span><span class="params">(<span class="type">int</span> p, <span class="type">int</span> q)</span></span><br><span class="line">    &#123;   <span class="keyword">return</span> root(p) == root(q);  &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> p, <span class="type">int</span> q)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">rootP</span> <span class="operator">=</span> root(p);</span><br><span class="line">        <span class="type">int</span> <span class="variable">rootQ</span> <span class="operator">=</span> root(q);</span><br><span class="line">        <span class="keyword">if</span> (rootP == rootQ) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (size[rootP] &lt; size[rootQ]) &#123;</span><br><span class="line">            id[rootP] = rootQ;</span><br><span class="line">            size[rootQ] += size[rootP];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>  &#123;</span><br><span class="line">            id[rootQ] = rootP;</span><br><span class="line">            size[rootP] += size[rootQ];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过这种方法，我们可以减少到$$ \log(N) $$的运行时间</p>
+<p>为什么是这样的时间呢，我们想，当树的高度增加的时候，只有当树的大小相等，所以就只有2^x^&#x3D;N，x就是$$ \log_2(N) $$</p>
+<h3 id="Improvement-2"><a href="#Improvement-2" class="headerlink" title="Improvement 2"></a>Improvement 2</h3><p><img src="https://raw.githubusercontent.com/Gazettm/my_images/refs/heads/main/algorithm/2-5.png"></p>
+<p><img src="https://raw.githubusercontent.com/Gazettm/my_images/refs/heads/main/algorithm/2-6.png"></p>
+<p>第二种优化方式是压缩，这是一种很简单的思想，就是在进行节点的根时，在Quick Union的基础上增加一点东西</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">root</span><span class="params">(<span class="type">int</span> p)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span>(p != id[p])&#123;</span><br><span class="line">            id[p] = id[id[p]];</span><br><span class="line">            p = id[p];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>在查找根节点的过程中，将当前节点 <code>p</code> 的父节点直接指向其父节点的父节点，从而压缩路径，减少树的高度。</p>
+<p>在这一过程中，节点全都直接指向了根节点。</p>
+<p>这种算法的效率也是$$log(N)$$。</p>
+<h1 id="Weighted-Quick-Union-path-compression"><a href="#Weighted-Quick-Union-path-compression" class="headerlink" title="Weighted Quick Union + path compression"></a>Weighted Quick Union + path compression</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WeightedQuickUnionUF</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span>[] id;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span>[] size;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">WeightedQuickUnionUF</span><span class="params">(<span class="type">int</span> N)</span>&#123;</span><br><span class="line">        size = <span class="keyword">new</span> <span class="title class_">int</span>[N];</span><br><span class="line">        id = <span class="keyword">new</span> <span class="title class_">int</span>[N];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; N; i++)&#123;</span><br><span class="line">            id[i] = i;</span><br><span class="line">            size[i] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">root</span><span class="params">(<span class="type">int</span> p)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span>(p != id[p])&#123;</span><br><span class="line">            p = id[p];</span><br><span class="line">            id[p] = id[id[p]];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">connected</span><span class="params">(<span class="type">int</span> p, <span class="type">int</span> q)</span></span><br><span class="line">    &#123;   <span class="keyword">return</span> root(p) == root(q);  &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> p, <span class="type">int</span> q)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">rootP</span> <span class="operator">=</span> root(p);</span><br><span class="line">        <span class="type">int</span> <span class="variable">rootQ</span> <span class="operator">=</span> root(q);</span><br><span class="line">        <span class="keyword">if</span> (rootP == rootQ) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (size[rootP] &lt; size[rootQ]) &#123;</span><br><span class="line">            id[rootP] = rootQ;</span><br><span class="line">            size[rootQ] += size[rootP];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>  &#123;</span><br><span class="line">            id[rootQ] = rootP;</span><br><span class="line">            size[rootP] += size[rootQ];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将改进结合我们会得到一个效率很高的并查集。这种并查集与直接存储秩（树高）的方法效率差不多</p>
+<table>
+<thead>
+<tr>
+<th align="center">algorithm</th>
+<th align="center">worst-case time</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">quick-find</td>
+<td align="center">M * N</td>
+</tr>
+<tr>
+<td align="center">quick-union</td>
+<td align="center">M * N</td>
+</tr>
+<tr>
+<td align="center">weighted QU</td>
+<td align="center">N+M * log N</td>
+</tr>
+<tr>
+<td align="center">QU + path compression</td>
+<td align="center">N + M * log N</td>
+</tr>
+<tr>
+<td align="center">weighted QU + path compression</td>
+<td align="center">N + M * α(n)</td>
+</tr>
+</tbody></table>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/07/24/%E5%B9%B6%E6%9F%A5%E9%9B%86/">http://gazettm.github.io/2025/07/24/%E5%B9%B6%E6%9F%A5%E9%9B%86/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/algorithm/"># algorithm</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/07/21/%E5%BF%AB%E6%8E%92/">快排</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
