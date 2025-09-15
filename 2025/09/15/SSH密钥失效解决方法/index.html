@@ -151,11 +151,29 @@
         <div class="post-content">
             <p>SSH密钥经常出问题，个人体感大概两个月不交GitHub就会出现问题，SSH密钥就会失效。以下是重新配置的办法。</p>
 <ol>
-<li>删除本机user目录下.ssh内的文件</li>
-<li><code>ssh-keygen -t rsa -C &quot;xxx@xxx.com&quot;</code>使用这个指令进行重新获取</li>
-<li>打开.ssh目录的.pub文件拷贝出来SSH密钥。</li>
-<li>添加到GitHub上并删除旧版SSH密钥</li>
+<li><p>删除本机user目录下.ssh内的文件</p>
+</li>
+<li><p><code>ssh-keygen -t rsa -C &quot;xxx@xxx.com&quot;</code>使用这个指令进行重新获取</p>
+</li>
+<li><p>打开.ssh目录的.pub文件拷贝出来SSH密钥。</p>
+</li>
+<li><p>添加到GitHub上并删除旧版SSH密钥</p>
+</li>
+<li><p>新建配置config编辑</p>
+</li>
+<li><pre><code>Host github.com
+  Hostname ssh.github.com
+  Port 443
+  User git
+  IdentityFile ~/.ssh/id_rsa
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+ssh -T git@github.com
+</code></pre>
+</li>
 </ol>
+<pre><code>
+测试之后就可以正常连上了。
+</code></pre>
 
         </div>
 
