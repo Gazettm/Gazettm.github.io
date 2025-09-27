@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>CSAPP_lab1 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">CSAPP_lab1</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">九月 27, 2025&nbsp;&nbsp;14:54:47</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CSAPP/">CSAPP</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="CSAPP-lab1"><a href="#CSAPP-lab1" class="headerlink" title="CSAPP_lab1"></a>CSAPP_lab1</h1><h2 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h2><p>本实验目的为查看栈中内容，明白计算机中是如何存储数据的。</p>
+<h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">float</span> a = <span class="number">55.0</span>;</span><br><span class="line">    <span class="type">float</span> b = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> c = <span class="number">2147483647</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;a is %f\n&quot;</span>, a);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;b is %f\n&quot;</span>, b);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;c is %d\n&quot;</span>, c);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写一个如图所示的代码</p>
+<h2 id="编译-与-反汇编"><a href="#编译-与-反汇编" class="headerlink" title="编译 与 反汇编"></a>编译 与 反汇编</h2><p>通过以下指令编译</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -g -o prog float.c</span><br></pre></td></tr></table></figure>
+
+<p>再通过这个指令反汇编</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -S prog &gt; prog.txt</span><br></pre></td></tr></table></figure>
+
+<p>得到下面的文本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">prog：     文件格式 elf64-x86-64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Disassembly of section .init:</span><br><span class="line"></span><br><span class="line">0000000000001000 &lt;_init&gt;:</span><br><span class="line">    1000:	48 83 ec 08          	sub    $0x8,%rsp</span><br><span class="line">    1004:	48 8b 05 c5 2f 00 00 	mov    0x2fc5(%rip),%rax        # 3fd0 &lt;__gmon_start__@Base&gt;</span><br><span class="line">    100b:	48 85 c0             	test   %rax,%rax</span><br><span class="line">    100e:	74 02                	je     1012 &lt;_init+0x12&gt;</span><br><span class="line">    1010:	ff d0                	call   *%rax</span><br><span class="line">    1012:	48 83 c4 08          	add    $0x8,%rsp</span><br><span class="line">    1016:	c3                   	ret</span><br><span class="line"></span><br><span class="line">Disassembly of section .plt:</span><br><span class="line"></span><br><span class="line">0000000000001020 &lt;printf@plt-0x10&gt;:</span><br><span class="line">    1020:	ff 35 ca 2f 00 00    	push   0x2fca(%rip)        # 3ff0 &lt;_GLOBAL_OFFSET_TABLE_+0x8&gt;</span><br><span class="line">    1026:	ff 25 cc 2f 00 00    	jmp    *0x2fcc(%rip)        # 3ff8 &lt;_GLOBAL_OFFSET_TABLE_+0x10&gt;</span><br><span class="line">    102c:	0f 1f 40 00          	nopl   0x0(%rax)</span><br><span class="line"></span><br><span class="line">0000000000001030 &lt;printf@plt&gt;:</span><br><span class="line">    1030:	ff 25 ca 2f 00 00    	jmp    *0x2fca(%rip)        # 4000 &lt;printf@GLIBC_2.2.5&gt;</span><br><span class="line">    1036:	68 00 00 00 00       	push   $0x0</span><br><span class="line">    103b:	e9 e0 ff ff ff       	jmp    1020 &lt;_init+0x20&gt;</span><br><span class="line"></span><br><span class="line">Disassembly of section .plt.got:</span><br><span class="line"></span><br><span class="line">0000000000001040 &lt;__cxa_finalize@plt&gt;:</span><br><span class="line">    1040:	ff 25 9a 2f 00 00    	jmp    *0x2f9a(%rip)        # 3fe0 &lt;__cxa_finalize@GLIBC_2.2.5&gt;</span><br><span class="line">    1046:	66 90                	xchg   %ax,%ax</span><br><span class="line"></span><br><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line">0000000000001050 &lt;_start&gt;:</span><br><span class="line">    1050:	31 ed                	xor    %ebp,%ebp</span><br><span class="line">    1052:	49 89 d1             	mov    %rdx,%r9</span><br><span class="line">    1055:	5e                   	pop    %rsi</span><br><span class="line">    1056:	48 89 e2             	mov    %rsp,%rdx</span><br><span class="line">    1059:	48 83 e4 f0          	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">    105d:	50                   	push   %rax</span><br><span class="line">    105e:	54                   	push   %rsp</span><br><span class="line">    105f:	45 31 c0             	xor    %r8d,%r8d</span><br><span class="line">    1062:	31 c9                	xor    %ecx,%ecx</span><br><span class="line">    1064:	48 8d 3d ce 00 00 00 	lea    0xce(%rip),%rdi        # 1139 &lt;main&gt;</span><br><span class="line">    106b:	ff 15 4f 2f 00 00    	call   *0x2f4f(%rip)        # 3fc0 &lt;__libc_start_main@GLIBC_2.34&gt;</span><br><span class="line">    1071:	f4                   	hlt</span><br><span class="line">    1072:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)</span><br><span class="line">    1079:	00 00 00 </span><br><span class="line">    107c:	0f 1f 40 00          	nopl   0x0(%rax)</span><br><span class="line"></span><br><span class="line">0000000000001080 &lt;deregister_tm_clones&gt;:</span><br><span class="line">    1080:	48 8d 3d 91 2f 00 00 	lea    0x2f91(%rip),%rdi        # 4018 &lt;__TMC_END__&gt;</span><br><span class="line">    1087:	48 8d 05 8a 2f 00 00 	lea    0x2f8a(%rip),%rax        # 4018 &lt;__TMC_END__&gt;</span><br><span class="line">    108e:	48 39 f8             	cmp    %rdi,%rax</span><br><span class="line">    1091:	74 15                	je     10a8 &lt;deregister_tm_clones+0x28&gt;</span><br><span class="line">    1093:	48 8b 05 2e 2f 00 00 	mov    0x2f2e(%rip),%rax        # 3fc8 &lt;_ITM_deregisterTMCloneTable@Base&gt;</span><br><span class="line">    109a:	48 85 c0             	test   %rax,%rax</span><br><span class="line">    109d:	74 09                	je     10a8 &lt;deregister_tm_clones+0x28&gt;</span><br><span class="line">    109f:	ff e0                	jmp    *%rax</span><br><span class="line">    10a1:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)</span><br><span class="line">    10a8:	c3                   	ret</span><br><span class="line">    10a9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)</span><br><span class="line"></span><br><span class="line">00000000000010b0 &lt;register_tm_clones&gt;:</span><br><span class="line">    10b0:	48 8d 3d 61 2f 00 00 	lea    0x2f61(%rip),%rdi        # 4018 &lt;__TMC_END__&gt;</span><br><span class="line">    10b7:	48 8d 35 5a 2f 00 00 	lea    0x2f5a(%rip),%rsi        # 4018 &lt;__TMC_END__&gt;</span><br><span class="line">    10be:	48 29 fe             	sub    %rdi,%rsi</span><br><span class="line">    10c1:	48 89 f0             	mov    %rsi,%rax</span><br><span class="line">    10c4:	48 c1 ee 3f          	shr    $0x3f,%rsi</span><br><span class="line">    10c8:	48 c1 f8 03          	sar    $0x3,%rax</span><br><span class="line">    10cc:	48 01 c6             	add    %rax,%rsi</span><br><span class="line">    10cf:	48 d1 fe             	sar    $1,%rsi</span><br><span class="line">    10d2:	74 14                	je     10e8 &lt;register_tm_clones+0x38&gt;</span><br><span class="line">    10d4:	48 8b 05 fd 2e 00 00 	mov    0x2efd(%rip),%rax        # 3fd8 &lt;_ITM_registerTMCloneTable@Base&gt;</span><br><span class="line">    10db:	48 85 c0             	test   %rax,%rax</span><br><span class="line">    10de:	74 08                	je     10e8 &lt;register_tm_clones+0x38&gt;</span><br><span class="line">    10e0:	ff e0                	jmp    *%rax</span><br><span class="line">    10e2:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)</span><br><span class="line">    10e8:	c3                   	ret</span><br><span class="line">    10e9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)</span><br><span class="line"></span><br><span class="line">00000000000010f0 &lt;__do_global_dtors_aux&gt;:</span><br><span class="line">    10f0:	f3 0f 1e fa          	endbr64</span><br><span class="line">    10f4:	80 3d 1d 2f 00 00 00 	cmpb   $0x0,0x2f1d(%rip)        # 4018 &lt;__TMC_END__&gt;</span><br><span class="line">    10fb:	75 2b                	jne    1128 &lt;__do_global_dtors_aux+0x38&gt;</span><br><span class="line">    10fd:	55                   	push   %rbp</span><br><span class="line">    10fe:	48 83 3d da 2e 00 00 	cmpq   $0x0,0x2eda(%rip)        # 3fe0 &lt;__cxa_finalize@GLIBC_2.2.5&gt;</span><br><span class="line">    1105:	00 </span><br><span class="line">    1106:	48 89 e5             	mov    %rsp,%rbp</span><br><span class="line">    1109:	74 0c                	je     1117 &lt;__do_global_dtors_aux+0x27&gt;</span><br><span class="line">    110b:	48 8b 3d fe 2e 00 00 	mov    0x2efe(%rip),%rdi        # 4010 &lt;__dso_handle&gt;</span><br><span class="line">    1112:	e8 29 ff ff ff       	call   1040 &lt;__cxa_finalize@plt&gt;</span><br><span class="line">    1117:	e8 64 ff ff ff       	call   1080 &lt;deregister_tm_clones&gt;</span><br><span class="line">    111c:	c6 05 f5 2e 00 00 01 	movb   $0x1,0x2ef5(%rip)        # 4018 &lt;__TMC_END__&gt;</span><br><span class="line">    1123:	5d                   	pop    %rbp</span><br><span class="line">    1124:	c3                   	ret</span><br><span class="line">    1125:	0f 1f 00             	nopl   (%rax)</span><br><span class="line">    1128:	c3                   	ret</span><br><span class="line">    1129:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)</span><br><span class="line"></span><br><span class="line">0000000000001130 &lt;frame_dummy&gt;:</span><br><span class="line">    1130:	f3 0f 1e fa          	endbr64</span><br><span class="line">    1134:	e9 77 ff ff ff       	jmp    10b0 &lt;register_tm_clones&gt;</span><br><span class="line"></span><br><span class="line">0000000000001139 &lt;main&gt;:</span><br><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">int main()&#123;</span><br><span class="line">    1139:	55                   	push   %rbp</span><br><span class="line">    113a:	48 89 e5             	mov    %rsp,%rbp</span><br><span class="line">    113d:	48 83 ec 10          	sub    $0x10,%rsp</span><br><span class="line">    float a = 55.0;</span><br><span class="line">    1141:	f3 0f 10 05 d7 0e 00 	movss  0xed7(%rip),%xmm0        # 2020 &lt;_IO_stdin_used+0x20&gt;</span><br><span class="line">    1148:	00 </span><br><span class="line">    1149:	f3 0f 11 45 fc       	movss  %xmm0,-0x4(%rbp)</span><br><span class="line">    float b = 0;</span><br><span class="line">    114e:	66 0f ef c0          	pxor   %xmm0,%xmm0</span><br><span class="line">    1152:	f3 0f 11 45 f8       	movss  %xmm0,-0x8(%rbp)</span><br><span class="line">    int c = 2147483647;</span><br><span class="line">    1157:	c7 45 f4 ff ff ff 7f 	movl   $0x7fffffff,-0xc(%rbp)</span><br><span class="line">    printf(&quot;a is %f\n&quot;, a);</span><br><span class="line">    115e:	66 0f ef c9          	pxor   %xmm1,%xmm1</span><br><span class="line">    1162:	f3 0f 5a 4d fc       	cvtss2sd -0x4(%rbp),%xmm1</span><br><span class="line">    1167:	66 48 0f 7e c8       	movq   %xmm1,%rax</span><br><span class="line">    116c:	66 48 0f 6e c0       	movq   %rax,%xmm0</span><br><span class="line">    1171:	48 8d 05 8c 0e 00 00 	lea    0xe8c(%rip),%rax        # 2004 &lt;_IO_stdin_used+0x4&gt;</span><br><span class="line">    1178:	48 89 c7             	mov    %rax,%rdi</span><br><span class="line">    117b:	b8 01 00 00 00       	mov    $0x1,%eax</span><br><span class="line">    1180:	e8 ab fe ff ff       	call   1030 &lt;printf@plt&gt;</span><br><span class="line">    printf(&quot;b is %f\n&quot;, b);</span><br><span class="line">    1185:	66 0f ef d2          	pxor   %xmm2,%xmm2</span><br><span class="line">    1189:	f3 0f 5a 55 f8       	cvtss2sd -0x8(%rbp),%xmm2</span><br><span class="line">    118e:	66 48 0f 7e d0       	movq   %xmm2,%rax</span><br><span class="line">    1193:	66 48 0f 6e c0       	movq   %rax,%xmm0</span><br><span class="line">    1198:	48 8d 05 6e 0e 00 00 	lea    0xe6e(%rip),%rax        # 200d &lt;_IO_stdin_used+0xd&gt;</span><br><span class="line">    119f:	48 89 c7             	mov    %rax,%rdi</span><br><span class="line">    11a2:	b8 01 00 00 00       	mov    $0x1,%eax</span><br><span class="line">    11a7:	e8 84 fe ff ff       	call   1030 &lt;printf@plt&gt;</span><br><span class="line">    printf(&quot;c is %d\n&quot;, c);</span><br><span class="line">    11ac:	8b 45 f4             	mov    -0xc(%rbp),%eax</span><br><span class="line">    11af:	89 c6                	mov    %eax,%esi</span><br><span class="line">    11b1:	48 8d 05 5e 0e 00 00 	lea    0xe5e(%rip),%rax        # 2016 &lt;_IO_stdin_used+0x16&gt;</span><br><span class="line">    11b8:	48 89 c7             	mov    %rax,%rdi</span><br><span class="line">    11bb:	b8 00 00 00 00       	mov    $0x0,%eax</span><br><span class="line">    11c0:	e8 6b fe ff ff       	call   1030 &lt;printf@plt&gt;</span><br><span class="line">    return 0;</span><br><span class="line">    11c5:	b8 00 00 00 00       	mov    $0x0,%eax</span><br><span class="line">&#125;</span><br><span class="line">    11ca:	c9                   	leave</span><br><span class="line">    11cb:	c3                   	ret</span><br><span class="line"></span><br><span class="line">Disassembly of section .fini:</span><br><span class="line"></span><br><span class="line">00000000000011cc &lt;_fini&gt;:</span><br><span class="line">    11cc:	48 83 ec 08          	sub    $0x8,%rsp</span><br><span class="line">    11d0:	48 83 c4 08          	add    $0x8,%rsp</span><br><span class="line">    11d4:	c3                   	ret</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里我们重点关注main函数中的东西。</p>
+<h2 id="gdb测试"><a href="#gdb测试" class="headerlink" title="gdb测试"></a>gdb测试</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb prog</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">break main</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p>break即为在程序的main函数处下断点，run即为启动程序。之后输入s(为执行下一条语句)我们便可以看见提示</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Breakpoint 1, main () at float.c:3</span><br><span class="line">3           <span class="built_in">float</span> a = 55.0;</span><br><span class="line">(gdb) s</span><br><span class="line">4           <span class="built_in">float</span> b = 0;</span><br><span class="line">(gdb) s</span><br><span class="line">5           int c = 2147483647;</span><br><span class="line">(gdb) s</span><br><span class="line">6           <span class="built_in">printf</span>(<span class="string">&quot;a is %f\n&quot;</span>, a);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>因为我们使用了-g指令，保留了一部分东西，所以会有相应的提示。</p>
+<p>之后我们使用 <code>i r</code>指令来看寄存器，会发现有很多寄存器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">(gdb) i r</span><br><span class="line">rax            0x555555555139      93824992235833</span><br><span class="line">rbx            0x7fffffffde58      140737488346712</span><br><span class="line">rcx            0x555555557dd8      93824992247256</span><br><span class="line">rdx            0x7fffffffde68      140737488346728</span><br><span class="line">rsi            0x7fffffffde58      140737488346712</span><br><span class="line">rdi            0x1                 1</span><br><span class="line">rbp            0x7fffffffdd40      0x7fffffffdd40</span><br><span class="line">rsp            0x7fffffffdd30      0x7fffffffdd30</span><br><span class="line">r8             0x0                 0</span><br><span class="line">r9             0x7ffff7fcbc20      140737353923616</span><br><span class="line">r10            0x7fffffffda80      140737488345728</span><br><span class="line">r11            0x206               518</span><br><span class="line">r12            0x0                 0</span><br><span class="line">r13            0x7fffffffde68      140737488346728</span><br><span class="line">r14            0x7ffff7ffd000      140737354125312</span><br><span class="line">r15            0x555555557dd8      93824992247256</span><br><span class="line">rip            0x55555555515e      0x55555555515e &lt;main+37&gt;</span><br><span class="line">eflags         0x206               [ PF IF ]</span><br><span class="line">cs             0x33                51</span><br><span class="line">ss             0x2b                43</span><br><span class="line">ds             0x0                 0</span><br><span class="line">es             0x0                 0</span><br><span class="line">fs             0x0                 0</span><br><span class="line">gs             0x0                 0</span><br><span class="line">fs_base        0x7ffff7daa740      140737351690048</span><br><span class="line">gs_base        0x0                 0</span><br></pre></td></tr></table></figure>
+
+<p>其中rbp，rsp分别为栈指针和基址指针，rsp向下生长rbp相对固定。</p>
+<p>我们使用<code>x/5xw $rsp</code>来查看栈中内容。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x7fffffffdd30: 0x00000000      0x7fffffff      0x00000000      0x425c0000</span><br><span class="line">0x7fffffffdd40: 0x00000001</span><br></pre></td></tr></table></figure>
+
+<p>再根据上文的汇编代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">float a = 55.0;</span><br><span class="line">   1141:	f3 0f 10 05 d7 0e 00 	movss  0xed7(%rip),%xmm0        # 2020 &lt;_IO_stdin_used+0x20&gt;</span><br><span class="line">   1148:	00 </span><br><span class="line">   1149:	f3 0f 11 45 fc       	movss  %xmm0,-0x4(%rbp)</span><br></pre></td></tr></table></figure>
+
+<p><code>movss</code>指令是移动一个单精度浮点数，这里把<code>rip</code>寄存器偏移量为0xed7地址里面的内容加载到<code>xmm</code>(128位的浮点寄存器中)，之后使用指令<code>movss  %xmm0,-0x4(%rbp)</code>，把<code>xmm</code>寄存器中的东西移动到了<code>rbp - 0x4</code>的位置</p>
+<p><code>rbp-0x4</code>的位置刚好是<code>0x7fffffffdd3C</code>，即为<code>0x425c0000</code>，因此对照上面栈，我们可以看到该数值就在里面。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">float b = 0;</span><br><span class="line">114e:	66 0f ef c0          	pxor   %xmm0,%xmm0</span><br><span class="line">1152:	f3 0f 11 45 f8       	movss  %xmm0,-0x8(%rbp)</span><br><span class="line">int c = 2147483647;</span><br><span class="line">1157:	c7 45 f4 ff ff ff 7f 	movl   $0x7fffffff,-0xc(%rbp)</span><br></pre></td></tr></table></figure>
+
+<p>剩下的一一对应。</p>
+<h2 id="大端小端"><a href="#大端小端" class="headerlink" title="大端小端"></a>大端小端</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/20xb <span class="variable">$rsp</span></span><br><span class="line">0x7fffffffdd30: 0x00    0x00    0x00    0x00    0xff    0xff    0xff    0x7f</span><br><span class="line">0x7fffffffdd38: 0x00    0x00    0x00    0x00    0x00    0x00    0x5c    0x42</span><br><span class="line">0x7fffffffdd40: 0x01    0x00    0x00    0x00</span><br></pre></td></tr></table></figure>
+
+<p>可以看到0x425c0000，在地址中的排序0x00    0x00    0x5c    0x42，因此可以断定这个是小端存储。</p>
+<h2 id="疑惑"><a href="#疑惑" class="headerlink" title="疑惑"></a>疑惑</h2><p>我们看了栈之后，发现原本是从<code>rsp</code>向下生长的栈中，第一个位置竟然是<code>0x00000001</code>而不是存的<code>float</code>，关于这个，可能是<code>main</code>函数的参数<code>argc</code>是1个。</p>
+<p>经过观察发现每次分配都是<code>0x10</code>个，这主要是为了栈对齐，避免段错误。</p>
+<h2 id="start与main"><a href="#start与main" class="headerlink" title="_start与main"></a><code>_start</code>与<code>main</code></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1139:	55                   	push   %rbp</span><br><span class="line">113a:	48 89 e5             	mov    %rsp,%rbp</span><br><span class="line">113d:	48 83 ec 10          	sub    $0x10,%rsp</span><br></pre></td></tr></table></figure>
+
+<p>经过观察我们发现main函数在开始时会发生被调用者保护。主要是把<code>rbp</code>压入栈中，然后把<code>rsp</code>的内容送入<code>rbp</code>中，之后分配<code>rsp</code>空间。为什么<code>main</code>函数要发生被调用者保护。经过了解，<code>_start</code>函数才是入口，它会调用main函数，导致main发生被调用者保护。我们可以在gdb中验证。</p>
+<p>首先设置两个断点，<code>_start</code>与<code>main</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb) <span class="built_in">break</span> main</span><br><span class="line">Breakpoint 1 at 0x1141: file float.c, line 3.</span><br><span class="line">(gdb) <span class="built_in">break</span> _start</span><br><span class="line">Breakpoint 2 at 0x1050</span><br></pre></td></tr></table></figure>
+
+<p>从断点位置我们可见一斑。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb) run</span><br><span class="line">Starting program: /root/Desktop/U2/prog </span><br><span class="line"></span><br><span class="line">Breakpoint 2.2, 0x00007ffff7fe35c0 <span class="keyword">in</span> _start () from /lib64/ld-linux-x86-64.so.2</span><br></pre></td></tr></table></figure>
+
+<p>执行<code>run</code>之后首先执行的也是<code>_start</code>函数</p>
+<p>此时我们查看栈</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rbp            0x0                 0x0</span><br><span class="line">rsp            0x7fffffffde50      0x7fffffffde50</span><br></pre></td></tr></table></figure>
+
+<p><code>rbp</code>还未被分配，而<code>rsp</code>是被内核分配的，已经有了。</p>
+<p>所以我们知道了为什么<code>main</code>要发生被调用者保护。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/09/27/CSAPP-lab1/">http://gazettm.github.io/2025/09/27/CSAPP-lab1/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/CSAPP/"># CSAPP</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/09/15/SSH%E5%AF%86%E9%92%A5%E5%A4%B1%E6%95%88%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/">SSH密钥失效解决方法</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
