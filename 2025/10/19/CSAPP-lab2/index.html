@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>CSAPP_lab2 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">CSAPP_lab2</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十月 19, 2025&nbsp;&nbsp;16:57:14</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CSAPP/">CSAPP</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="CSAPP-lab2"><a href="#CSAPP-lab2" class="headerlink" title="CSAPP_lab2"></a>CSAPP_lab2</h1><h2 id="lea用于计算"><a href="#lea用于计算" class="headerlink" title="lea用于计算"></a><code>lea</code>用于计算</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> <span class="title function_">arith</span><span class="params">(<span class="type">long</span> x, <span class="type">long</span> y, <span class="type">long</span> z)</span>&#123;</span><br><span class="line">    <span class="type">long</span> t1 = x ^ y;</span><br><span class="line">    <span class="type">long</span> t2 = z * <span class="number">48</span>;</span><br><span class="line">    <span class="type">long</span> t3 = t1 &amp; <span class="number">0x0f0f0f0f</span>;</span><br><span class="line">    <span class="type">long</span> t4 = t2 - t3;</span><br><span class="line">    <span class="keyword">return</span> t4;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于这样一个指令，汇编之后是这样。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">0000000000001139 &lt;arith&gt;:</span><br><span class="line">    1139:	48 31 f7             	xor    %rsi,%rdi</span><br><span class="line">    113c:	48 8d 04 52          	lea    (%rdx,%rdx,2),%rax</span><br><span class="line">    1140:	48 c1 e0 04          	shl    $0x4,%rax</span><br><span class="line">    1144:	81 e7 0f 0f 0f 0f    	and    $0xf0f0f0f,%edi</span><br><span class="line">    114a:	48 29 f8             	sub    %rdi,%rax</span><br><span class="line">    114d:	c3                   	ret</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>先将x与异或，之后使用<code>lea</code>这个用于计算地址的指令来计算。<code>lea</code>指令的计算公式如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lea rax, [n + rdx + rdx*m]</span><br></pre></td></tr></table></figure>
+
+<p>等价于：<code>rax</code> &#x3D; n + <code>rdx</code> + <code>rdx</code> * m</p>
+<p>其中 m 为2^n，因为使用了左移操作。</p>
+<p>此处的</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> t2 = z * <span class="number">48</span>；</span><br></pre></td></tr></table></figure>
+
+<p>对应</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">113c:	48 8d 04 52          	lea    (%rdx,%rdx,2),%rax</span><br><span class="line">1140:	48 c1 e0 04          	shl    $0x4,%rax</span><br></pre></td></tr></table></figure>
+
+<p>先算出了<code>z * 3</code>，在进行逻辑左移，想坐移动四位即为<code>3z*16</code>，得出<code>z*48</code></p>
+<h2 id="Jump"><a href="#Jump" class="headerlink" title="Jump"></a><code>Jump</code></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> <span class="title function_">absdiff_se</span><span class="params">(<span class="type">long</span> x, <span class="type">long</span> y)</span>&#123;</span><br><span class="line">    <span class="type">long</span> result;</span><br><span class="line">    <span class="keyword">if</span>(x &lt; y)&#123;</span><br><span class="line">        result = y - x;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        result = x - y;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>汇编如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">0000000000001139 &lt;absdiff_se&gt;:</span><br><span class="line">    1139:	48 39 f7             	cmp    %rsi,%rdi</span><br><span class="line">    113c:	7d 07                	jge    1145 &lt;absdiff_se+0xc&gt;</span><br><span class="line">    113e:	48 89 f0             	mov    %rsi,%rax</span><br><span class="line">    1141:	48 29 f8             	sub    %rdi,%rax</span><br><span class="line">    1144:	c3                   	ret</span><br><span class="line">    1145:	48 89 f8             	mov    %rdi,%rax</span><br><span class="line">    1148:	48 29 f0             	sub    %rsi,%rax</span><br><span class="line">    114b:	c3                   	ret</span><br><span class="line">    114b:	c3                   	ret</span><br></pre></td></tr></table></figure>
+
+<p><code>cmp</code>指令为比较。带符号的如下。在<code>linux</code>中采用<code>AT&amp;T</code>风格，前面为源操作数，后面为目的操作数。同时，我们知道参数有相应寄存器存储，第一个在<code>rdi</code>，第二个在<code>rsi</code>。所以此处为<code>x &lt; y</code>得到  <code>SF ≠ OF</code></p>
+<table>
+<thead>
+<tr>
+<th>CMP结果</th>
+<th>标志位</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目的操作数 ＜ 源操作数</td>
+<td>SF ≠ OF</td>
+</tr>
+<tr>
+<td>目的操作数 ＞ 源操作数</td>
+<td>SF &#x3D; OF</td>
+</tr>
+<tr>
+<td>目的操作数 &#x3D; 源操作数</td>
+<td>ZF &#x3D; 1</td>
+</tr>
+</tbody></table>
+<p>同时有下表</p>
+<table>
+<thead>
+<tr>
+<th>Instruction</th>
+<th>Jump Condition</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>jg</code> Label</td>
+<td><code>~(SF^OF)&amp;~ZF</code></td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td><code>jge</code> Label</td>
+<td><code>~(SF^OF)</code></td>
+<td>&gt;&#x3D;</td>
+</tr>
+<tr>
+<td><code>jl</code> Label</td>
+<td><code>SF^OF</code></td>
+<td>&lt;</td>
+</tr>
+<tr>
+<td><code>jle</code> Label</td>
+<td><code>(SF^OF) or ZF</code></td>
+<td>&lt;&#x3D;</td>
+</tr>
+</tbody></table>
+<p>此时SF≠OF，异或之后为1，非之后为0。也就是说当x&lt;y的时候会进行跳转操作，跳转到1145处进行y-x之后<code>ret</code>。当x&gt;y的时候不跳转，会进行x-y并<code>ret</code></p>
+<h2 id="cmov"><a href="#cmov" class="headerlink" title="cmov"></a><code>cmov</code></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> <span class="title function_">cmovdiff_se</span><span class="params">(<span class="type">long</span> x, <span class="type">long</span> y)</span>&#123;</span><br><span class="line">    <span class="type">long</span> rval = y-x;</span><br><span class="line">    <span class="type">long</span> eval = x - y;</span><br><span class="line">    <span class="type">long</span> ntest = (x &gt;= y);</span><br><span class="line">    <span class="keyword">if</span>(ntest) rval = eval;</span><br><span class="line">    <span class="keyword">return</span> rval;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>汇编如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">0000000000001160 &lt;cmovdiff_se&gt;:</span><br><span class="line">    1160:	48 89 f2             	mov    %rsi,%rdx</span><br><span class="line">    1163:	48 89 f8             	mov    %rdi,%rax</span><br><span class="line">    1166:	48 29 fa             	sub    %rdi,%rdx</span><br><span class="line">    1169:	48 29 f0             	sub    %rsi,%rax</span><br><span class="line">    116c:	48 39 fe             	cmp    %rdi,%rsi</span><br><span class="line">    116f:	48 0f 4f c2          	cmovg  %rdx,%rax</span><br><span class="line">    1173:	c3                   	ret</span><br></pre></td></tr></table></figure>
+
+<p>这个是直接算出来y-x与x-y，之后<code>cmp</code>得到标志码之后，使用<code>cmov</code>这个条件移动指令。</p>
+<table>
+<thead>
+<tr>
+<th>Instruction</th>
+<th>Move Condition</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>cmovg</code> S,R</td>
+<td><code>~(SF^OF)&amp;~ZF</code></td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td><code>cmovge</code> S,R</td>
+<td><code>~(SF^OF)</code></td>
+<td>&gt;&#x3D;</td>
+</tr>
+<tr>
+<td><code>cmovl</code> S,R</td>
+<td><code>SF^OF</code></td>
+<td>&lt;</td>
+</tr>
+<tr>
+<td><code>cmovle</code> S,R</td>
+<td><code>(SF^OF) or ZF</code></td>
+<td>&lt;&#x3D;</td>
+</tr>
+</tbody></table>
+<p>通过比较<code>rdx</code>(<code>rsi</code>,y)与<code>rax</code>(<code>rdi</code>,x)中的值，即比较x&gt;y若成立，将<code>rdx</code>中的值移动到<code>rax</code>中，即 y-x 变为 x-y。</p>
+<h3 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h3><p>现代处理器通过流水线来获得高性能。当遇到跳转指令时，处理器会根据分支预测器来猜测每条跳转指令是否执行。当发生错误预测的时候，会浪费大量的时间，导致程序性能严重下降。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/10/19/CSAPP-lab2/">http://gazettm.github.io/2025/10/19/CSAPP-lab2/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/CSAPP/"># CSAPP</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/10/10/%E6%8A%BD%E5%8D%A1%E6%9C%9F%E6%9C%9B%E8%AE%A1%E7%AE%97/">抽卡期望计算</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
