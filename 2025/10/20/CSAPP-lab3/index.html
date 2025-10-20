@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>CSAPP_lab3 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">CSAPP_lab3</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十月 20, 2025&nbsp;&nbsp;15:55:10</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CSAPP/">CSAPP</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="CSAPP-lab3"><a href="#CSAPP-lab3" class="headerlink" title="CSAPP_lab3"></a>CSAPP_lab3</h1><h2 id="loop"><a href="#loop" class="headerlink" title="loop"></a><code>loop</code></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> <span class="title function_">fact_do</span><span class="params">(<span class="type">long</span> n)</span>&#123;</span><br><span class="line">    <span class="type">long</span> result = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">do</span>&#123;</span><br><span class="line">        result *= n;</span><br><span class="line">        n = n<span class="number">-1</span>;</span><br><span class="line">    &#125;<span class="keyword">while</span>(n &gt; <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>汇编如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">0000000000001140 &lt;fact_do&gt;:</span><br><span class="line">    1140:	b8 01 00 00 00       	mov    $0x1,%eax</span><br><span class="line">    1145:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)</span><br><span class="line">    114c:	00 00 00 00 </span><br><span class="line">    1150:	48 0f af c7          	imul   %rdi,%rax</span><br><span class="line">    1154:	48 83 ef 01          	sub    $0x1,%rdi</span><br><span class="line">    1158:	48 83 ff 01          	cmp    $0x1,%rdi</span><br><span class="line">    115c:	7f f2                	jg     1150 &lt;fact_do+0x10&gt;</span><br><span class="line">    115e:	c3                   	ret</span><br></pre></td></tr></table></figure>
+
+<p><code>data16 cs nopw 0x0(%rax,%rax,1)</code></p>
+<p>这一段比较特殊用于对齐，不讨论。</p>
+<p>首先参数n存储在rdi中。吧0x1进入<code>eax</code>寄存器中，然后把<code>rdi</code>乘入<code>rax</code>中，再n-1，检查<code>rdi</code>是否大于1，再根据标志码寄存器的值判断是否jg跳转到1150位置。循环本质上就是通过条件测试与跳转的结合来实现的。</p>
+<h2 id="switch"><a href="#switch" class="headerlink" title="switch"></a><code>switch</code></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">time</span><span class="params">(<span class="type">int</span> day)</span>&#123;</span><br><span class="line"><span class="keyword">switch</span> (day) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">3</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">4</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">5</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">5</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">6</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">6</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">7</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">7</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>汇编如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">0000000000001149 &lt;time&gt;:</span><br><span class="line">    1149:	89 f8                	mov    %edi,%eax</span><br><span class="line">    114b:	83 ff 07             	cmp    $0x7,%edi</span><br><span class="line">    114e:	77 12                	ja     1162 &lt;time+0x19&gt;</span><br><span class="line">    1150:	89 fa                	mov    %edi,%edx</span><br><span class="line">    1152:	48 8d 0d ab 0e 00 00 	lea    0xeab(%rip),%rcx        # 2004 &lt;_IO_stdin_used+0x4&gt;</span><br><span class="line">    1159:	48 63 14 91          	movslq (%rcx,%rdx,4),%rdx</span><br><span class="line">    115d:	48 01 ca             	add    %rcx,%rdx</span><br><span class="line">    1160:	ff e2                	jmp    *%rdx</span><br><span class="line">    1162:	b8 00 00 00 00       	mov    $0x0,%eax</span><br><span class="line">    1167:	c3                   	ret</span><br></pre></td></tr></table></figure>
+
+<p>(此处使用的是int所以是edi)将<code>edi</code>移入<code>eax</code>中，比较day是否大于7，这里考虑了默认范围，若不在默认范围直接返回了0。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1150:	89 fa                	mov    %edi,%edx</span><br><span class="line">1152:	48 8d 0d ab 0e 00 00 	lea    0xeab(%rip),%rcx        # 2004 &lt;_IO_stdin_used+0x4&gt;</span><br><span class="line">1159:	48 63 14 91          	movslq (%rcx,%rdx,4),%rdx</span><br><span class="line">115d:	48 01 ca             	add    %rcx,%rdx</span><br><span class="line">1160:	ff e2                	jmp    *%rdx</span><br></pre></td></tr></table></figure>
+
+<p>这里则是switch的核心部分跳转表。day作为索引存入edx，lea指令加载跳转表基地址到<code>rcx</code>中，计算公式为</p>
+<p><code>    1152:	48 8d 0d ab 0e 00 00  lea    0xeab(%rip),%rcx</code> 为<code>rip</code>当前指令下一个的地址值 加上0xeab，即为0x1159 + 0xeab &#x3D; 0x2004，0x2004为跳转表基地址，被加载到<code>rcx</code>寄存器中</p>
+<p>movslq从表中读取了偏移量，从<code>rcx + rdx*4</code>读取一个32位地址的值，并扩展64位到rdx中，得到目标<strong>相对偏移量</strong>。</p>
+<p>之后<strong>相对偏移量</strong> + 基地址<code>rcx</code>中的值得到<strong>绝对地址</strong>，之后跳转到绝对地址。</p>
+<p>跳转表在<code>0x2004</code>，内容可能是这样的：</p>
+<table>
+<thead>
+<tr>
+<th align="left">地址</th>
+<th align="left">day值</th>
+<th align="left">偏移量</th>
+<th align="left">目标地址</th>
+<th align="left">对应case</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">0x2004</td>
+<td align="left">0</td>
+<td align="left">0xFFFFFFXX</td>
+<td align="left">0x1162</td>
+<td align="left">default</td>
+</tr>
+<tr>
+<td align="left">0x2008</td>
+<td align="left">1</td>
+<td align="left">0x000000XX</td>
+<td align="left">case1地址</td>
+<td align="left">case 1</td>
+</tr>
+<tr>
+<td align="left">0x200C</td>
+<td align="left">2</td>
+<td align="left">0x000000XX</td>
+<td align="left">case2地址</td>
+<td align="left">case 2</td>
+</tr>
+<tr>
+<td align="left">…</td>
+<td align="left">…</td>
+<td align="left">…</td>
+<td align="left">…</td>
+<td align="left">…</td>
+</tr>
+<tr>
+<td align="left">0x201C</td>
+<td align="left">7</td>
+<td align="left">0x000000XX</td>
+<td align="left">case7地址</td>
+<td align="left">case 7</td>
+</tr>
+</tbody></table>
+<p>根据跳转表跳转的地址来处理eax中的值并返回。</p>
+<p>此处由于在<code>case day</code>的情况下返回了<code>day</code>，所以被优化了，从跳转表来看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">0000000000002000 &lt;_IO_stdin_used&gt;:</span><br><span class="line">    2000:	01 00                	add    %eax,(%rax)</span><br><span class="line">    2002:	02 00                	add    (%rax),%al</span><br><span class="line">    2004:	5e                   	pop    %rsi</span><br><span class="line">    2005:	f1                   	int1</span><br><span class="line">    2006:	ff                   	(bad)</span><br><span class="line">    2007:	ff 63 f1             	jmp    *-0xf(%rbx)</span><br><span class="line">    200a:	ff                   	(bad)</span><br><span class="line">    200b:	ff 63 f1             	jmp    *-0xf(%rbx)</span><br><span class="line">    200e:	ff                   	(bad)</span><br><span class="line">    200f:	ff 63 f1             	jmp    *-0xf(%rbx)</span><br><span class="line">    2012:	ff                   	(bad)</span><br><span class="line">    2013:	ff 63 f1             	jmp    *-0xf(%rbx)</span><br><span class="line">    2016:	ff                   	(bad)</span><br><span class="line">    2017:	ff 63 f1             	jmp    *-0xf(%rbx)</span><br><span class="line">    201a:	ff                   	(bad)</span><br><span class="line">    201b:	ff 63 f1             	jmp    *-0xf(%rbx)</span><br><span class="line">    201e:	ff                   	(bad)</span><br><span class="line">    201f:	ff 63 f1             	jmp    *-0xf(%rbx)</span><br><span class="line">    2022:	ff                   	(bad)</span><br><span class="line">    2023:	ff 00                	incl   (%rax)</span><br><span class="line">    2025:	00 00                	add    %al,(%rax)</span><br><span class="line">    2027:	00 45 6e             	add    %al,0x6e(%rbp)</span><br><span class="line">    202a:	74 65                	je     2091 &lt;__GNU_EH_FRAME_HDR+0x39&gt;</span><br><span class="line">    202c:	72 20                	jb     204e &lt;_IO_stdin_used+0x4e&gt;</span><br><span class="line">    202e:	61                   	(bad)</span><br><span class="line">    202f:	20 6e 75             	and    %ch,0x75(%rsi)</span><br><span class="line">    2032:	6d                   	insl   (%dx),%es:(%rdi)</span><br><span class="line">    2033:	62 65 72 20 74       	(bad)</span><br><span class="line">    2038:	6f                   	outsl  %ds:(%rsi),(%dx)</span><br><span class="line">    2039:	20 73 68             	and    %dh,0x68(%rbx)</span><br><span class="line">    203c:	6f                   	outsl  %ds:(%rsi),(%dx)</span><br><span class="line">    203d:	77 20                	ja     205f &lt;__GNU_EH_FRAME_HDR+0x7&gt;</span><br><span class="line">    203f:	74 68                	je     20a9 &lt;__GNU_EH_FRAME_HDR+0x51&gt;</span><br><span class="line">    2041:	65 20 74 69 6d       	and    %dh,%gs:0x6d(%rcx,%rbp,2)</span><br><span class="line">    2046:	65 00 25 64 00 74 6f 	add    %ah,%gs:0x6f740064(%rip)        # 6f7420b1 &lt;_end+0x6f73e089&gt;</span><br><span class="line">    204d:	64 61                	fs (bad)</span><br><span class="line">    204f:	79 20                	jns    2071 &lt;__GNU_EH_FRAME_HDR+0x19&gt;</span><br><span class="line">    2051:	69 73 20 25 64 0a 00 	imul   $0xa6425,0x20(%rbx),%esi</span><br></pre></td></tr></table></figure>
+
+<p>拆开来看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">2004: 5e f1 ff ff           # day=0的偏移量</span><br><span class="line">2008: 63 f1 ff ff           # day=1的偏移量  </span><br><span class="line">200c: 63 f1 ff ff           # day=2的偏移量</span><br><span class="line">2010: 63 f1 ff ff           # day=3的偏移量</span><br><span class="line">2014: 63 f1 ff ff           # day=4的偏移量</span><br><span class="line">2018: 63 f1 ff ff           # day=5的偏移量</span><br><span class="line">201c: 63 f1 ff ff           # day=6的偏移量</span><br><span class="line">2020: 63 f1 ff ff           # day=7的偏移量</span><br></pre></td></tr></table></figure>
+
+<p>可见day为1到7的时候，被偏移量相同<code>0x2004 + 0xfffff163 = 0x2004 - 0xe9d = 0x1167</code></p>
+<p>跳转到1167，即为<code>ret</code>指令。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/10/20/CSAPP-lab3/">http://gazettm.github.io/2025/10/20/CSAPP-lab3/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/CSAPP/"># CSAPP</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/10/19/CSAPP-lab2/">CSAPP_lab2</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
