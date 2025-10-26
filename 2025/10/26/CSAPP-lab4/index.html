@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>CSAPP-lab4 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">CSAPP-lab4</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十月 26, 2025&nbsp;&nbsp;17:21:22</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CSAPP/">CSAPP</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="CSAPP-lab4"><a href="#CSAPP-lab4" class="headerlink" title="CSAPP-lab4"></a>CSAPP-lab4</h1><p>过程</p>
+<h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stdio.h&quot;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">multstore</span><span class="params">(<span class="type">long</span> ,<span class="type">long</span>, <span class="type">long</span> *)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">long</span> d;</span><br><span class="line">    multstore(<span class="number">2</span>,<span class="number">3</span>,&amp;d);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;2 * 3 --&gt; %ld\n&quot;</span>,d);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">long</span> <span class="title function_">mult2</span><span class="params">(<span class="type">long</span> a,<span class="type">long</span> b)</span>&#123;</span><br><span class="line">    <span class="type">long</span> s = a * b;</span><br><span class="line">    <span class="keyword">return</span> s;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">multstore</span><span class="params">(<span class="type">long</span> x,<span class="type">long</span> y,<span class="type">long</span> *dest)</span>&#123;</span><br><span class="line">    <span class="type">long</span> t = mult2(x,y);</span><br><span class="line">    *dest = t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>汇编代码的主要函数如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">0000000000001139 &lt;main&gt;:</span><br><span class="line">#include &quot;stdio.h&quot;</span><br><span class="line">void multstore(long ,long, long *);</span><br><span class="line">int main()&#123;</span><br><span class="line">    1139:	55                   	push   %rbp</span><br><span class="line">    113a:	48 89 e5             	mov    %rsp,%rbp</span><br><span class="line">    113d:	48 83 ec 10          	sub    $0x10,%rsp</span><br><span class="line">    long d;</span><br><span class="line">    multstore(2,3,&amp;d);</span><br><span class="line">    1141:	48 8d 45 f8          	lea    -0x8(%rbp),%rax</span><br><span class="line">    1145:	48 89 c2             	mov    %rax,%rdx</span><br><span class="line">    1148:	be 03 00 00 00       	mov    $0x3,%esi</span><br><span class="line">    114d:	bf 02 00 00 00       	mov    $0x2,%edi</span><br><span class="line">    1152:	e8 41 00 00 00       	call   1198 &lt;multstore&gt;</span><br><span class="line">    printf(&quot;2 * 3 --&gt; %ld\n&quot;,d);</span><br><span class="line">    1157:	48 8b 45 f8          	mov    -0x8(%rbp),%rax</span><br><span class="line">    115b:	48 89 c6             	mov    %rax,%rsi</span><br><span class="line">    115e:	48 8d 05 9f 0e 00 00 	lea    0xe9f(%rip),%rax        # 2004 &lt;_IO_stdin_used+0x4&gt;</span><br><span class="line">    1165:	48 89 c7             	mov    %rax,%rdi</span><br><span class="line">    1168:	b8 00 00 00 00       	mov    $0x0,%eax</span><br><span class="line">    116d:	e8 be fe ff ff       	call   1030 &lt;printf@plt&gt;</span><br><span class="line">    return 0;</span><br><span class="line">    1172:	b8 00 00 00 00       	mov    $0x0,%eax</span><br><span class="line">&#125;</span><br><span class="line">    1177:	c9                   	leave</span><br><span class="line">    1178:	c3                   	ret</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">0000000000001179 &lt;mult2&gt;:</span><br><span class="line">long mult2(long a,long b)&#123;</span><br><span class="line">    1179:	55                   	push   %rbp</span><br><span class="line">    117a:	48 89 e5             	mov    %rsp,%rbp</span><br><span class="line">    117d:	48 89 7d e8          	mov    %rdi,-0x18(%rbp)</span><br><span class="line">    1181:	48 89 75 e0          	mov    %rsi,-0x20(%rbp)</span><br><span class="line">    long s = a * b;</span><br><span class="line">    1185:	48 8b 45 e8          	mov    -0x18(%rbp),%rax</span><br><span class="line">    1189:	48 0f af 45 e0       	imul   -0x20(%rbp),%rax</span><br><span class="line">    118e:	48 89 45 f8          	mov    %rax,-0x8(%rbp)</span><br><span class="line">    return s;</span><br><span class="line">    1192:	48 8b 45 f8          	mov    -0x8(%rbp),%rax</span><br><span class="line">&#125;</span><br><span class="line">    1196:	5d                   	pop    %rbp</span><br><span class="line">    1197:	c3                   	ret</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">0000000000001198 &lt;multstore&gt;:</span><br><span class="line">void multstore(long x,long y,long *dest)&#123;</span><br><span class="line">    1198:	55                   	push   %rbp</span><br><span class="line">    1199:	48 89 e5             	mov    %rsp,%rbp</span><br><span class="line">    119c:	48 83 ec 28          	sub    $0x28,%rsp</span><br><span class="line">    11a0:	48 89 7d e8          	mov    %rdi,-0x18(%rbp)</span><br><span class="line">    11a4:	48 89 75 e0          	mov    %rsi,-0x20(%rbp)</span><br><span class="line">    11a8:	48 89 55 d8          	mov    %rdx,-0x28(%rbp)</span><br><span class="line">    long t = mult2(x,y);</span><br><span class="line">    11ac:	48 8b 55 e0          	mov    -0x20(%rbp),%rdx</span><br><span class="line">    11b0:	48 8b 45 e8          	mov    -0x18(%rbp),%rax</span><br><span class="line">    11b4:	48 89 d6             	mov    %rdx,%rsi</span><br><span class="line">    11b7:	48 89 c7             	mov    %rax,%rdi</span><br><span class="line">    11ba:	e8 ba ff ff ff       	call   1179 &lt;mult2&gt;</span><br><span class="line">    11bf:	48 89 45 f8          	mov    %rax,-0x8(%rbp)</span><br><span class="line">    *dest = t;</span><br><span class="line">    11c3:	48 8b 45 d8          	mov    -0x28(%rbp),%rax</span><br><span class="line">    11c7:	48 8b 55 f8          	mov    -0x8(%rbp),%rdx</span><br><span class="line">    11cb:	48 89 10             	mov    %rdx,(%rax)</span><br><span class="line">&#125;</span><br><span class="line">    11ce:	90                   	nop</span><br><span class="line">    11cf:	c9                   	leave</span><br><span class="line">    11d0:	c3                   	ret</span><br></pre></td></tr></table></figure>
+
+<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p><code>call</code>:将下一条指令的返回地址压入栈，跳入到函数的起始地址，被调用函数执行，返回值存入寄存器，<code>pop</code>释放栈帧之后返回到返回地址。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">multstore(2,3,&amp;d);</span><br><span class="line">    1141:	48 8d 45 f8          	lea    -0x8(%rbp),%rax</span><br><span class="line">    1145:	48 89 c2             	mov    %rax,%rdx</span><br><span class="line">    1148:	be 03 00 00 00       	mov    $0x3,%esi</span><br><span class="line">    114d:	bf 02 00 00 00       	mov    $0x2,%edi</span><br><span class="line">    1152:	e8 41 00 00 00       	call   1198 &lt;multstore&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这段指令计算了<code>rbp</code>-8的地址，即为<code>d</code>存储的地址，将其存入<code>rax</code>寄存器中。之后由于是传输地址<code>&amp;</code>，于是把地址存入寄存器<code>rdx</code>中。先将最后面的参数0x3进入<code>esi</code>中，再将0x2进入<code>edi</code>寄存器中。在取数据的时候顺序相反。之后调用地址在1198处的函数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">0000000000001198 &lt;multstore&gt;:</span><br><span class="line">void multstore(long x,long y,long *dest)&#123;</span><br><span class="line">    1198:	55                   	push   %rbp</span><br><span class="line">    1199:	48 89 e5             	mov    %rsp,%rbp</span><br><span class="line">    119c:	48 83 ec 28          	sub    $0x28,%rsp</span><br><span class="line">    11a0:	48 89 7d e8          	mov    %rdi,-0x18(%rbp);(0x2)</span><br><span class="line">    11a4:	48 89 75 e0          	mov    %rsi,-0x20(%rbp);(0x3)</span><br><span class="line">    11a8:	48 89 55 d8          	mov    %rdx,-0x28(%rbp)</span><br><span class="line">    long t = mult2(x,y);</span><br><span class="line">    11ac:	48 8b 55 e0          	mov    -0x20(%rbp),%rdx</span><br><span class="line">    11b0:	48 8b 45 e8          	mov    -0x18(%rbp),%rax</span><br><span class="line">    11b4:	48 89 d6             	mov    %rdx,%rsi</span><br><span class="line">    11b7:	48 89 c7             	mov    %rax,%rdi</span><br><span class="line">    11ba:	e8 ba ff ff ff       	call   1179 &lt;mult2&gt;</span><br><span class="line">    11bf:	48 89 45 f8          	mov    %rax,-0x8(%rbp)</span><br><span class="line">    *dest = t;</span><br><span class="line">    11c3:	48 8b 45 d8          	mov    -0x28(%rbp),%rax</span><br><span class="line">    11c7:	48 8b 55 f8          	mov    -0x8(%rbp),%rdx</span><br><span class="line">    11cb:	48 89 10             	mov    %rdx,(%rax)</span><br><span class="line">&#125;</span><br><span class="line">    11ce:	90                   	nop</span><br><span class="line">    11cf:	c9                   	leave</span><br><span class="line">    11d0:	c3                   	ret</span><br></pre></td></tr></table></figure>
+
+<p>这里调用了<code>multstore</code>函数，启用保护，将原先的<code>rbp</code>的值压入栈中，再使用栈为局部变量x，y分配新的空间。此时栈底指针<code>rbp</code>指向该函数的空间底部。将第一个，第二个参数压入现在的栈中，再将<code>rdx</code>中的地址放入<code>rbp</code>偏移量为-0x28的地方。此时的栈空间</p>
+<table>
+<thead>
+<tr>
+<th>原ebp</th>
+<th>main函数栈底</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>栈中内容</td>
+</tr>
+<tr>
+<td>原esp</td>
+<td>call指令压入的下一条指令的返回地址</td>
+</tr>
+<tr>
+<td>新ebp</td>
+<td>新分配的栈帧底</td>
+</tr>
+<tr>
+<td></td>
+<td>栈中内容</td>
+</tr>
+<tr>
+<td>新esp</td>
+<td>……</td>
+</tr>
+</tbody></table>
+<p>同样之后把数据进入自己的栈之后调用<code>mult2</code>函数也会分配新的空间。进行运算完毕之后，会将返回值<code>rax</code>压入<code>rbp</code>-8的地址，将<code>t</code>赋值为6。下一个语句中，把r<code>bp</code>-28即变量<code>d</code>的地址放入了<code>rax</code>寄存器中，将<code>t</code>放入<code>rdx</code>寄存器中，之后把t中的值放入<code>rax</code>所指向的地址，完成了指针操作。<code>leave</code>操作恢复栈顶指针与栈底指针的位置，<code>ret</code>指令返回到调用该函数的地方。这样我们就完成了一整个程序的过程。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/10/26/CSAPP-lab4/">http://gazettm.github.io/2025/10/26/CSAPP-lab4/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/CSAPP/"># CSAPP</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/10/20/CSAPP-lab3/">CSAPP_lab3</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
