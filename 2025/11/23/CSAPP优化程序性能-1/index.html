@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>CSAPP优化程序性能_1 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">CSAPP优化程序性能_1</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 23, 2025&nbsp;&nbsp;16:49:37</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CSAPP/">CSAPP</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="CSAPP优化程序性能-1"><a href="#CSAPP优化程序性能-1" class="headerlink" title="CSAPP优化程序性能_1"></a>CSAPP优化程序性能_1</h1><p>注:采用<code>Og</code>优化</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>在现代编译器中写代码，最重要的目的就是位了能够正常工作，在此基础上尽可能运行的快。</p>
+<p>编写高效程序需要做到以下几点</p>
+<ol>
+<li>选择一组适当的算法和数据结构</li>
+<li>编写出编译器能够有效优化以转换成高效可执行代码的源代码</li>
+<li>针对处理运算量特别大的计算，把一个任务分成多个部分</li>
+</ol>
+<h2 id="理解编译器的能力与局限性"><a href="#理解编译器的能力与局限性" class="headerlink" title="理解编译器的能力与局限性"></a>理解编译器的能力与局限性</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">twiddle1</span><span class="params">(<span class="type">long</span> *xp, <span class="type">long</span> *yp)</span>&#123;</span><br><span class="line">	*xp += *yp;</span><br><span class="line">	*xp += *yp;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">twiddle2</span><span class="params">(<span class="type">long</span> *xp, <span class="type">long</span> *yp)</span>&#123;</span><br><span class="line">	*xp += *yp * <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>看上去这两个过程有相同行为，都是将存储在指针<code>yp</code>中的值加到指针<code>xp</code>中。而且函数2效率更高，只要求读三次内存引用，而函数1需要六次。但是，当<code>xp</code>与<code>yp</code>指向同一段内存的时候，第一个函数会将结果变成四倍，第二个函数则是三倍。</p>
+<p>这种情况称为<strong>内存别名使用</strong></p>
+<p>由于可能出现错误，所以编译器不会把第二个代码作为第一段代码的优化情况。</p>
+<h2 id="表示程序性能"><a href="#表示程序性能" class="headerlink" title="表示程序性能"></a>表示程序性能</h2><p>我们引入度量标准镁元素的周期数 Cycles Per Element，CPE来作为一种表示程序性能并指导我们改进代码的方法。</p>
+<h2 id="循环展开"><a href="#循环展开" class="headerlink" title="循环展开"></a>循环展开</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">func1</span><span class="params">(<span class="type">int</span> a[])</span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt; <span class="number">10001</span>;i++)&#123;</span><br><span class="line">		a[i] = test[i<span class="number">-1</span>] + test[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">func2</span><span class="params">(<span class="type">int</span> a[])</span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt; <span class="number">10001</span>;i += <span class="number">5</span>)&#123;</span><br><span class="line">		a[i] = test[i<span class="number">-1</span>] + test[i];</span><br><span class="line">		a[i+<span class="number">1</span>] = test[i] + test[i+<span class="number">1</span>];</span><br><span class="line">		a[i+<span class="number">2</span>] = test[i+<span class="number">1</span>] + test[i+<span class="number">2</span>];</span><br><span class="line">		a[i+<span class="number">3</span>] = test[i+<span class="number">2</span>] + test[i+<span class="number">3</span>];</span><br><span class="line">		a[i+<span class="number">4</span>] = test[i+<span class="number">3</span>] + test[i+<span class="number">4</span>];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于上面两段代码，对数组中的元年苏进行了加法运算。</p>
+<p>从计算机内部来看，for循环每次都要跳转（汇编中的<code>jxx</code>指令），当我们循环展开，即在一个循环中计算多个值，会提升代码的运行效率。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;random&gt;</span></span></span><br><span class="line"><span class="type">int</span> test[<span class="number">10002</span>];</span><br><span class="line"><span class="type">int</span> res1[<span class="number">10002</span>];</span><br><span class="line"><span class="type">int</span> res2[<span class="number">10002</span>];</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func1</span><span class="params">(<span class="type">int</span> a[])</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt; <span class="number">10001</span>;i++)&#123;</span><br><span class="line">		a[i] = test[i<span class="number">-1</span>] + test[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func2</span><span class="params">(<span class="type">int</span> a[])</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt; <span class="number">10001</span>;i += <span class="number">5</span>)&#123;</span><br><span class="line">		a[i] = test[i<span class="number">-1</span>] + test[i];</span><br><span class="line">		a[i<span class="number">+1</span>] = test[i] + test[i<span class="number">+1</span>];</span><br><span class="line">		a[i<span class="number">+2</span>] = test[i<span class="number">+1</span>] + test[i<span class="number">+2</span>];</span><br><span class="line">		a[i<span class="number">+3</span>] = test[i<span class="number">+2</span>] + test[i<span class="number">+3</span>];</span><br><span class="line">		a[i<span class="number">+4</span>] = test[i<span class="number">+3</span>] + test[i<span class="number">+4</span>];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; <span class="number">10002</span>;i++)&#123;</span><br><span class="line">		test[i] = <span class="built_in">rand</span>() % <span class="number">1000</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">auto</span> start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">func1</span>(res1);</span><br><span class="line">	cout&lt;&lt;res1[<span class="number">9998</span>];</span><br><span class="line">	<span class="keyword">auto</span> end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="keyword">auto</span> duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;代码执行时间: &quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">func2</span>(res2);</span><br><span class="line">	cout&lt;&lt;res2[<span class="number">9998</span>];</span><br><span class="line">	end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;代码执行时间: &quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我们使用<code>cpp</code>来测试一下运行效率，得到如下输出。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1426</span>代码执行时间: <span class="number">284500</span> 纳秒</span><br><span class="line"><span class="number">1426</span>代码执行时间: <span class="number">62500</span> 纳秒</span><br></pre></td></tr></table></figure>
+
+<h2 id="循环不变代码外提"><a href="#循环不变代码外提" class="headerlink" title="循环不变代码外提"></a>循环不变代码外提</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> IDENT 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OP +</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> <span class="type">data_t</span> ;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	<span class="type">long</span> len;</span><br><span class="line">	<span class="type">data_t</span> *data;</span><br><span class="line">&#125;vec_rec, *vec_ptr;</span><br><span class="line"></span><br><span class="line"><span class="type">long</span> <span class="title function_">vec_length</span><span class="params">(vec_ptr v)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (*v).len;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">get_vec_element</span><span class="params">(vec_ptr v,<span class="type">long</span> index,<span class="type">data_t</span> *val)</span>&#123;</span><br><span class="line">	*val = *((*v).data + index);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">combine1</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; vec_length(v);i &lt; len;i++)&#123;</span><br><span class="line">		<span class="type">data_t</span> val;</span><br><span class="line">		get_vec_element(v,i,&amp;val);</span><br><span class="line">		*dest = *dest OP val;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于这样的代码，在函数<code>combine1</code>中，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; vec_length(v);i &lt; len;i++)&#123;</span><br><span class="line">		<span class="type">data_t</span> val;</span><br><span class="line">		get_vec_element(v,i,&amp;val);</span><br><span class="line">		*dest = *dest OP val;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该循环每次运行都会重新调用<code>vec_length</code>函数，导致效率变低。</p>
+<p>我们可以再定义一个变量，来代替在循环中不变的值，这样就不必每次都重新计算长度。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">combine2</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span>&#123;</span><br><span class="line">	<span class="type">long</span> i,len;</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>,len = vec_length(v);i &lt; len;i++)&#123;</span><br><span class="line">		<span class="type">data_t</span> val;</span><br><span class="line">		get_vec_element(v,i,&amp;val);</span><br><span class="line">		*dest = *dest OP val;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">combine1:17444700 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine2</span>:10113000 纳秒</span></span><br></pre></td></tr></table></figure>
+
+<p>CSAPP书上给出，当使用如下代码的<code>lower1</code>和<code>lower2</code>时，效率将会天差地别。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">lower1</span><span class="params">(<span class="type">char</span> *s)</span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; <span class="built_in">strlen</span>(s);i++)&#123;</span><br><span class="line">		<span class="keyword">if</span>(s[i] &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; s[i] &lt;- <span class="string">&#x27;Z&#x27;</span>)</span><br><span class="line">			s[i] -= (<span class="string">&#x27;A&#x27;</span> - <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">lower2</span><span class="params">(<span class="type">char</span> *s)</span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> len = <span class="built_in">strlen</span>(s);</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">		<span class="keyword">if</span>(s[i] &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; s[i] &lt;- <span class="string">&#x27;Z&#x27;</span>)</span><br><span class="line">			s[i] -= (<span class="string">&#x27;A&#x27;</span> - <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">size_t</span> <span class="title function_">strlen</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *s)</span>&#123;</span><br><span class="line">	<span class="type">long</span> length = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(*s != <span class="string">&#x27;\0&#x27;</span>)&#123;</span><br><span class="line">		s++;</span><br><span class="line">		length++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> length;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当个对于一个长度位1048576的字符串，函数2只需要0.2毫秒，而函数1竟然需要17分钟。（数据来源CSAPP page352）</p>
+<h2 id="消除不必要的内存引用"><a href="#消除不必要的内存引用" class="headerlink" title="消除不必要的内存引用"></a>消除不必要的内存引用</h2><p>我们发现在combine2中依然有<code>get_vec_element</code>函数每次被调用，因此我们尝试消除这个函数的影响。</p>
+<p>我们获可以直接获取结构体中的数据，采用数组的方式来计算，这样就不必每次都调用函数访问内存。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">data_t</span>* <span class="title function_">get_vec_start</span><span class="params">(vec_ptr v)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (*v).data;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">combine3</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span>&#123;</span><br><span class="line">	<span class="type">long</span> i,len;</span><br><span class="line">	len = vec_length(v);</span><br><span class="line">	<span class="type">data_t</span> *data = get_vec_start(v);</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">		*dest = *dest OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们使用这个代码的时候</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">combine2:3983500 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine3</span>:4616800 纳秒</span></span><br></pre></td></tr></table></figure>
+
+<p>另外，在每次更新<code>dest</code>的时候需要访问<code>dest</code>的值。</p>
+<p>当我们再次改进之后</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">combine3_pro</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span>&#123;</span><br><span class="line">	<span class="type">long</span> i,len;</span><br><span class="line">	len = vec_length(v);</span><br><span class="line">	<span class="type">data_t</span> *data = get_vec_start(v);</span><br><span class="line">	<span class="type">data_t</span> acc = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">		acc = acc OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出(<code>Og</code>优化)</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">combine2:10131000 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine3</span>:3962500 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine3_pro</span>:2475800 纳秒</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IDENT 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OP +</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> chrono;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> <span class="type">data_t</span> ;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="type">long</span> len;</span><br><span class="line">	<span class="type">data_t</span> *data;</span><br><span class="line">&#125;vec_rec, *vec_ptr;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">long</span> <span class="title">vec_length</span><span class="params">(vec_ptr v)</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (*v).len;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">get_vec_element</span><span class="params">(vec_ptr v,<span class="type">long</span> index,<span class="type">data_t</span> *val)</span></span>&#123;</span><br><span class="line">	*val = *((*v).data + index);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">data_t</span>* <span class="title">get_vec_start</span><span class="params">(vec_ptr v)</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (*v).data;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine1</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span></span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; <span class="built_in">vec_length</span>(v);i++)&#123;</span><br><span class="line">		<span class="type">data_t</span> val;</span><br><span class="line">		<span class="built_in">get_vec_element</span>(v,i,&amp;val);</span><br><span class="line">		*dest = *dest OP val;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine2</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span></span>&#123;</span><br><span class="line">	<span class="type">long</span> i,len;</span><br><span class="line">	len = <span class="built_in">vec_length</span>(v);</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">		<span class="type">data_t</span> val;</span><br><span class="line">		<span class="built_in">get_vec_element</span>(v,i,&amp;val);</span><br><span class="line">		*dest = *dest OP val;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine3</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span></span>&#123;</span><br><span class="line">	<span class="type">long</span> i,len;</span><br><span class="line">	len = <span class="built_in">vec_length</span>(v);</span><br><span class="line">	<span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">		*dest = *dest OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine4</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span></span>&#123;</span><br><span class="line">	<span class="type">long</span> i,len;</span><br><span class="line">	len = <span class="built_in">vec_length</span>(v);</span><br><span class="line">	<span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line">	<span class="type">data_t</span> acc = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">		acc = acc OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="type">data_t</span> result;</span><br><span class="line">	vec_rec r;</span><br><span class="line">	r.len = <span class="number">10000000</span>;</span><br><span class="line">	r.data = <span class="keyword">new</span> <span class="type">data_t</span>[r.len];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span> ;i &lt; <span class="number">10000000</span>;i++)&#123;</span><br><span class="line">		*(r.data + i) = i + <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	vec_ptr v = &amp;r;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">auto</span> start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">combine1</span>(v,&amp;result);</span><br><span class="line">	<span class="keyword">auto</span> end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="keyword">auto</span> duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;combine1:&quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">combine2</span>(v,&amp;result);</span><br><span class="line">	end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;combine2:&quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">combine3</span>(v,&amp;result);</span><br><span class="line">	end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;combine3:&quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">combine4</span>(v,&amp;result);</span><br><span class="line">	end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;combine4:&quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">delete</span>[] r.data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">combine1:18251100 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine2</span>:10829200 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine3</span>:4922100 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine4</span>:2486200 纳秒</span></span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/11/23/CSAPP%E4%BC%98%E5%8C%96%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD-1/">http://gazettm.github.io/2025/11/23/CSAPP%E4%BC%98%E5%8C%96%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD-1/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/CSAPP/"># CSAPP</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/10/26/CSAPP-lab4/">CSAPP-lab4</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
