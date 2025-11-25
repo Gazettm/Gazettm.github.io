@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>CSAPP优化程序性能_2 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">CSAPP优化程序性能_2</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 25, 2025&nbsp;&nbsp;23:23:05</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CSAPP/">CSAPP</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="CSAPP优化程序性能-2"><a href="#CSAPP优化程序性能-2" class="headerlink" title="CSAPP优化程序性能_2"></a>CSAPP优化程序性能_2</h1><p>采用<code>Og</code>优化</p>
+<h2 id="循环展开"><a href="#循环展开" class="headerlink" title="循环展开"></a>循环展开</h2><p>这篇文章详细说明循环展开</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">combine5</span><span class="params">(vec_ptr v,<span class="type">data_t</span> *dest)</span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> length = vec_length(v);</span><br><span class="line">	<span class="type">long</span> limit = length - <span class="number">1</span>;</span><br><span class="line">	<span class="type">data_t</span> *data = get_vec_start(v);</span><br><span class="line">	<span class="type">data_t</span> acc = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; limit; i+= <span class="number">2</span>)&#123;</span><br><span class="line">		acc = (acc OP data[i]) OP data[i+<span class="number">1</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(; i &lt; length;i++)&#123;</span><br><span class="line">		acc = acc OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上一篇文章中，使用了<code>combine</code> 1，2，3，4等来优化程序，这次在上一篇文章的基础上继续优化。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.L35:</span><br><span class="line">	vmulsd (%rax, %rdx, 4), %xmm0, %xmm0</span><br><span class="line">	vmulsd 8(%rax, %rdx, 4), %xmm0, %xmm0</span><br><span class="line">	addq $2, %rdx</span><br><span class="line">	cmpq %rdx, %rbp</span><br><span class="line">	jg .L35</span><br></pre></td></tr></table></figure>
+
+<p>其中循环的索引值i存放在<code>rdx</code>中，<code>rbp</code>中存放循环的界限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    subgraph Register1</span><br><span class="line">		M1[%xmm0]</span><br><span class="line">		R1[%rdx]</span><br><span class="line">	end</span><br><span class="line">	</span><br><span class="line">	subgraph Operation</span><br><span class="line">		</span><br><span class="line">		L1(load) </span><br><span class="line">		MUL1(MUL)</span><br><span class="line">		L2(load)</span><br><span class="line">		MUL2(MUL)</span><br><span class="line">		ADD(add)</span><br><span class="line">	end</span><br><span class="line">	</span><br><span class="line">	subgraph Register2</span><br><span class="line">		M2[%xmm0]</span><br><span class="line">		R2[%rdx]</span><br><span class="line">	end</span><br><span class="line">	M1 --&gt; MUL1 --&gt; MUL2 --&gt; M2</span><br><span class="line">	R1 --&gt; L1 --&gt; MUL1</span><br><span class="line">	R1 --&gt; L2 --&gt; MUL2</span><br><span class="line">	R1 --&gt; ADD --&gt; R2</span><br></pre></td></tr></table></figure>
+
+<p>该图为数据流表示</p>
+<p>从该图可以看出<strong>关键路径</strong>是左边的乘法操作</p>
+<h2 id="并行"><a href="#并行" class="headerlink" title="并行"></a>并行</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">combine6</span><span class="params">(vec_ptr v,<span class="type">data_t</span> *dest)</span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> length = vec_length(v);</span><br><span class="line">	<span class="type">long</span> limit = length - <span class="number">1</span>;</span><br><span class="line">	<span class="type">data_t</span> *data = get_vec_start(v);</span><br><span class="line">	<span class="type">data_t</span> acc0 = IDENT;</span><br><span class="line">	<span class="type">data_t</span> acc1 = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; limit; i+= <span class="number">2</span>)&#123;</span><br><span class="line">		acc0 = acc0 OP data[i];</span><br><span class="line">		acc1 = acc1 OP data[i+<span class="number">1</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(; i &lt; length;i++)&#123;</span><br><span class="line">		acc0 = acc0 OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc0 OP acc1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2*2循环展开</p>
+<p>这种方法打破了延迟界限设下的限制，处理器不需要再等待前一个操作完成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    subgraph Register1</span><br><span class="line">		M1[%xmm0]</span><br><span class="line">		M3[%xmm1]</span><br><span class="line">		R1[%rdx]</span><br><span class="line">		</span><br><span class="line">	end</span><br><span class="line">subgraph Operation</span><br><span class="line">	</span><br><span class="line">	L1(load) </span><br><span class="line">	MUL1(MUL)</span><br><span class="line">	L2(load)</span><br><span class="line">	MUL2(MUL)</span><br><span class="line">	ADD(add)</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">subgraph Register2</span><br><span class="line">	M2[%xmm0]</span><br><span class="line">	M4[%xmm1]</span><br><span class="line">	R2[%rdx]</span><br><span class="line">end</span><br><span class="line">M1 --&gt; MUL1 --&gt; M2</span><br><span class="line">M3 --&gt; MUL2 --&gt; M4</span><br><span class="line">R1 --&gt; L1 --&gt; MUL1</span><br><span class="line">R1 --&gt; L2 --&gt; MUL2</span><br><span class="line">R1 --&gt; ADD --&gt; R2</span><br></pre></td></tr></table></figure>
+
+<p>这样每条关键路径的MUL操作减半，CPE从5.0降低到2.5</p>
+<p>这样的并行方法可以提升程序运行效率直至达到吞吐量极限。</p>
+<h2 id="重新结合变换"><a href="#重新结合变换" class="headerlink" title="重新结合变换"></a>重新结合变换</h2><p>此外在combine5的基础上</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">combine7</span><span class="params">(vec_ptr v,<span class="type">data_t</span> *dest)</span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> length = vec_length(v);</span><br><span class="line">	<span class="type">long</span> limit = length - <span class="number">1</span>;</span><br><span class="line">	<span class="type">data_t</span> *data = get_vec_start(v);</span><br><span class="line">	<span class="type">data_t</span> acc = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; limit; i+= <span class="number">2</span>)&#123;</span><br><span class="line">		acc = acc OP (data[i] OP data[i+<span class="number">1</span>]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(; i &lt; length;i++)&#123;</span><br><span class="line">		acc = acc OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样可以不需要等待上一个<code>acc</code>计算出来的结果。仅仅通过括号的改变便突破了延迟界限。</p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IDENT 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OP +</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> chrono;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> <span class="type">data_t</span> ;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="type">long</span> len;</span><br><span class="line">	<span class="type">data_t</span> *data;</span><br><span class="line">&#125;vec_rec, *vec_ptr;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">long</span> <span class="title">vec_length</span><span class="params">(vec_ptr v)</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (*v).len;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">get_vec_element</span><span class="params">(vec_ptr v,<span class="type">long</span> index,<span class="type">data_t</span> *val)</span></span>&#123;</span><br><span class="line">	*val = *((*v).data + index);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">data_t</span>* <span class="title">get_vec_start</span><span class="params">(vec_ptr v)</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (*v).data;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine1</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span></span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; <span class="built_in">vec_length</span>(v);i++)&#123;</span><br><span class="line">		<span class="type">data_t</span> val;</span><br><span class="line">		<span class="built_in">get_vec_element</span>(v,i,&amp;val);</span><br><span class="line">		*dest = *dest OP val;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine2</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span></span>&#123;</span><br><span class="line">	<span class="type">long</span> i,len;</span><br><span class="line">	len = <span class="built_in">vec_length</span>(v);</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">		<span class="type">data_t</span> val;</span><br><span class="line">		<span class="built_in">get_vec_element</span>(v,i,&amp;val);</span><br><span class="line">		*dest = *dest OP val;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine3</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span></span>&#123;</span><br><span class="line">	<span class="type">long</span> i,len;</span><br><span class="line">	len = <span class="built_in">vec_length</span>(v);</span><br><span class="line">	<span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line">	*dest = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">		*dest = *dest OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine4</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span></span>&#123;</span><br><span class="line">	<span class="type">long</span> i,len;</span><br><span class="line">	len = <span class="built_in">vec_length</span>(v);</span><br><span class="line">	<span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line">	<span class="type">data_t</span> acc = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">		acc = acc OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine5</span><span class="params">(vec_ptr v,<span class="type">data_t</span> *dest)</span></span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> length = <span class="built_in">vec_length</span>(v);</span><br><span class="line">	<span class="type">long</span> limit = length - <span class="number">1</span>;</span><br><span class="line">	<span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line">	<span class="type">data_t</span> acc = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; limit; i+= <span class="number">2</span>)&#123;</span><br><span class="line">		acc = (acc OP data[i]) OP data[i<span class="number">+1</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(; i &lt; length;i++)&#123;</span><br><span class="line">		acc = acc OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine6</span><span class="params">(vec_ptr v,<span class="type">data_t</span> *dest)</span></span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> length = <span class="built_in">vec_length</span>(v);</span><br><span class="line">	<span class="type">long</span> limit = length - <span class="number">1</span>;</span><br><span class="line">	<span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line">	<span class="type">data_t</span> acc0 = IDENT;</span><br><span class="line">	<span class="type">data_t</span> acc1 = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; limit; i+= <span class="number">2</span>)&#123;</span><br><span class="line">		acc0 = acc0 OP data[i];</span><br><span class="line">		acc1 = acc1 OP data[i<span class="number">+1</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(; i &lt; length;i++)&#123;</span><br><span class="line">		acc0 = acc0 OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc0 OP acc1;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine7</span><span class="params">(vec_ptr v,<span class="type">data_t</span> *dest)</span></span>&#123;</span><br><span class="line">	<span class="type">long</span> i;</span><br><span class="line">	<span class="type">long</span> length = <span class="built_in">vec_length</span>(v);</span><br><span class="line">	<span class="type">long</span> limit = length - <span class="number">1</span>;</span><br><span class="line">	<span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line">	<span class="type">data_t</span> acc = IDENT;</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; limit; i+= <span class="number">2</span>)&#123;</span><br><span class="line">		acc = acc <span class="built_in">OP</span> (data[i] OP data[i<span class="number">+1</span>]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(; i &lt; length;i++)&#123;</span><br><span class="line">		acc = acc OP data[i];</span><br><span class="line">	&#125;</span><br><span class="line">	*dest = acc;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="type">data_t</span> result;</span><br><span class="line">	vec_rec r;</span><br><span class="line">	r.len = <span class="number">10000000</span>;</span><br><span class="line">	r.data = <span class="keyword">new</span> <span class="type">data_t</span>[r.len];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span> ;i &lt; <span class="number">10000000</span>;i++)&#123;</span><br><span class="line">		*(r.data + i) = i + <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	vec_ptr v = &amp;r;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">auto</span> start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">combine1</span>(v,&amp;result);</span><br><span class="line">	<span class="keyword">auto</span> end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="keyword">auto</span> duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;combine1:&quot;</span>&lt;&lt;result&lt;&lt;<span class="string">&quot; &quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">combine2</span>(v,&amp;result);</span><br><span class="line">	end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;combine2:&quot;</span>&lt;&lt;result&lt;&lt;<span class="string">&quot; &quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">combine3</span>(v,&amp;result);</span><br><span class="line">	end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;combine3:&quot;</span>&lt;&lt;result&lt;&lt;<span class="string">&quot; &quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">combine4</span>(v,&amp;result);</span><br><span class="line">	end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;combine4:&quot;</span>&lt;&lt;result&lt;&lt;<span class="string">&quot; &quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">combine5</span>(v,&amp;result);</span><br><span class="line">	end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;combine5:&quot;</span>&lt;&lt;result&lt;&lt;<span class="string">&quot; &quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">combine6</span>(v,&amp;result);</span><br><span class="line">	end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;combine6:&quot;</span>&lt;&lt;result&lt;&lt;<span class="string">&quot; &quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	start = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="built_in">combine7</span>(v,&amp;result);</span><br><span class="line">	end = chrono::high_resolution_clock::<span class="built_in">now</span>();</span><br><span class="line">	duration = chrono::<span class="built_in">duration_cast</span>&lt;chrono::nanoseconds&gt;(end - start);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;combine7:&quot;</span>&lt;&lt;result&lt;&lt;<span class="string">&quot; &quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; 纳秒&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">delete</span>[] r.data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">combine1:-2004260032 17419100 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine2</span>:-2004260032 10052300 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine3</span>:-2004260032 2508100 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine4</span>:-2004260032 2210700 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine5</span>:-2004260032 2392700 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine6</span>:-2004260032 2545600 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine7</span>:-2004260032 2419400 纳秒</span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>Og</code>优化中，似乎并没有多大提升，这是因为：</p>
+<p>在 <code>-Og</code> 这种调试友好的优化级别下，复杂的优化策略（如多累积变量+循环展开）可能反而适得其反，因为：</p>
+<ol>
+<li>优化不够充分，无法发挥并行优势</li>
+<li>增加了额外的复杂性和开销</li>
+<li>寄存器分配不够智能</li>
+</ol>
+<p>在<code>O2</code>优化中，我们可以看到这样的输出</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">combine1:-2004260032 3887200 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine2</span>:-2004260032 4280400 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine3</span>:-2004260032 3171000 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine4</span>:-2004260032 2471500 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine5</span>:-2004260032 2103600 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine6</span>:-2004260032 1782700 纳秒</span></span><br><span class="line"><span class="function"><span class="title">combine7</span>:-2004260032 1866900 纳秒</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就更快了一点。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/11/25/CSAPP%E4%BC%98%E5%8C%96%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD-2/">http://gazettm.github.io/2025/11/25/CSAPP%E4%BC%98%E5%8C%96%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD-2/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/CSAPP/"># CSAPP</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/11/23/CSAPP%E4%BC%98%E5%8C%96%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD-1/">CSAPP优化程序性能_1</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
