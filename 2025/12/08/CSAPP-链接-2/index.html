@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>CSAPP-链接-2 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">CSAPP-链接-2</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 8, 2025&nbsp;&nbsp;16:18:19</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CSAPP/">CSAPP</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="CSAPP链接-2"><a href="#CSAPP链接-2" class="headerlink" title="CSAPP链接_2"></a>CSAPP链接_2</h1><h2 id="静态库的解析过程"><a href="#静态库的解析过程" class="headerlink" title="静态库的解析过程"></a>静态库的解析过程</h2><p>使用如下命令，可以让连接器从左到右按照命令行出现的顺序来扫描可重定位文件与静态库文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -static -o prog main.o ./libvector.a</span><br></pre></td></tr></table></figure>
+
+<p>例如图上内容，链接器先处理<code>main.o</code>再处理<code>libvector.a</code>最后会处理<code>libc.a</code>。由于连接器每次都会处理<code>libc.a</code>所以不需要显式地引用<code>libc.a</code>。</p>
+<p>在扫描的过程中连接器会维护三个集合分别是</p>
+<ul>
+<li>集合E：扫描过程中发现可重定位目标文件会放到这个集合中。这个集合中的文件最终会被合并起来形成可执行文件。</li>
+<li>集合U：连接器把引用了但是尚未定义的符号放在这个集合中，连接器在遇到静态库文件时会查找有这个符号的可重定位目标文件。若链接结束且该集合不为空会报错。</li>
+<li>集合D：存放输入文件中已经定义的符号。</li>
+</ul>
+<p>该命令对于目标文件和库文件的输入顺序非常重要。若我们更改顺序，将顺序变为</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> gcc -static -o prog ./libvector.a main.o</span><br></pre></td></tr></table></figure>
+
+<p>该链接将会失败。原因：当连接器处理<code>libvector.a</code>的时候，集合U是空的，会导致不做处理，进行下一步操作，而处理完<code>main.o</code>之后，集合U不为空，链接发生错误。</p>
+<p>所以在使用静态链接的过程中，文件的输入顺序十分重要。通常情况下把静态库放在结尾，若各个库的成员是相互独立的，那么顺序并不重要，但当静态库之间的成员发生了相互引用，那么不恰当的顺序会使链接发生错误。</p>
+<p>例如：<code>foo.c</code>调用<code>lib1.a</code>，而l<code>lib1.a</code>又调用了<code>lib2.a</code>，<code>lib2.a</code>中又调用了<code>lib1.a</code>，此时的命令如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc foo.c lib1.a lib2.a lib1.a</span><br></pre></td></tr></table></figure>
+
+<p>此时会显得臃肿且发麻烦，最好的办法是把<code>lib1</code>和<code>lib2</code>合并。</p>
+<h3 id="重定位"><a href="#重定位" class="headerlink" title="重定位"></a>重定位</h3><p>重定位步骤分为两步</p>
+<ul>
+<li>重定位<code>section</code>和符号定义</li>
+<li>重定位<code>section</code>中的符号引用</li>
+</ul>
+<p><code>main.c</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">sum</span><span class="params">(<span class="type">int</span> *a,<span class="type">int</span> n)</span>;</span><br><span class="line"><span class="type">int</span> <span class="built_in">array</span>[<span class="number">2</span>] = &#123;<span class="number">1</span>,<span class="number">2</span>&#125;;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">	<span class="type">int</span> val = sum(<span class="built_in">array</span>,<span class="number">2</span>);</span><br><span class="line">	<span class="keyword">return</span> val;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>sum.c</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">sum</span><span class="params">(<span class="type">int</span> *a,<span class="type">int</span> n)</span>&#123;</span><br><span class="line">	<span class="type">int</span> i, s = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">		s += a[i];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="重定位section和符号定义"><a href="#重定位section和符号定义" class="headerlink" title="重定位section和符号定义"></a>重定位<code>section</code>和符号定义</h3><h4 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h4><p>链接器将<code>main.o</code>和<code>sum.o</code>中所有相同类型的<code>section</code>合并为一个新的<code>section</code>（比如<code>.text</code>，<code>.data</code>）；</p>
+<p>新合成的<code>section</code>就是可执行文件的<code>section</code>。</p>
+<p>这一条完成之后，程序中每条地址和全局变量都有了唯一的运行时内存地址。</p>
+<h4 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h4><p>第二部是重定位<code>section</code>中的符号引用。</p>
+<p>例如函数<code>main</code>中调用函数<code>sum</code>，<code>call</code>在汇编中并未初始化，这一步中连接器需要修改对符号<code>sum</code>的引用，使其指向正确的运行地址。这一步中链接器还要依赖于可重定位条目的数据结构。</p>
+<p>可重定位条目：在汇编器生成可重定位目标文件的过程中，并不知道数据和代码最后会被放在内存的什么地方，除此之外，汇编器也不知道该模块所引用的外部定义的函数以及全局变量的位置。所以当汇编器遇到最终位置不确定的符号引用时，会生成可重定位条目，它的功能是用来告诉链接器在合成可执行文件的时候应该如何修改这个引用。关于代码的重定位条目存放在<code>.rel.text</code>中，关于已初始化数据的重定位条目存放在<code>.rel.data</code>中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0000000000000000&lt;main&gt;:</span><br><span class="line">  0:  48 83 ec 08       sub $0x8, %rsp</span><br><span class="line">  4:  be 02 00 00 00    mov $0x2, %esi</span><br><span class="line">  9:  bf 00 00 00 00    mov $0x0, %edi</span><br><span class="line">  e:  e8 00 00 00 00    callq 13&lt;main+13&gt;</span><br><span class="line">  13: 48 83 c4 08       add $0x8, %rsp</span><br><span class="line">  17: c3                retq</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，汇编器产生了两个重定位条目，一个是对<code>sum</code>的引用，另一个是对全局变量<code>array</code>的引用。</p>
+<h5 id="重定位相对引用"><a href="#重定位相对引用" class="headerlink" title="重定位相对引用"></a>重定位相对引用</h5><p>指令<code>call</code>的起始地址在字节偏移0xe的地方，0xe8表示<code>call</code>的操作码，在重定位之前，e8之后的数据被填充为0。对于<code>sum</code>的重定位条目，由四部分组成。</p>
+<ul>
+<li><code>r.offset</code> &#x3D; 0xf</li>
+<li><code>r.symbol</code> &#x3D; sum</li>
+<li><code>r.type</code> &#x3D; R_X86_64_PC32</li>
+<li><code>r.addend</code> &#x3D; -4</li>
+</ul>
+<p><code>ref_addr = ADDR(main) + r.offset</code></p>
+<p><code>*ref_ptr = ADDR(sum) - ref_addr + r.addend</code></p>
+<p>函数main的地址在重定位第一步可以得到，通过上面公式可以得到<code>sum</code>的地址填充到e8之后。</p>
+<p>若<code>main</code>的开始地址为0x4004d0，计算出来的<code>ref_addr</code>是<code>main</code>的值加上0xf，即e8之后的偏移量。至于为什么<code>addend</code>默认是-4，CPU执行<code>call</code>指令时，PC &#x3D; PC + <code>call</code>指令长度，已经指向下一个指令，所以在计算偏移量的时候要加上<code>r.addend</code>以保证不会掠过sum函数开始时的指令。</p>
+<p>(实际上就是指令e8为相对寻址，执行到该位置的时候使得PC加上操作数实现跳转到<code>sum</code>，而这个操作数是通过第二步计算出来的。)</p>
+<h5 id="重定位绝对引用"><a href="#重定位绝对引用" class="headerlink" title="重定位绝对引用"></a>重定位绝对引用</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">9:  bf 00 00 00 00    mov $0x0, %edi</span><br></pre></td></tr></table></figure>
+
+<p>这一条<code>mov</code>指令把<code>array</code>的起始地址传给了寄存器edi。此时<code>array</code>的绝对地址被设置为0。<code>array</code>的可重定位条目如下</p>
+<ul>
+<li><code>r.offset</code> &#x3D; 0xa</li>
+<li><code>r.symbol</code> &#x3D; array</li>
+<li><code>r.type</code> &#x3D; R_X86_64_32</li>
+<li><code>r.addend</code> &#x3D; 0</li>
+</ul>
+<p>假设<code>array</code>所在的<code>data section</code>位于0x601018处</p>
+<p><code>*ref_ptr = ADDR(array) + r.addend = 0x601018</code></p>
+<p>（<code>offset</code>只在计算相对引用的时候有用。）</p>
+<h2 id="可执行目标文件"><a href="#可执行目标文件" class="headerlink" title="可执行目标文件"></a>可执行目标文件</h2><p>下图为一个典型的ELF可执行目标文件的相关信息。</p>
+<table>
+<thead>
+<tr>
+<th>代码段</th>
+<th align="center"><code>ELF header</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>代码段</td>
+<td align="center"><code>Segment header table</code></td>
+</tr>
+<tr>
+<td>代码段</td>
+<td align="center"><code>.init</code></td>
+</tr>
+<tr>
+<td>代码段</td>
+<td align="center"><code>.text</code></td>
+</tr>
+<tr>
+<td>代码段</td>
+<td align="center"><code>.rodata</code></td>
+</tr>
+<tr>
+<td>数据段</td>
+<td align="center"><code>.data</code></td>
+</tr>
+<tr>
+<td>数据段</td>
+<td align="center"><code>.bss</code></td>
+</tr>
+<tr>
+<td></td>
+<td align="center"><code>.symtab</code></td>
+</tr>
+<tr>
+<td></td>
+<td align="center"><code>.debug</code></td>
+</tr>
+<tr>
+<td></td>
+<td align="center"><code>.line</code></td>
+</tr>
+<tr>
+<td></td>
+<td align="center"><code>.strtab</code></td>
+</tr>
+<tr>
+<td></td>
+<td align="center"><code>Section header table</code></td>
+</tr>
+</tbody></table>
+<p>可执行文件的<code>.init section</code>定义了一个名为<code>_init</code>的函数，程序的初始化代码会调用该函数进行初始化。其他的内容与可重定位目标文件相似，区别在于可执行文件已经将可重定位条目的最终位置确定。</p>
+<p>在运行时，代码段和数据段会加载到内存执行。</p>
+<p>程序头部表中描述了代码段，数据段与内存映射的关系。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Type           Offset             VirtAddr           PhysAddr</span><br><span class="line">                 FileSiz            MemSiz              Flags  Align</span><br><span class="line">  LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000</span><br><span class="line">                 0x0000000000000500 0x0000000000000500  R      0x1000</span><br><span class="line">  LOAD           0x0000000000001000 0x0000000000401000 0x0000000000401000</span><br><span class="line">                 0x0000000000074e45 0x0000000000074e45  R E    0x1000</span><br><span class="line">  LOAD           0x0000000000076000 0x0000000000476000 0x0000000000476000</span><br><span class="line">                 0x00000000000274b0 0x00000000000274b0  R      0x1000</span><br><span class="line">  LOAD           0x000000000009de28 0x000000000049ee28 0x000000000049ee28</span><br><span class="line">                 0x0000000000005ca0 0x000000000000b4e0  RW     0x1000</span><br><span class="line">  NOTE           0x00000000000002a8 0x00000000004002a8 0x00000000004002a8</span><br><span class="line">                 0x0000000000000020 0x0000000000000020  R      0x8</span><br><span class="line">  NOTE           0x00000000000002c8 0x00000000004002c8 0x00000000004002c8</span><br><span class="line">                 0x0000000000000024 0x0000000000000024  R      0x4</span><br><span class="line">  NOTE           0x000000000009d490 0x000000000049d490 0x000000000049d490</span><br><span class="line">                 0x0000000000000020 0x0000000000000020  R      0x4</span><br><span class="line">  TLS            0x000000000009de28 0x000000000049ee28 0x000000000049ee28</span><br><span class="line">                 0x0000000000000018 0x0000000000000058  R      0x8</span><br><span class="line">  GNU_PROPERTY   0x00000000000002a8 0x00000000004002a8 0x00000000004002a8</span><br><span class="line">                 0x0000000000000020 0x0000000000000020  R      0x8</span><br><span class="line">  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000</span><br><span class="line">                 0x0000000000000000 0x0000000000000000  RW     0x10</span><br><span class="line">  GNU_RELRO      0x000000000009de28 0x000000000049ee28 0x000000000049ee28</span><br><span class="line">                 0x00000000000041d8 0x00000000000041d8  R      0x1</span><br></pre></td></tr></table></figure>
+
+<p>在第四个段中，<code>FileSiz</code>与<code>MemSiz</code>的大小不同。这是因为多出来的字节要存放<code>.bss section</code>的数据。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000005ca0 0x000000000000b4e0</span><br></pre></td></tr></table></figure>
+
+<p>四个<code>LOAD</code>中，分别为</p>
+<ul>
+<li>只读头 包含各种<code>note</code>和重定位信息</li>
+<li>主代码段 可读可执行 包含<code>.init</code> <code>.plt</code> <code>.text</code> <code>.fini</code></li>
+<li>只读数据 包含<code>.rodata</code> 等各种信息</li>
+<li>读写数据段 包含<code>.data</code> <code>.bss</code>等信息</li>
+</ul>
+<p>当我们输入指令之后，<code>shell</code>程序通过调用加载器来运行这个程序。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./prog</span><br></pre></td></tr></table></figure>
+
+<p>接下来加载器将可执行目标文件中的代码和数据从磁盘复制到内存中，然后跳转到程序的入口来运行该程序，（使用<code>readelf -l prog</code>我们可以发现程序入口是0x4015c0）（这个将程序从磁盘复制到内存并运行的过程叫做加载。）也就是<code>_start</code>函数（<code>crt1.o</code>提供）的地址，接下来调用系统启动函数<code>__libc_start_main</code>（位于<code>libc.so</code>）来初始化执行环境，然后再调用<code>main</code>函数，最后的返回值还是有<code>libc.so</code>中的<code>__libc_start_main</code>来处理并在必要时将控制权还给Linux。</p>
+<p>每一个Linux系统都有一个运行时的内存镜像。在Linux x86-64系统中，（没开PIE的情况下）代码段总是从地址0x400000处开始，然后是数据段。运行时堆在数据段之后。堆的增长方向是从低地址到高地址，堆之后的区域是为共享模块保留，这个区域把堆和栈隔开。用户栈的起始地址是2的48次方减一，这里是最大的合法用户地址，而栈就是从此处开始，从高地址到底地址生长。从地址2的48次方开始，是为操作系统的代码和数据保留的，这部分内存空间堆用户代码不可见。最后，为了防止程序受到攻击，在分配栈，共享库以及堆的运行时地址的时候，链接器还会用到地址空间随机化的策略（ASLR）来让这些区域的地址改变。（相对位置不变）</p>
+<h2 id="动态链接共享库"><a href="#动态链接共享库" class="headerlink" title="动态链接共享库"></a>动态链接共享库</h2><p>静态链接库有这样的缺点</p>
+<ul>
+<li>需要定期维护和更新</li>
+<li>几乎每个C程序都要使用标准的I&#x2F;O函数，太多重复的I&#x2F;O函数会占用大量内存。</li>
+</ul>
+<p>为了解决这样的缺陷，操作系统提供了一种共享库的技术。共享库是一种特殊的可重定位文件，在Linux中以<code>.so</code>后缀结尾，在Windows系统中也使用了大量的共享库，例如以<code>dll</code>（Dynamic link library）结尾的文件就属于共享库。共享库在运行和加载的过程中可以被加载到任意的内存地址，还能喝一个在内存中的程序链接起来，这种叫做动态链接的方法是通过动态链接器来实现的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -fpic -o libvector.so addvec.c mulvec.c</span><br></pre></td></tr></table></figure>
+
+<p>-shared是生成动态链接库的选项，<code>-fpic</code>是生成位置无关代码，这样才能加载到任意的内存地址。</p>
+<p>在使用动态链接库之后，<code>libvector.so</code>中的代码喝数据并没有真的复制到可执行文件中去，而是复制了符号表和一些重定位信息，当可执行文件运行的时候，加载器会发现可执行文件中存在一个名为<code>.interp</code>的<code>section</code>，这个<code>section</code>中包含了动态链接库的路径名，接下来加载器会将动态链接器加载到内存中运行，由动态链接器执行重定位代码和数据的工作，完成之后，共享库的位置固定，转交给可执行文件运行。</p>
+<p>动态链接的作用</p>
+<ul>
+<li>分发软件 热更新（仅需要更新动态链接库，不需要更改应用程序本身</li>
+<li>搭建高性能Web服务器</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/12/08/CSAPP-%E9%93%BE%E6%8E%A5-2/">http://gazettm.github.io/2025/12/08/CSAPP-%E9%93%BE%E6%8E%A5-2/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/CSAPP/"># CSAPP</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/12/04/CSAPP-%E9%93%BE%E6%8E%A5-1/">CSAPP_链接_1</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
