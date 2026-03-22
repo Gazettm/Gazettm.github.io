@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>STM32旋转编码器计数 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">STM32旋转编码器计数</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">三月 22, 2026&nbsp;&nbsp;15:03:14</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/c/">c</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="STM32旋转编码器计数"><a href="#STM32旋转编码器计数" class="headerlink" title="STM32旋转编码器计数"></a>STM32旋转编码器计数</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>对STM32嵌入式开发有点感兴趣，跟着b站江科大up学了一下</p>
+<h2 id="嵌入式介绍"><a href="#嵌入式介绍" class="headerlink" title="嵌入式介绍"></a>嵌入式介绍</h2><p>使用STM32f103c8t6 </p>
+<p>主频:72MHz </p>
+<p>RAM:20K (SRAM) </p>
+<p>ROM:64K（Flash）</p>
+<p>供电:2.0~3.6V（标准3.3V）</p>
+<h3 id="GPIO"><a href="#GPIO" class="headerlink" title="GPIO"></a>GPIO</h3><h4 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h4><p>GPIO接入PAB2总线，分为GPIOA和GPIOB等等，内部是寄存器和驱动器实现的。</p>
+<h4 id="八种输入输出"><a href="#八种输入输出" class="headerlink" title="八种输入输出"></a>八种输入输出</h4><p>GPIO全称为General Purpose Input Output，有八种输入输出方式。</p>
+<p>上拉输入：默认高电平</p>
+<p>下拉输入：默认低电平</p>
+<p>浮空输入：不确定</p>
+<p>模拟输入：GPIO失能，引脚接入内部ADC</p>
+<p>开漏输出：输出电平引脚，高电平为高阻态，低电平接VSS（驱动能力弱，依靠上拉电阻来输出高电平（在同时需要输入和输出时会用到</p>
+<p>推挽输出：输出电平引脚，高电平为VDD，低电平接VSS</p>
+<p>复用开漏输出：由片上外设控制，高电平为高阻态，低电平接VSS</p>
+<p>复用推挽输出：由片上外设控制，高电平为VDD，低电平接VSS</p>
+<h2 id="EXTI外部中断"><a href="#EXTI外部中断" class="headerlink" title="EXTI外部中断"></a>EXTI外部中断</h2><h4 id="中断系统核心逻辑"><a href="#中断系统核心逻辑" class="headerlink" title="中断系统核心逻辑"></a>中断系统核心逻辑</h4><p>中断机制的核心与 CSAPP 中讲解的 CPU 异常 &#x2F; 中断模型一致：CPU 在执行主程序过程中，若触发特定中断条件（异步事件，如外设请求、引脚电平变化），会暂停当前执行流，转去执行预设的中断服务函数（异常处理程序），处理完成后恢复到原断点继续运行。</p>
+<p>中断的核心特性包括：</p>
+<p><strong>优先级仲裁</strong>：多个中断源同时请求时，CPU 按中断优先级高低决定处理顺序；</p>
+<p><strong>中断嵌套</strong>：若当前中断服务函数执行时，有更高优先级的中断源请求，CPU 会暂停当前中断处理，转去处理高优先级中断，处理完成后再回到原中断继续执行。</p>
+<h4 id="STM32-中断核心特性"><a href="#STM32-中断核心特性" class="headerlink" title="STM32 中断核心特性"></a>STM32 中断核心特性</h4><p><strong>外部中断（EXTI）</strong>：</p>
+<p>STM32 提供 EXTI0~EXTI15 共 16 条外部中断 &#x2F; 事件线，每条中断线对应一组 GPIO 引脚：EXTI 线 n 对应所有 GPIO 端口的第 n 号引脚（如 EXTI0 对应 PA0、PB0、PC0…PG0，EXTI1 对应 PA1、PB1…PG1）。</p>
+<p>当某一 GPIO 引脚触发电平变化时，需通过 AFIO（Alternate Function I&#x2F;O，复用功能 I&#x2F;O）的 EXTI 配置寄存器，判断具体是哪个端口的引脚触发了中断，再将中断请求传递给 EXTI 控制器。</p>
+<p><strong>NVIC 统一管理</strong>：</p>
+<p>STM32 的所有中断（包括 EXTI、定时器、串口等）由内核级的 NVIC（Nested Vectored Interrupt Controller，嵌套向量中断控制器）统一管理：</p>
+<p>每个中断通道支持 0~15 共 16 级可编程优先级；</p>
+<p>优先级可分为 “抢占优先级” 和 “响应优先级”：抢占优先级决定中断嵌套能力（高抢占优先级可打断低抢占优先级的中断），响应优先级用于同抢占优先级的中断排队；</p>
+<p>优先级分组（如 NVIC_PriorityGroupConfig）决定抢占优先级和响应优先级的位数分配（如分组 2：2 位抢占优先级 + 2 位响应优先级）。</p>
+<p>比喻下来就是，AFIO是前台的接线员，知道是哪一个I&#x2F;O口发出的信号，EXTI是前台，负责给NVIC通知，NVIC是经理，而CPU是员工。</p>
+<h2 id="程序开发"><a href="#程序开发" class="headerlink" title="程序开发"></a>程序开发</h2><h3 id="main-c"><a href="#main-c" class="headerlink" title="main.c"></a><code>main.c</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stm32f10x.h&quot;</span>      <span class="comment">// Device header</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Delay.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;OLED.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;CountSensor.h&quot;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">	</span><br><span class="line">	OLED_Init();</span><br><span class="line">	CountSensor_Init();</span><br><span class="line">	OLED_ShowString(<span class="number">1</span>,<span class="number">1</span>,<span class="string">&quot;Count:&quot;</span>);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		OLED_ShowNum(<span class="number">1</span>,<span class="number">7</span>,GetCountSensor_Count(),<span class="number">5</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>进行初始化操作与OLED显示。</p>
+<h3 id="Encoder-c"><a href="#Encoder-c" class="headerlink" title="Encoder.c"></a><code>Encoder.c</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stm32f10x.h&quot;</span>                  <span class="comment">// Device header</span></span></span><br><span class="line"><span class="type">int16_t</span> EncoderCount = <span class="number">0</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">Encoder_Init</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);</span><br><span class="line">	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);</span><br><span class="line">	</span><br><span class="line">	GPIO_InitTypeDef GPIO_InitStructure;</span><br><span class="line"> 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;</span><br><span class="line">	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;</span><br><span class="line"> 	GPIO_Init(GPIOB, &amp;GPIO_InitStructure);</span><br><span class="line">	</span><br><span class="line">	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB,GPIO_PinSource0);</span><br><span class="line">	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB,GPIO_PinSource1);</span><br><span class="line">	</span><br><span class="line">	EXTI_InitTypeDef EXTI_InitStructure;</span><br><span class="line">	EXTI_InitStructure.EXTI_Line = EXTI_Line0 | EXTI_Line1;</span><br><span class="line">	EXTI_InitStructure.EXTI_LineCmd = ENABLE;</span><br><span class="line">	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;</span><br><span class="line">	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;</span><br><span class="line">	EXTI_Init(&amp;EXTI_InitStructure);</span><br><span class="line">	</span><br><span class="line">	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);</span><br><span class="line">	</span><br><span class="line">	NVIC_InitTypeDef NVIC_InitStructure;</span><br><span class="line">	</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = <span class="number">1</span>;</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelSubPriority = <span class="number">1</span>;</span><br><span class="line">	NVIC_Init(&amp;NVIC_InitStructure);</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = <span class="number">1</span>;</span><br><span class="line">	NVIC_InitStructure.NVIC_IRQChannelSubPriority = <span class="number">2</span>;</span><br><span class="line">	NVIC_Init(&amp;NVIC_InitStructure);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">EXTI0_IRQHandler</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(EXTI_GetITStatus(EXTI_Line0) == SET)&#123;<span class="comment">//判断是否是EXTILine0导致的</span></span><br><span class="line">		<span class="keyword">if</span>(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1) == <span class="number">0</span>)&#123;</span><br><span class="line">			EncoderCount--;</span><br><span class="line">		&#125;</span><br><span class="line">		EXTI_ClearITPendingBit(EXTI_Line0);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">EXTI1_IRQHandler</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(EXTI_GetITStatus(EXTI_Line1) == SET)&#123;<span class="comment">//判断是否是EXTILine1导致的</span></span><br><span class="line">		<span class="keyword">if</span>(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0) == <span class="number">0</span>)&#123;</span><br><span class="line">			EncoderCount++;</span><br><span class="line">		&#125;</span><br><span class="line">		EXTI_ClearITPendingBit(EXTI_Line1);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int16_t</span> <span class="title function_">GetEnconder_Count</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> EncoderCount;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先配置GPIO引脚初始化，再开启AFIO时钟，初始化EXTI，初始化NVIC。</p>
+<h4 id="旋转编码器的相关解释"><a href="#旋转编码器的相关解释" class="headerlink" title="旋转编码器的相关解释"></a>旋转编码器的相关解释</h4><p>这里使用了旋转编码器，旋转编码器的接入A，B两个触点，分别接入PB0和PB1。当向右正转的时候，A触点先响应，B随后来，这里设置的是EXTI下降沿触发中断，因此A下降沿的时候，B还处于低电平的时候时反转。同理，当B下降沿时，A还处于低电平时是正转。</p>
+<p>这里只使用EXTI0配置中断也可以，只判断A引脚，当A引脚下降沿的时候，只看B就可以判断方向，但要注意的是，当正转的时候，B未转到位，当反转的时候，B已经转到位。</p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><p><code>EXTI_GetITStatus(EXTI_Line1) == SET </code> 对这个进行判断，其中一个原因是STM32f103c8t6的9到5用的是同一个中断服务，15到10也是用的一个中断服务，所以这里要判断，当作一个规范，避免其他操作导致的中断运行了这个中断函数。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/03/22/STM32%E6%97%8B%E8%BD%AC%E7%BC%96%E7%A0%81%E5%99%A8%E8%AE%A1%E6%95%B0/">http://gazettm.github.io/2026/03/22/STM32%E6%97%8B%E8%BD%AC%E7%BC%96%E7%A0%81%E5%99%A8%E8%AE%A1%E6%95%B0/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/c/"># c</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/12/26/NJU-linklab/">NJU_linklab</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
