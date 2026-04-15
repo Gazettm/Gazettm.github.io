@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>KMP算法 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">KMP算法</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 15, 2026&nbsp;&nbsp;16:07:36</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="KMP算法"><a href="#KMP算法" class="headerlink" title="KMP算法"></a>KMP算法</h1><p>在学习串这一数据结构的过程中，了解到了KMP算法。</p>
+<p>KMP算法是一个经典的字符串匹配算法。字符串匹配是一个非常基本的操作，也就是在一个字符串中寻找另一个子串。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>以下是一个KMP算法的一个c++代码。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">subString</span>&#123;</span><br><span class="line">	<span class="type">int</span> *arr;</span><br><span class="line">	string sub;</span><br><span class="line">	<span class="type">int</span> length;</span><br><span class="line">	<span class="built_in">subString</span>(string s) &#123;</span><br><span class="line">		length = s.<span class="built_in">length</span>();</span><br><span class="line">		sub = s;</span><br><span class="line">		arr = <span class="keyword">new</span> <span class="type">int</span>[length];</span><br><span class="line">	&#125;</span><br><span class="line">	~<span class="built_in">subString</span>() &#123;</span><br><span class="line">		<span class="keyword">delete</span>[] arr;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">KMPindex</span><span class="params">(string sub,<span class="type">int</span> *arr)</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> i = <span class="number">1</span>;</span><br><span class="line">	<span class="type">int</span> prefix_len = <span class="number">0</span>;</span><br><span class="line">	arr[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(i &lt; sub.<span class="built_in">length</span>())&#123;</span><br><span class="line">		<span class="keyword">if</span>(sub[i] == sub[prefix_len])&#123;</span><br><span class="line">			prefix_len++;</span><br><span class="line">			arr[i] = prefix_len;</span><br><span class="line">			i++;</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(prefix_len != <span class="number">0</span>)&#123;</span><br><span class="line">				prefix_len = arr[prefix_len<span class="number">-1</span>];</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span>&#123;</span><br><span class="line">				arr[i] = <span class="number">0</span>;</span><br><span class="line">				i++;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">KMP</span><span class="params">(string &amp;P,subString &amp;sub)</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> length = P.<span class="built_in">length</span>();</span><br><span class="line">	<span class="type">int</span> i = <span class="number">0</span>,j = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(i &lt; length)&#123;</span><br><span class="line">		<span class="keyword">if</span>(P[i] == sub.sub[j])&#123;</span><br><span class="line">			i++;j++;</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(j == <span class="number">0</span>)i++;</span><br><span class="line">			<span class="keyword">else</span> j = sub.arr[j<span class="number">-1</span>];</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">if</span>(j == sub.length)&#123;</span><br><span class="line">			<span class="keyword">return</span> i - sub.length;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	string primary = <span class="string">&quot;abccabccaacba&quot;</span>;</span><br><span class="line">	<span class="function">subString <span class="title">sub</span><span class="params">(<span class="string">&quot;acb&quot;</span>)</span></span>;</span><br><span class="line">	<span class="built_in">KMPindex</span>(sub.sub, sub.arr);</span><br><span class="line">	<span class="type">int</span> res = <span class="built_in">KMP</span>(primary,sub);</span><br><span class="line">	cout&lt;&lt;res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="KMP"><a href="#KMP" class="headerlink" title="KMP"></a>KMP</h2><h3 id="KMP思考"><a href="#KMP思考" class="headerlink" title="KMP思考"></a>KMP思考</h3><p>字符串匹配算法最简单想到的就是暴力。遍历长度为m的主串，嵌套遍历子串来判断是否相等，这样是O(n^2)的复杂度。</p>
+<p>但是能不能转换成线性时间呢？在子串匹配主串的时候，我们设想一个数组next，与子串一一对应。字符串在比对失败的时候，我们已经知道之前都读过哪些字符了，有没有可能避免“跳回下一个字符再重新匹配”的步骤呢？这里是一种动态规划的思想。</p>
+<p>KMP 算法的基本思路是，**当我们发现某一个字符不匹配的时候，由于已经知道之前遍历过的字符，那能不能利用这些信息来避免暴力算法中回退的步骤呢？**换句话说，我们不希望递减主串的这个指针，而让它永远向前方移动。如果能做到这一点，我们的算法不就可以改进为线性时间复杂度了吗？这时候就要用到next数组了。它的作用是，告诉我们哪些字符串是我们可以在匹配失败的时候，可以跳过的。</p>
+<table>
+<thead>
+<tr>
+<th>ABABABCAA</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ABABC</td>
+</tr>
+<tr>
+<td>00120</td>
+</tr>
+</tbody></table>
+<p>这样一个表，当我们比较到C的时候，发现是不匹配的，那么可以利用next数组，来进行跳过，C前面的next数组值为2，可以跳过子串的前面两个字符AB。</p>
+<table>
+<thead>
+<tr>
+<th>ABABABCAA</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>XXABABC</td>
+</tr>
+<tr>
+<td>XX00120</td>
+</tr>
+</tbody></table>
+<p>我们发现，此时指向主串的指针是只向前移动的，子串的指针会回退，但会聪明的回退，且次数不会超过子串的长度（next数组的长度）</p>
+<p>因此为O(m+n);</p>
+<p>而暴力算法，由于使用了双层嵌套，可以认为主串的指针是回退的</p>
+<table>
+<thead>
+<tr>
+<th>ABABABCAA</th>
+<th>ABABABCAA</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ABABC</td>
+<td>XABABC</td>
+</tr>
+</tbody></table>
+<p>主串指针遍历到第五个字符了，但是由于子串不匹配所以主串指针又回到了第二个字符重新与子串匹配。</p>
+<p>所以，<strong>暴力慢在主串指针频繁回退导致字符被反复比较；KMP 利用 next 数组让主串指针永不回退，模式串指针智能跳转，从而将比较次数降为线性。</strong></p>
+<h3 id="KMP实现"><a href="#KMP实现" class="headerlink" title="KMP实现"></a>KMP实现</h3><p>有主串指针i，子串指针j，初始化都指向第一个位置</p>
+<p>当i小于主串长度的时候，比较i和j处的字符：</p>
+<ul>
+<li>若相同，i++，j++，到下一次比较</li>
+<li>不相同，根据next跳过子串头部的数字，让j &#x3D; next[j-1]，继续匹配</li>
+<li>如果不相同的时候j为0，即子串第一个数字就没有匹配上，就i++（必须有，否则next[j-1]会越界）</li>
+<li>如果j等于了j的长度，即成功匹配，则退出，返回i-子串长度的值，得到子串匹配到主串的头部位置。</li>
+</ul>
+<h3 id="next思考"><a href="#next思考" class="headerlink" title="next思考"></a>next思考</h3><p>那么我们就只剩下next数组的实现了。</p>
+<table>
+<thead>
+<tr>
+<th>ABABABCAA</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>XXABABC</td>
+</tr>
+<tr>
+<td>XX001 20</td>
+</tr>
+</tbody></table>
+<p>我们看这个，当C匹配失效的时候，跳过了两个字符，为什么可以跳过这两个字符？我们注意到，后面的AB与前面的AB是一样的，而主串已经匹配过与子串前面AB一样的AB，所以可以直接跳过前面的AB，来比较后面的AB。</p>
+<p>到这里我们就知道了<strong>next 数组的本质，其实就是寻找子串中相同前后缀的长度，并且一定是最长的前后缀。</strong></p>
+<p>并且next数组仅仅与子串有关。</p>
+<h3 id="next实现"><a href="#next实现" class="headerlink" title="next实现"></a>next实现</h3><p>有指针i指向子串第二个值，第一个值默认为0。初始化一个值var表示当前后缀与前缀匹配成功的值，这个也可以代表当前前缀指向的位置。再初始化next数组</p>
+<p>当i小于子串长度的时候，比较i处的字符与var处的字符</p>
+<ul>
+<li>如果匹配成功，var++，i++，i处的next数组等于var，表示可以跳过的长度</li>
+<li>如果匹配失败且var是0，那么就让i++，i处的next数组等于0，表示不能够跳过</li>
+<li>如果匹配失败且var不为0，那么需要让var等于next数组中var-1处的值。（解释：执行到这一句的时候，说明当前的地方无法与子串前缀匹配，我们需要寻找尝试一个更短的前缀来保证找到最长的真前缀。而next[var-1]里面存的是子串前var个字符的最长真前缀。这也是一种聪明的回退，总结就是<strong>利用已计算好的 <code>next[var-1]</code> 得到“当前前缀子串”的最长相等真前后缀长度，作为新的候选长度，从而跳过不可能匹配的中间长度，保证线性时间复杂度。</strong>）</li>
+</ul>
+<p>对于第三点我们举一个例子</p>
+<table>
+<thead>
+<tr>
+<th align="left">ABACABAB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">001 01 23</td>
+</tr>
+</tbody></table>
+<p>当到这一步的时候，就剩下最后一个B了，此时比较，我们发现ABAC与ABAB不匹配，当前var为3，于是我们找前缀ABA，发现第三个字符与前面两个字符匹配的值为1，于是让var等于1。也就是后面的ABAB中第三个字符A与前缀匹配的值为1，如此回退来继续比较。此处我们不过把子串与主串的比较在子串中的前缀与后缀的比较回退重演了一遍。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>KMP算法比较绕，最重要的是next数组的实现，尤其是<code>prefix_len = arr[prefix_len-1];</code>这一句。KMP利用已有的信息来避免重复的计算，本质也是一种动态规划的思想。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/04/15/KMP%E7%AE%97%E6%B3%95/">http://gazettm.github.io/2026/04/15/KMP%E7%AE%97%E6%B3%95/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Algorithm/"># Algorithm</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/04/02/%E5%88%86%E6%B2%BB1/">分治1</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
