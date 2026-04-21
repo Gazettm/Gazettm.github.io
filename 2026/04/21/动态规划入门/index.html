@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>动态规划入门 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">动态规划入门</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 21, 2026&nbsp;&nbsp;22:17:58</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="动态规划入门"><a href="#动态规划入门" class="headerlink" title="动态规划入门"></a>动态规划入门</h1><h2 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">        <span class="number">7</span> </span><br><span class="line">      <span class="number">3</span>   <span class="number">8</span> </span><br><span class="line">    <span class="number">8</span>   <span class="number">1</span>   <span class="number">0</span> </span><br><span class="line">  <span class="number">2</span>   <span class="number">7</span>   <span class="number">4</span>   <span class="number">4</span> </span><br><span class="line"><span class="number">4</span>   <span class="number">5</span>   <span class="number">2</span>   <span class="number">6</span>   <span class="number">5</span> </span><br></pre></td></tr></table></figure>
+
+<p>设想这样一个数字塔，需要找到一条从最高点到底部任意处结束的路径，使路径经过数字的和最大．每一步可以走到当前点左下方的点或右下方的点。</p>
+<p>在上面这个例子中，最优路径是 7 3 8 7 5。</p>
+<p>如果我们使用暴力的话会消耗很多的算力。我们思考，我们在自己模拟的时候，会想到在每个数字旁边标注上当前最优的结果，在这个结果的基础上往下找。所以这里我们应该可以为计算机划分一段空间来存储已经计算过的结果，这样效率就大大提高了。空间换时间，也就是动态规划的主要思路。</p>
+<h2 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h2><p>能用动态规划解决的问题，需要满足三个条件：最优子结构，无后效性和子问题重叠。</p>
+<p>最优子结构我们在引入之中已经介绍。无后效性是指已经解决的子问题后继不会被改变。子问题重叠也是我们优化的前提，我们可以把暴力中每个会重复的子问题记录下来，提高效率。</p>
+<p>这里我们引入状态与状态转移，是动态规划的核心思想。</p>
+<h2 id="01背包问题（背包DP）"><a href="#01背包问题（背包DP）" class="headerlink" title="01背包问题（背包DP）"></a>01背包问题（背包DP）</h2><h3 id="什么是01背包问题"><a href="#什么是01背包问题" class="headerlink" title="什么是01背包问题"></a>什么是01背包问题</h3><blockquote>
+<p>有 <code>n</code> 个物品，每个物品只有一个（要么拿，要么不拿，所以叫 “01”）。<br>第 <code>i</code> 个物品重量为 <code>w[i]</code>，价值为 <code>v[i]</code>。<br>背包总容量为 <code>W</code>。<br>问：<strong>如何选择物品装入背包，使得总价值最大？</strong></p>
+</blockquote>
+<p><strong>例</strong>：<br>背包容量 <code>W = 4</code><br>物品 1：重量 1，价值 15<br>物品 2：重量 3，价值 20<br>物品 3：重量 4，价值 30</p>
+<p>最优解是选物品 1 + 物品 2，总重 4，总价值 35。</p>
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>面对第 <code>i</code> 个物品时，我们有两种选择：</p>
+<ul>
+<li>不选：背包容量不变，总价值不变。</li>
+<li>选：背包容量减少 <code>w[i]</code>，总价值增加 <code>v[i]</code>。</li>
+</ul>
+<p>如果我们已经知道“前 <code>i-1</code> 个物品在任意容量下的最大价值”，那么对于第 <code>i</code> 个物品，就能做出最优决策。</p>
+<p>这就是动态规划的<strong>最优子结构</strong>：<br>大问题的最优解包含子问题的最优解。</p>
+<h3 id="定义-DP-状态"><a href="#定义-DP-状态" class="headerlink" title="定义 DP 状态"></a>定义 DP 状态</h3><p>这里我们定义DP状态为<code>dp[i][j]</code>为前i个物品中，背包容量为j的时候的最优策略。</p>
+<p>显然初始状态前0个物品价值都为0，容量为0的时候背包价值也为0。</p>
+<p>答案是<code>dp[n][W]</code>n为n个物品，W为最大重量</p>
+<h3 id="状态转移"><a href="#状态转移" class="headerlink" title="状态转移"></a>状态转移</h3><p>对于第 <code>i</code> 个物品（重量 <code>w[i]</code>，价值 <code>v[i]</code>），在容量 <code>j</code> 时：</p>
+<p>如果不选第 <code>i</code> 个物品<br><code>dp[i][j] = dp[i-1][j]</code>价值等于前 <code>i-1</code> 个物品在容量 <code>j</code> 下的最大值）</p>
+<p>如果选第 <code>i</code> 个物品（前提是 <code>j &gt;= w[i]</code>）<br><code>dp[i][j] = dp[i-1][j - w[i]] + v[i]</code>腾出 <code>w[i]</code> 的空间放当前物品，然后加上前 <code>i-1</code> 个物品在剩余容量下的最大值）</p>
+<p>取两者中的较大值</p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">backup</span><span class="params">(<span class="type">int</span>** dp,<span class="type">int</span> value[],<span class="type">int</span> weight[],<span class="type">int</span> n,<span class="type">int</span> W)</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt;= n;i++)&#123;</span><br><span class="line">		<span class="type">int</span> v = value[i - <span class="number">1</span>];</span><br><span class="line">		<span class="type">int</span> w = weight[i - <span class="number">1</span>];</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>;j &lt;= W;j++)&#123;</span><br><span class="line">			<span class="keyword">if</span>(j &gt;= w)&#123;</span><br><span class="line">				dp[i][j] = <span class="built_in">max</span>(dp[i<span class="number">-1</span>][j],dp[i<span class="number">-1</span>][j-w] + v);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span>&#123;</span><br><span class="line">				dp[i][j] = dp[i<span class="number">-1</span>][j];</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="type">int</span> n,W;</span><br><span class="line">	cin&gt;&gt;n&gt;&gt;W;</span><br><span class="line">	<span class="type">int</span> value[n],weight[n];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">		cin&gt;&gt;weight[i];</span><br><span class="line">		cin&gt;&gt;value[i];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="type">int</span> **dp = <span class="keyword">new</span> <span class="type">int</span>*[n + <span class="number">1</span>];</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n + <span class="number">1</span>; ++i)</span><br><span class="line">		dp[i] = <span class="keyword">new</span> <span class="type">int</span>[W + <span class="number">1</span>]();</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; W + <span class="number">1</span>;i++)&#123;</span><br><span class="line">		dp[<span class="number">0</span>][i] = <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">backup</span>(dp,value,weight,n,W);</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; n<span class="number">+1</span>;i++)&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>;j &lt; W<span class="number">+1</span>;j++)&#123;</span><br><span class="line">			cout&lt;&lt;dp[i][j]&lt;&lt;<span class="string">&quot;\t&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		cout&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line">	cout&lt;&lt;dp[n][W];</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= n; ++i) <span class="keyword">delete</span>[] dp[i];</span><br><span class="line">	<span class="keyword">delete</span>[] dp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><p>这里我们不难发现要分配的数组长度得大一圈，这是为了状态转移的时候避免数组越界。</p>
+<p>我们发现背包问题的结构为</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">backup</span><span class="params">(<span class="type">int</span>** dp,<span class="type">int</span> value[],<span class="type">int</span> weight[],<span class="type">int</span> n,<span class="type">int</span> W)</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt;= n;i++)&#123;</span><br><span class="line">		<span class="type">int</span> v = value[i - <span class="number">1</span>];</span><br><span class="line">		<span class="type">int</span> w = weight[i - <span class="number">1</span>];</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>;j &lt;= W;j++)&#123;</span><br><span class="line">			<span class="keyword">if</span>(j &gt;= w)&#123;</span><br><span class="line">				dp[i][j] = <span class="built_in">max</span>(dp[i<span class="number">-1</span>][j],dp[i<span class="number">-1</span>][j-w] + v);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span>&#123;</span><br><span class="line">				dp[i][j] = dp[i<span class="number">-1</span>][j];</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>循环遍历每个物品，然后获取物品的属性（这里是重量和价格），然后循环遍历状态的第二个变量也就是限制，背包容量。在遍历的时候取得子问题的最优策略。</p>
+<p>我们设想，如果在完全背包问题（装的数量可以为任意整数）中，我们需要改动的是在遍历第二个变量也就是限制的过程中嵌套一个循环，得到子问题的最优策略即可。</p>
+<h2 id="矩阵链DP（区间DP）"><a href="#矩阵链DP（区间DP）" class="headerlink" title="矩阵链DP（区间DP）"></a>矩阵链DP（区间DP）</h2><h3 id="什么是矩阵链乘法问题"><a href="#什么是矩阵链乘法问题" class="headerlink" title="什么是矩阵链乘法问题"></a>什么是矩阵链乘法问题</h3><p><strong>问题定义</strong>：</p>
+<blockquote>
+<p>给定 <code>n</code> 个矩阵的维度 <code>[p₀, p₁, p₂, ..., pₙ]</code>，其中矩阵 <code>Aᵢ</code> 的大小为 <code>pᵢ₋₁ × pᵢ</code>。<br>通过<strong>加括号</strong>改变计算顺序，求最少的<strong>标量乘法次数</strong>。</p>
+</blockquote>
+<p><strong>标量乘法次数公式</strong>：<br>计算 <code>(p × q)</code> 矩阵与 <code>(q × r)</code> 矩阵相乘，需要 <code>p × q × r</code> 次标量乘法。</p>
+<h3 id="状态定义"><a href="#状态定义" class="headerlink" title="状态定义"></a>状态定义</h3><p>这里我们定义DP状态为<code>dp[i][j]</code>为前第i个矩阵到第j个矩阵之间的最优问题</p>
+<p>显然j小于i，同时i等于j的时候不需要计算，结果为0。</p>
+<p>答案是<code>dp[1][n]</code>n为n个矩阵。</p>
+<h3 id="状态转移-1"><a href="#状态转移-1" class="headerlink" title="状态转移"></a>状态转移</h3><p>这里状态转移我们可以加一层遍历，在i和j之间，遍历k来确定区间是多少。</p>
+<p><code>dp[i][j]</code>的大小即为计算次数，等于两个子矩阵的计算次数加上合并这两个子矩阵的计算次数。</p>
+<h3 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;climits&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">matrixChain</span><span class="params">(<span class="type">int</span> p[], <span class="type">int</span> **dp,<span class="type">int</span>** split ,<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> len = <span class="number">2</span>; len &lt;= n; ++len) &#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n - len + <span class="number">1</span>; ++i) &#123;</span><br><span class="line">			<span class="type">int</span> j = i + len - <span class="number">1</span>;</span><br><span class="line">			dp[i][j] = INT_MAX;</span><br><span class="line">			<span class="keyword">for</span> (<span class="type">int</span> k = i; k &lt; j; ++k) &#123;</span><br><span class="line">				<span class="type">int</span> cost = dp[i][k] + dp[k<span class="number">+1</span>][j] + p[i<span class="number">-1</span>] * p[k] * p[j];</span><br><span class="line">				<span class="keyword">if</span> (cost &lt; dp[i][j])&#123;</span><br><span class="line">				    dp[i][j] = cost;</span><br><span class="line">					split[i][j] = k;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dp[<span class="number">1</span>][n];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printOptimalParens</span><span class="params">(<span class="type">int</span>** split, <span class="type">int</span> i, <span class="type">int</span> j)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (i == j) &#123;</span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;A&quot;</span> &lt;&lt; i;           <span class="comment">// 单个矩阵</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;(&quot;</span>;</span><br><span class="line">		<span class="built_in">printOptimalParens</span>(split, i, split[i][j]);       <span class="comment">// 左半边</span></span><br><span class="line">		<span class="built_in">printOptimalParens</span>(split, split[i][j] + <span class="number">1</span>, j);   <span class="comment">// 右半边</span></span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;)&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="type">int</span> n;</span><br><span class="line">	cin&gt;&gt;n;</span><br><span class="line">	</span><br><span class="line">	<span class="type">int</span> dims[n<span class="number">+1</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; n<span class="number">+1</span>;i++)&#123;</span><br><span class="line">		cin&gt;&gt;dims[i];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="type">int</span>** dp = <span class="keyword">new</span> <span class="type">int</span>*[n + <span class="number">1</span>];</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= n; ++i) &#123;</span><br><span class="line">		dp[i] = <span class="keyword">new</span> <span class="type">int</span>[n + <span class="number">1</span>]();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="type">int</span>** split = <span class="keyword">new</span> <span class="type">int</span>*[n + <span class="number">1</span>];</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= n; ++i)</span><br><span class="line">		split[i] = <span class="keyword">new</span> <span class="type">int</span>[n + <span class="number">1</span>]();</span><br><span class="line">	</span><br><span class="line">	cout &lt;&lt; <span class="built_in">matrixChain</span>(dims, dp ,split ,n ) &lt;&lt; endl; <span class="comment">// 18000</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; n + <span class="number">1</span>;i++)&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>;j &lt; n + <span class="number">1</span>;j++)</span><br><span class="line">		&#123;</span><br><span class="line">			cout&lt;&lt;dp[i][j]&lt;&lt;<span class="string">&quot;\t&quot;</span>;</span><br><span class="line">		&#125;		</span><br><span class="line">		cout&lt;&lt;endl;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= n; ++i) <span class="keyword">delete</span>[] dp[i];</span><br><span class="line">	<span class="keyword">delete</span>[] dp;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= n; ++i) <span class="keyword">delete</span>[] split[i];</span><br><span class="line">	<span class="keyword">delete</span>[] split;</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">printOptimalParens</span>(split,<span class="number">1</span>,n);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="代码分析-1"><a href="#代码分析-1" class="headerlink" title="代码分析"></a>代码分析</h3><p>这里我们使用了一个矩阵<code>split</code>来保存结果，这个的作用是回溯。</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">5</span> <span class="number">10</span> <span class="number">20</span> <span class="number">30</span> <span class="number">40</span> <span class="number">50</span> <span class="number">60</span></span><br><span class="line"><span class="number">68000</span></span><br><span class="line"><span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span></span><br><span class="line"><span class="number">0</span>       <span class="number">0</span>       <span class="number">6000</span>    <span class="number">18000</span>   <span class="number">38000</span>   <span class="number">68000</span></span><br><span class="line"><span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">24000</span>   <span class="number">64000</span>   <span class="number">124000</span></span><br><span class="line"><span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">60000</span>   <span class="number">150000</span></span><br><span class="line"><span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">120000</span></span><br><span class="line"><span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span>       <span class="number">0</span></span><br><span class="line">((((A1A2)A3)A4)A5)</span><br></pre></td></tr></table></figure>
+
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>我们简单探讨了动态规划的思想，这是算法的一个重要分支。在部分算法中如状态压缩是非常复杂的。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/04/21/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E5%85%A5%E9%97%A8/">http://gazettm.github.io/2026/04/21/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E5%85%A5%E9%97%A8/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Algorithm/"># Algorithm</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/04/15/KMP%E7%AE%97%E6%B3%95/">KMP算法</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
