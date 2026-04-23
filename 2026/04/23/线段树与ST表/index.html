@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>线段树与ST表 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">线段树与ST表</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">四月 23, 2026&nbsp;&nbsp;15:41:42</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="线段树与ST表"><a href="#线段树与ST表" class="headerlink" title="线段树与ST表"></a>线段树与ST表</h1><h2 id="线段树"><a href="#线段树" class="headerlink" title="线段树"></a>线段树</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>线段树是一种采用了分治思想和递归合并的高级数据结构，主要是用来解决区间最大值，区间求和问题。由于采用了分治思想来构建树状结构，所以单次查询时间效率为O(log n)。相比于ST表，线段树能够利用懒标记机制更新单点与区间，更便于维护。</p>
+<h3 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h3><p>线段树基于二叉树。比如有一个初始数组<code>&#123;3,4,6,8,9&#125;</code>，我们要对这个数组进行建表，很显然，利用分治思想将左边三个数与右边两个数分开，而左边三个数能够再次分开两个和一个，再形成叶子，右边两个数分开形成叶子。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">                [<span class="number">1</span>,<span class="number">5</span>]</span><br><span class="line">               /     \</span><br><span class="line">          [<span class="number">1</span>,<span class="number">3</span>]       [<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">         /     \      /    \</span><br><span class="line">    [<span class="number">1</span>,<span class="number">2</span>]     [<span class="number">3</span>,<span class="number">3</span>] [<span class="number">4</span>,<span class="number">4</span>] [<span class="number">5</span>,<span class="number">5</span>]</span><br><span class="line">    /    \</span><br><span class="line">[<span class="number">1</span>,<span class="number">1</span>]  [<span class="number">2</span>,<span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+
+<p>此时我们可以将这个二叉树看作完全二叉树，只不过叶子节点的下面节点为<code>NULL</code>。对于初始数组大小为n来说，层数会有ceil(log2(n)) + 1层。此时节点数为2^(ceil(log2(n)) + 1)个。此时最坏情况下 n 不是 2 的整数次幂：</p>
+<p>设 2^m^ &lt;n&lt;2^m+1^  log2n &#x3D;m+1⟹A&#x3D;2^m+2^ 则最坏情况下数组大小为4 * n。所以我们要开的线段树数组为4 * n。</p>
+<p>线段树的左子节点下标，我们可以根据二叉树的性质来得知为2乘上父节点下标，右子节点下表可以得知是2乘上父节点下标+1。</p>
+<h3 id="建立线段树"><a href="#建立线段树" class="headerlink" title="建立线段树"></a>建立线段树</h3><p>建立线段树的逻辑比较简单，我们需要开一个四倍大的数组，然后采用分-治-合的思想，递归完成即可。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">build</span><span class="params">(<span class="type">int</span> node, <span class="type">int</span> left, <span class="type">int</span> right, <span class="type">const</span> vector&lt;<span class="type">long</span> <span class="type">long</span>&gt;&amp; a)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (left == right) &#123;</span><br><span class="line">			tree[node] = a[left];</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;<span class="comment">//递归到叶子，令节点等于原数组中对应的值</span></span><br><span class="line">		<span class="type">int</span> mid = (left + right) / <span class="number">2</span>;<span class="comment">//分</span></span><br><span class="line">		<span class="built_in">build</span>(node * <span class="number">2</span>, left, mid, a);<span class="comment">//治</span></span><br><span class="line">		<span class="built_in">build</span>(node * <span class="number">2</span> + <span class="number">1</span>, mid + <span class="number">1</span>, right, a);</span><br><span class="line">		tree[node] = tree[node * <span class="number">2</span>] + tree[node * <span class="number">2</span> + <span class="number">1</span>];<span class="comment">//合</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="查表"><a href="#查表" class="headerlink" title="查表"></a>查表</h3><p>查表的逻辑也比较简单，其中<code>left</code>与<code>right</code>为当前区间，而<code>l</code>和<code>r</code>为需要查找的区间。此处的逻辑为：</p>
+<ul>
+<li>若查找的区间包含了当前的区间则返回当前区间的值</li>
+<li>若查找的区间为当前区间的子集，则向下分治，去找被查找区间包含的区间。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="type">long</span> <span class="title">queryRange</span><span class="params">(<span class="type">int</span> node, <span class="type">int</span> left, <span class="type">int</span> right, <span class="type">int</span> l, <span class="type">int</span> r)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (l &lt;= left &amp;&amp; right &lt;= r) &#123;</span><br><span class="line">			<span class="keyword">return</span> tree[node];</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="type">int</span> mid = (left + right) / <span class="number">2</span>;</span><br><span class="line">		<span class="type">long</span> <span class="type">long</span> res = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span> (l &lt;= mid) res += <span class="built_in">queryRange</span>(node * <span class="number">2</span>, left, mid, l, r);</span><br><span class="line">		<span class="keyword">if</span> (r &gt; mid) res += <span class="built_in">queryRange</span>(node * <span class="number">2</span> + <span class="number">1</span>, mid + <span class="number">1</span>, right, l, r);</span><br><span class="line">		<span class="keyword">return</span> res;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">            [<span class="number">1</span>,<span class="number">5</span>]</span><br><span class="line">           /     \</span><br><span class="line">      [<span class="number">1</span>,<span class="number">3</span>]       [<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">     /     \      /    \</span><br><span class="line">  [<span class="number">1</span>,<span class="number">2</span>]     [<span class="number">3</span>,<span class="number">3</span>] [<span class="number">4</span>,<span class="number">4</span>] [<span class="number">5</span>,<span class="number">5</span>]</span><br><span class="line"> /    \</span><br><span class="line">[<span class="number">1</span>,<span class="number">1</span>]  [<span class="number">2</span>,<span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+<p><code>&#123;3,4,6,8,9&#125;</code></p>
+<p>我们当前要查找区间<code>[2,3]</code>的值，由于被包含且只被左边包含，则取左边找，区间<code>[2,3]</code>包含了<code>[3,3]</code>，返回<code>res</code>，同时部分包含<code>[1,2]</code>，则继续向下拆分，找到[2,2]，返回<code>res</code>。此时<code>res</code>为<code>[3,3]</code>+<code>[2,2]</code>的值，即为4+6&#x3D;10。</p>
+<h3 id="区间更新lazy标记"><a href="#区间更新lazy标记" class="headerlink" title="区间更新lazy标记"></a>区间更新lazy标记</h3><p>这里我们将单点更新与区间更新合在一起，因为区间更新最小即为单点更新。</p>
+<p>这里的区间更新为将区间每一个数都加一个值。为了能让区间更新的效率再O(log n)此处我们引入了lazy标记，即父节点有一个lazy标记，当查找父节点的时候，我们把lazy标记加上并传递给下面的两个子节点。这样能够惰性地更新节点而不必每次都计算。</p>
+<p>与查找类似：</p>
+<ul>
+<li>修改&#x2F;查询时，若当前节点区间完全被目标区间覆盖 → 就地处理，停止递归。</li>
+<li>否则 → 下传懒标记，递归访问与目标区间有交集的子节点。</li>
+</ul>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SegmentTree</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="type">int</span> n;</span><br><span class="line">	vector&lt;<span class="type">long</span> <span class="type">long</span>&gt; tree;</span><br><span class="line">	vector&lt;<span class="type">long</span> <span class="type">long</span>&gt; lazy;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">pushDown</span><span class="params">(<span class="type">int</span> node, <span class="type">int</span> left, <span class="type">int</span> right)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (lazy[node] != <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="type">int</span> mid = (left + right) / <span class="number">2</span>;</span><br><span class="line">			tree[node * <span class="number">2</span>] += lazy[node] * (mid - left + <span class="number">1</span>);</span><br><span class="line">			tree[node * <span class="number">2</span> + <span class="number">1</span>] += lazy[node] * (right - mid);</span><br><span class="line">			lazy[node * <span class="number">2</span>] += lazy[node];</span><br><span class="line">			lazy[node * <span class="number">2</span> + <span class="number">1</span>] += lazy[node];</span><br><span class="line">			lazy[node] = <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">build</span><span class="params">(<span class="type">int</span> node, <span class="type">int</span> left, <span class="type">int</span> right, <span class="type">const</span> vector&lt;<span class="type">long</span> <span class="type">long</span>&gt;&amp; a)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (left == right) &#123;</span><br><span class="line">			tree[node] = a[left];</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="type">int</span> mid = (left + right) / <span class="number">2</span>;</span><br><span class="line">		<span class="built_in">build</span>(node * <span class="number">2</span>, left, mid, a);</span><br><span class="line">		<span class="built_in">build</span>(node * <span class="number">2</span> + <span class="number">1</span>, mid + <span class="number">1</span>, right, a);</span><br><span class="line">		tree[node] = tree[node * <span class="number">2</span>] + tree[node * <span class="number">2</span> + <span class="number">1</span>];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">updateRange</span><span class="params">(<span class="type">int</span> node, <span class="type">int</span> left, <span class="type">int</span> right, <span class="type">int</span> l, <span class="type">int</span> r, <span class="type">long</span> <span class="type">long</span> val)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (l &lt;= left &amp;&amp; right &lt;= r) &#123;</span><br><span class="line">			tree[node] += val * (right - left + <span class="number">1</span>);</span><br><span class="line">			lazy[node] += val;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">pushDown</span>(node, left, right);</span><br><span class="line">		<span class="type">int</span> mid = (left + right) / <span class="number">2</span>;</span><br><span class="line">		<span class="keyword">if</span> (l &lt;= mid) <span class="built_in">updateRange</span>(node * <span class="number">2</span>, left, mid, l, r, val);</span><br><span class="line">		<span class="keyword">if</span> (r &gt; mid) <span class="built_in">updateRange</span>(node * <span class="number">2</span> + <span class="number">1</span>, mid + <span class="number">1</span>, right, l, r, val);</span><br><span class="line">		tree[node] = tree[node * <span class="number">2</span>] + tree[node * <span class="number">2</span> + <span class="number">1</span>];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">long</span> <span class="type">long</span> <span class="title">queryRange</span><span class="params">(<span class="type">int</span> node, <span class="type">int</span> left, <span class="type">int</span> right, <span class="type">int</span> l, <span class="type">int</span> r)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (l &lt;= left &amp;&amp; right &lt;= r) &#123;</span><br><span class="line">			<span class="keyword">return</span> tree[node];</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">pushDown</span>(node, left, right);</span><br><span class="line">		<span class="type">int</span> mid = (left + right) / <span class="number">2</span>;</span><br><span class="line">		<span class="type">long</span> <span class="type">long</span> res = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span> (l &lt;= mid) res += <span class="built_in">queryRange</span>(node * <span class="number">2</span>, left, mid, l, r);</span><br><span class="line">		<span class="keyword">if</span> (r &gt; mid) res += <span class="built_in">queryRange</span>(node * <span class="number">2</span> + <span class="number">1</span>, mid + <span class="number">1</span>, right, l, r);</span><br><span class="line">		<span class="keyword">return</span> res;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"></span><br><span class="line">	<span class="built_in">SegmentTree</span>(<span class="type">const</span> vector&lt;<span class="type">long</span> <span class="type">long</span>&gt;&amp; a) &#123;</span><br><span class="line">		n = a.<span class="built_in">size</span>();</span><br><span class="line">		tree.<span class="built_in">resize</span>(<span class="number">4</span> * n);</span><br><span class="line">		lazy.<span class="built_in">resize</span>(<span class="number">4</span> * n, <span class="number">0</span>);</span><br><span class="line">		<span class="built_in">build</span>(<span class="number">1</span>, <span class="number">0</span>, n - <span class="number">1</span>, a);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">update</span><span class="params">(<span class="type">int</span> l, <span class="type">int</span> r, <span class="type">long</span> <span class="type">long</span> val)</span> </span>&#123;</span><br><span class="line">		<span class="built_in">updateRange</span>(<span class="number">1</span>, <span class="number">0</span>, n - <span class="number">1</span>, l, r, val);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">long</span> <span class="type">long</span> <span class="title">query</span><span class="params">(<span class="type">int</span> l, <span class="type">int</span> r)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">queryRange</span>(<span class="number">1</span>, <span class="number">0</span>, n - <span class="number">1</span>, l, r);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="线段树例题"><a href="#线段树例题" class="headerlink" title="线段树例题"></a>线段树例题</h2><h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>每天，农夫 John 的 <em>n</em> (1≤<em>n</em>≤5×104) 头牛总是按同一序列排队。</p>
+<p>有一天，John 决定让一些牛们玩一场飞盘比赛。他准备找一群在队列中位置连续的牛来进行比赛。但是为了避免水平悬殊，牛的身高不应该相差太大。John 准备了 <em>q</em> (1≤<em>q</em>≤1.8×105) 个可能的牛的选择和所有牛的身高 <em>h**i</em> (1≤<em>h**i</em>≤106,1≤<em>i</em>≤<em>n</em>)。他想知道每一组里面最高和最低的牛的身高差。</p>
+<h4 id="输入格式"><a href="#输入格式" class="headerlink" title="输入格式"></a>输入格式</h4><p>第一行两个数 <em>n</em>,<em>q</em>。</p>
+<p>接下来 <em>n</em> 行，每行一个数 <em>h**i</em>。</p>
+<p>再接下来 <em>q</em> 行，每行两个整数 <em>a</em> 和 <em>b</em>，表示询问第 <em>a</em> 头牛到第 <em>b</em> 头牛里的最高和最低的牛的身高差。</p>
+<h4 id="输出格式"><a href="#输出格式" class="headerlink" title="输出格式"></a>输出格式</h4><p>输出共 <em>q</em> 行，对于每一组询问，输出每一组中最高和最低的牛的身高差。</p>
+<h4 id="输入输出样例"><a href="#输入输出样例" class="headerlink" title="输入输出样例"></a>输入输出样例</h4><p><strong>输入 #1</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">6 3</span><br><span class="line">1</span><br><span class="line">7</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">2</span><br><span class="line">5</span><br><span class="line">1 5</span><br><span class="line">4 6</span><br><span class="line">2 2</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出 #1</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">6</span><br><span class="line">3</span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现代码"><a href="#实现代码" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;climits&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">build_tree</span><span class="params">(vector&lt;pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt;&gt;&amp;tree, <span class="type">int</span> l, <span class="type">int</span> r,<span class="type">int</span> node, <span class="type">int</span>* a)</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(l == r)&#123;</span><br><span class="line">		tree[node].first = a[l];</span><br><span class="line">		tree[node].second = a[l];</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="type">int</span> mid = (l + r) / <span class="number">2</span>;</span><br><span class="line">	<span class="built_in">build_tree</span>(tree,l,mid,node * <span class="number">2</span>,a);</span><br><span class="line">	<span class="built_in">build_tree</span>(tree,mid<span class="number">+1</span>,r,node * <span class="number">2</span> + <span class="number">1</span>,a);</span><br><span class="line">	tree[node].first = <span class="built_in">max</span>(tree[node * <span class="number">2</span>].first , tree[node * <span class="number">2</span> + <span class="number">1</span>].first);</span><br><span class="line">	tree[node].second = <span class="built_in">min</span>(tree[node * <span class="number">2</span>].second , tree[node * <span class="number">2</span> + <span class="number">1</span>].second);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt; <span class="title">query</span><span class="params">(vector&lt;pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt;&gt;&amp; tree, <span class="type">int</span> l, <span class="type">int</span> r, <span class="type">int</span> ql, <span class="type">int</span> qr, <span class="type">int</span> node)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (ql &lt;= l &amp;&amp; r &lt;= qr) &#123;</span><br><span class="line">		<span class="keyword">return</span> tree[node];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="type">int</span> mid = (l + r) / <span class="number">2</span>;</span><br><span class="line">	pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt; left_res = &#123;INT_MIN, INT_MAX&#125;;</span><br><span class="line">	pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt; right_res = &#123;INT_MIN, INT_MAX&#125;;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> (ql &lt;= mid) left_res = <span class="built_in">query</span>(tree, l, mid, ql, qr, node*<span class="number">2</span>);</span><br><span class="line">	<span class="keyword">if</span> (qr &gt; mid) right_res = <span class="built_in">query</span>(tree, mid<span class="number">+1</span>, r, ql, qr, node*<span class="number">2</span><span class="number">+1</span>);</span><br><span class="line">	</span><br><span class="line">	<span class="type">int</span> max_val = <span class="built_in">max</span>(left_res.first, right_res.first);</span><br><span class="line">	<span class="type">int</span> min_val = <span class="built_in">min</span>(left_res.second, right_res.second);</span><br><span class="line">	<span class="keyword">return</span> &#123;max_val, min_val&#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line">	cin.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="type">int</span> n,q;</span><br><span class="line">	cin&gt;&gt;n&gt;&gt;q;</span><br><span class="line">	<span class="type">int</span> a[n];</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">		cin&gt;&gt;a[i];</span><br><span class="line">	&#125;</span><br><span class="line">	vector&lt;pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt;&gt; <span class="built_in">segement_tree</span>(<span class="number">4</span> * n,&#123;<span class="number">0</span>, <span class="number">0</span>&#125;);</span><br><span class="line">	<span class="built_in">build_tree</span>(segement_tree,<span class="number">0</span>,n<span class="number">-1</span>,<span class="number">1</span>,a);</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; q;i++)&#123;</span><br><span class="line">		<span class="type">int</span> a,b;</span><br><span class="line">		cin&gt;&gt;a&gt;&gt;b;</span><br><span class="line">		<span class="keyword">auto</span> res = <span class="built_in">query</span>(segement_tree, <span class="number">0</span>, n<span class="number">-1</span>, --a, --b, <span class="number">1</span>);</span><br><span class="line">		cout&lt;&lt;res.first - res.second&lt;&lt;<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="代码说明"><a href="#代码说明" class="headerlink" title="代码说明"></a>代码说明</h4><p>这个题目要求找区间中的最大值和最小值，由于查找多次，我们想到线段树。构建<code>pair</code>类型的<code>vector</code>数组，可以很轻松解决这类问题。</p>
+<h2 id="ST表"><a href="#ST表" class="headerlink" title="ST表"></a>ST表</h2><h3 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h3><p>ST表即稀疏表，主要用于静态区间最值查询（RMQ ：Range Maximum&#x2F;Minimum Query ）的情景。构建效率为O(n log(n))，查询时间为O(1)。ST表主要使用倍增思想与动态规划思想，<code>ST[i][j]</code>中，<code>i</code>为起点索引，从0开始，而<code>j</code>是2的j次幂。也就是说<code>ST[i][j]</code>是指从<code>i</code>开始，到2的<code>j</code>次幂的最值。</p>
+<h3 id="建立ST表"><a href="#建立ST表" class="headerlink" title="建立ST表"></a>建立ST表</h3><p>定义状态：</p>
+<p>我们采用动态规划的思想。<code>ST[i][j]</code>我们将其定义为从第i个数开始到第 i + 2^j^ - 1这个区间的最大值。比如i为0，j为3，求的就为区间0到7的最值。</p>
+<p>状态转移（重点）：</p>
+<p>先看状态初始化，很明显，<code>ST[i][0]</code>我们可以知道就分别等于原数组的值。</p>
+<p>对于状态转移，我们可以画一个表，拆开两部分<code>ST[i][j]</code>其中一部分为<code>ST[i][j-1]</code>，另一部分开头应为上一个区间的起始位置，尾部为即为<code>ST[i + (1&lt;&lt;(j-1)) ][j-1]</code></p>
+<p>这里两个<code>j-1</code>刚好将<code>j</code>二分。</p>
+<p>比如i为1，j为2。</p>
+<table>
+<thead>
+<tr>
+<th>Index</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>value</td>
+<td>2</td>
+<td>8</td>
+<td>5</td>
+<td>1</td>
+<td>9</td>
+<td>3</td>
+<td>7</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>ST[i][j]</code></td>
+<td></td>
+<td>i</td>
+<td></td>
+<td></td>
+<td>j</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>ST[i][j - 1]</code></td>
+<td></td>
+<td>i</td>
+<td>j-1</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>ST[i+(1&lt;&lt;(j-1))][j-1]</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>i + (1&lt;&lt;(j-1))</td>
+<td>j-1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>这里的查询，我们可以这样想。输入<code>left</code>和<code>right</code>两个下标，我们可以计算得出长度，根据长度，比如为6，我们可以用两个2^log2(6)^（log2(6)向下取整)长度区间得出最值。这里ST表只能得出最值，是因为最值重叠依旧是最值，而不能计算区间和，会重复。</p>
+<p>比如查询<code>[1][6]</code></p>
+<table>
+<thead>
+<tr>
+<th>Index</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>value</td>
+<td>2</td>
+<td>8</td>
+<td>5</td>
+<td>1</td>
+<td>9</td>
+<td>3</td>
+<td>7</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>ST[i][j]</code></td>
+<td></td>
+<td>i</td>
+<td></td>
+<td></td>
+<td>j</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>ST[r-(1&lt;&lt;j)+1][j]</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>i + (1&lt;&lt;(j-1))</td>
+<td></td>
+<td></td>
+<td>j</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构建ST表，ST[i][j] 表示区间 [i, i+2^j-1] 的最大值</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">ST_init</span><span class="params">(<span class="type">int</span>* arr, vector&lt;vector&lt;<span class="type">int</span>&gt;&gt;&amp; ST, <span class="type">int</span> k, <span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">		ST[i][<span class="number">0</span>] = arr[i];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 动态规划</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">1</span>; j &lt; k; j++) &#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i + (<span class="number">1</span> &lt;&lt; j) &lt;= n; i++) &#123;</span><br><span class="line">			ST[i][j] = <span class="built_in">max</span>(ST[i][j<span class="number">-1</span>], ST[i + (<span class="number">1</span> &lt;&lt; (j<span class="number">-1</span>))][j<span class="number">-1</span>]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">query</span><span class="params">(<span class="type">const</span> vector&lt;vector&lt;<span class="type">int</span>&gt;&gt;&amp; ST, <span class="type">int</span> l, <span class="type">int</span> r, <span class="type">const</span> vector&lt;<span class="type">int</span>&gt;&amp; log2_pre)</span> </span>&#123;</span><br><span class="line">	<span class="type">int</span> len = r - l + <span class="number">1</span>;</span><br><span class="line">	<span class="type">int</span> j = log2_pre[len];</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">max</span>(ST[l][j], ST[r - (<span class="number">1</span> &lt;&lt; j) + <span class="number">1</span>][j]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="type">int</span> n;</span><br><span class="line">	cin &gt;&gt; n;</span><br><span class="line">	<span class="type">int</span>* a = <span class="keyword">new</span> <span class="type">int</span>[n]</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">		cin &gt;&gt; a[i];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">log2_pre</span><span class="params">(n + <span class="number">1</span>)</span></span>;</span><br><span class="line">	log2_pre[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">2</span>; i &lt;= n; i++) &#123;</span><br><span class="line">		log2_pre[i] = log2_pre[i / <span class="number">2</span>] + <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="type">int</span> k = log2_pre[n] + <span class="number">1</span>;</span><br><span class="line">	vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">ST</span>(n, <span class="built_in">vector</span>&lt;<span class="type">int</span>&gt;(k, <span class="number">0</span>));</span><br><span class="line">	<span class="built_in">ST_init</span>(a, ST, k, n);</span><br><span class="line"></span><br><span class="line">	<span class="type">int</span> q;</span><br><span class="line">	cin &gt;&gt; q;</span><br><span class="line">	<span class="keyword">while</span> (q--) &#123;</span><br><span class="line">		<span class="type">int</span> l, r;</span><br><span class="line">		cin &gt;&gt; l &gt;&gt; r;</span><br><span class="line">		cout &lt;&lt; <span class="built_in">query</span>(ST, l, r, log2_pre) &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">delete</span>[] a;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/04/23/%E7%BA%BF%E6%AE%B5%E6%A0%91%E4%B8%8EST%E8%A1%A8/">http://gazettm.github.io/2026/04/23/%E7%BA%BF%E6%AE%B5%E6%A0%91%E4%B8%8EST%E8%A1%A8/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Algorithm/"># Algorithm</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/04/21/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E5%85%A5%E9%97%A8/">动态规划入门</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
