@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>CS61C_FALL2020_Proj3 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">CS61C_FALL2020_Proj3</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">八月 17, 2026&nbsp;&nbsp;20:30:48</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CS61C/">CS61C</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="CS61C-FALL2020-Proj3"><a href="#CS61C-FALL2020-Proj3" class="headerlink" title="CS61C_FALL2020_Proj3"></a>CS61C_FALL2020_Proj3</h1><p>记录通过CS61C的2020年秋季学期proj3的整个项目。</p>
+<p>参考<a target="_blank" rel="noopener" href="https://www.learncs.site/docs/curriculum-resource/cs61c/projects/proj3">Project3 | CS自学社区</a></p>
+<p>该项目让我们使用logisim来做了一个二级流水线CPU。如图所示，能够通过所有测试，以及要求中RISC-V的指令。（贴在后面）</p>
+<p>本文为了防止抄袭之类的，仅仅展示CPU界面以及通过测试的输出，但会说明逻辑控制的一些问题。（不过你可以下载我的CS61C学习仓库来进行查看学习，但请遵守CS61C课程的基本原则，不要抄袭。）</p>
+<h2 id="CPU"><a href="#CPU" class="headerlink" title="CPU"></a>CPU</h2><p><img src="/../images/CS61C-FALL2020-Proj3-cpu.png" alt="CS61C-FALL2020-Proj3-CPU"></p>
+<h2 id="Control-Logic-Design"><a href="#Control-Logic-Design" class="headerlink" title="Control Logic Design"></a>Control Logic Design</h2><p>逻辑控制是项目里比较难的部分：控制单元以指令中的 <strong>opcode、funct3、funct7</strong> 三组位段作为输入（正好对应 3 个输入信号），解析出 11 个控制信号去驱动数据通路。</p>
+<p>其中最关键的是 <strong>ALUSel</strong>：它直接控制 ALU 运算类型的选择。由于几乎所有指令都要经过 ALU——R 型 &#x2F; I 型要算数运算，访存指令要用 ALU 计算地址，分支指令要用 ALU 做比较——我们必须对 funct3、opcode 甚至 funct7 一起解析，才能确定每条指令该选哪一种 ALU 运算。比如当 opcode 为 0x63（B 型分支指令）时，ALUSel 必须选为 0，让 ALU 完成 rs1 与 rs2 的比较，否则分支跳转指令都会解析失败、产生错误结果。</p>
+<p>对每一个控制信号，都要逐一考虑：哪些指令会用到它、它在这些指令下应该取什么值。</p>
+<h2 id="Pipeline-Hazard-Handling"><a href="#Pipeline-Hazard-Handling" class="headerlink" title="Pipeline Hazard Handling"></a>Pipeline Hazard Handling</h2><p>本设计是<strong>二级流水线</strong>：IF（取指）一个阶段，译码 + 执行 + 访存 + 写回合并在 EX 一个阶段，两个阶段之间用流水线寄存器 <strong>inst_ID</strong> 传递指令。以及一个 <strong>PC_ID</strong> 来存储指令</p>
+<ul>
+<li><strong>数据冒险</strong>：寄存器堆的写回发生在 EX 阶段末尾，而下一条指令的寄存器读取发生在下一周期 EX 阶段开头，写后读（RAW）依赖天然被流水级错开，因此<strong>不需要数据转发，也不需要停顿</strong>。</li>
+<li><strong>控制冒险</strong>：分支 &#x2F; 跳转指令要到 EX 阶段才能解析出目标地址（或是否跳转），此时下一条指令已经被取进 inst_ID 寄存器了。处理方法是：<strong>检测到跳转（含分支跳转）时，把 inst_ID 寄存器里的指令替换成 NOP（0x00000013）</strong>，让这条已取出的延迟槽指令作废，CPU 再从正确的目标地址继续执行。</li>
+</ul>
+<p>0x00000013 正是 RISC-V 的规范 NOP 编码：<code>addi x0, x0, 0</code>——对 x0 写 0，没有副作用，不会触发寄存器堆写使能或访存，所以用作”冲刷”指令非常安全。</p>
+<h2 id="RISC-V-指令实现（含-CSR）"><a href="#RISC-V-指令实现（含-CSR）" class="headerlink" title="RISC-V 指令实现（含 CSR）"></a>RISC-V 指令实现（含 CSR）</h2><p><img src="/../images/CS61C-FALL2020-Proj3-Risc-V.png" alt="CS61C-FALL2020-Proj3-Risc-V"></p>
+<p>官方测试覆盖了以下几类指令：</p>
+<ul>
+<li><strong>算术 &#x2F; 逻辑</strong>：addi、add、lui、sll 等</li>
+<li><strong>访存</strong>：load &#x2F; store（cpu-mem test）</li>
+<li><strong>分支跳转</strong>：branch、jump、branch-jump</li>
+<li><strong>系统类（CSR）</strong>：csrw、csrwi</li>
+</ul>
+<p>其中 <strong>CSR 指令</strong>值得单独说明：<code>csrw</code> 是 <code>csrrw x0, csr, rs1</code> 的伪指令，把 rs1 的值写入 CSR 寄存器（目标寄存器是 x0，读出的旧值直接丢弃）；<code>csrwi</code> 是 <code>csrrwi x0, csr, imm</code>，立即数版本。CSR 指令的 opcode 为 0x73，通过 funct3 区分读写类型（csrrw 为 001，csrrwi 为 101）。官方给的<strong>CSR</strong>实现方法很简单，算是一个模拟，没有真正的CSR寄存器组。</p>
+<h2 id="Contact-to-CS61C"><a href="#Contact-to-CS61C" class="headerlink" title="Contact to CS61C"></a>Contact to CS61C</h2><p>解析完指令后，就会明白 RISC-V 的立即数<strong>为什么故意拆分得特别散</strong>。</p>
+<p>RISC-V 不像 x86 那样把立即数连续拼在指令尾部，而是把不同指令类型的立即数位段”打散”在指令字中：</p>
+<ul>
+<li><strong>I 型</strong>（addi &#x2F; lw &#x2F; jalr 等）：<code>inst[31:20]</code>，12 位，符号扩展</li>
+<li><strong>S 型</strong>（sw 等）：<code>inst[31:25] | inst[11:7]</code>，12 位，符号扩展</li>
+<li><strong>B 型</strong>（分支）：<code>inst[31] | inst[7] | inst[30:25] | inst[11:8]</code>，13 位（含符号位与最低位 0，2 字节对齐）</li>
+<li><strong>U 型</strong>（lui &#x2F; auipc）：<code>inst[31:12]</code>，20 位，低 12 位补 0</li>
+<li><strong>J 型</strong>（jal）：<code>inst[31] | inst[19:12] | inst[20] | inst[30:21]</code>，21 位（2 字节对齐）</li>
+</ul>
+<p>这样设计是为了<strong>硬件复用</strong>：B 型复用了 S 型的位段位置（只是把符号位和最低位换了个位置），J 型复用了 U 型的高 20 位位置，这样译码阶段只需少量多路选择器（MUX）就能从同一组线上重组立即数，节省大量布线和逻辑；同时所有指令的寄存器号（rd &#x2F; rs1 &#x2F; rs2）都固定在 <code>inst[11:7]</code>、<code>inst[19:15]</code>、<code>inst[24:20]</code>，寄存器堆译码完全不用动。</p>
+<p>所以在实现时，需要根据指令类型（ImmSel）把对应位段重新拼接，再做符号扩展（Sign Extension），才能送进 ALU 或地址计算单元——这就是”立即数为什么拆得散”的答案。</p>
+<h2 id="Outputs"><a href="#Outputs" class="headerlink" title="Outputs"></a>Outputs</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">python test_runner.py part_b pipelined</span><br><span class="line">Running tests <span class="keyword">for</span> part_b/pipelined...</span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-add-lui-sll <span class="built_in">test</span></span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-addi <span class="built_in">test</span></span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-branch-jump <span class="built_in">test</span></span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-branch <span class="built_in">test</span></span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-csrw <span class="built_in">test</span></span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-csrwi <span class="built_in">test</span></span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-jump <span class="built_in">test</span></span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-mem <span class="built_in">test</span></span><br><span class="line">Passed 8/8 tests</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">python test_runner.py part_b custom</span><br><span class="line">Running tests <span class="keyword">for</span> part_b/custom...</span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-test_alu <span class="built_in">test</span></span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-test_auipc <span class="built_in">test</span></span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-test_branch <span class="built_in">test</span></span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-test_fib <span class="built_in">test</span></span><br><span class="line">        PASSED <span class="built_in">test</span>: cpu-test_mem <span class="built_in">test</span></span><br><span class="line">Passed 5/5 tests</span><br></pre></td></tr></table></figure>
+
+<p>下面的是自己设置的测试集，用于测试其余没有测试到的RISC-V指令。具体内容可以到本人仓库查看。（由AI编写完成）</p>
+<h2 id="资源与链接"><a href="#资源与链接" class="headerlink" title="资源与链接"></a>资源与链接</h2><ul>
+<li>我的 CS61C 学习仓库：<a target="_blank" rel="noopener" href="https://github.com/Gazettm/HCl-CS61C-Assignment">GitHub - Gazettm&#x2F;HCl-CS61C-Assignment: HCl CS61C-Assignment · GitHub</a></li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/08/17/CS61C-FALL2020-Proj3/">http://gazettm.github.io/2026/08/17/CS61C-FALL2020-Proj3/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/CS61C/"># CS61C</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/06/19/%E5%85%B3%E4%BA%8EC%E4%B8%AD%E5%AE%8F%E7%9A%84%E9%97%AE%E9%A2%98/">C 宏的四个核心问题 —— 为什么现代代码中宏越来越少</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
