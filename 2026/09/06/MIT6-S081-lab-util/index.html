@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>MIT6-S081-lab:util | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">MIT6-S081-lab:util</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">九月 6, 2026&nbsp;&nbsp;20:10:39</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/OS/">OS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>lab:util已完成。以下是测试</p>
+<p>xv6源码写的非常好，简洁且强大。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">== Test <span class="built_in">sleep</span>, no arguments == </span><br><span class="line">$ make qemu-gdb</span><br><span class="line"><span class="built_in">sleep</span>, no arguments: OK (5.2s) </span><br><span class="line">== Test <span class="built_in">sleep</span>, returns == </span><br><span class="line">$ make qemu-gdb</span><br><span class="line"><span class="built_in">sleep</span>, returns: OK (1.0s) </span><br><span class="line">== Test <span class="built_in">sleep</span>, makes syscall == </span><br><span class="line">$ make qemu-gdb</span><br><span class="line"><span class="built_in">sleep</span>, makes syscall: OK (0.9s) </span><br><span class="line">== Test pingpong == </span><br><span class="line">$ make qemu-gdb</span><br><span class="line">pingpong: OK (1.2s) </span><br><span class="line">== Test primes == </span><br><span class="line">$ make qemu-gdb</span><br><span class="line">primes: OK (1.3s) </span><br><span class="line">== Test find, <span class="keyword">in</span> current directory == </span><br><span class="line">$ make qemu-gdb</span><br><span class="line">find, <span class="keyword">in</span> current directory: OK (1.4s) </span><br><span class="line">== Test find, recursive == </span><br><span class="line">$ make qemu-gdb</span><br><span class="line">find, recursive: OK (1.9s) </span><br><span class="line">== Test xargs == </span><br><span class="line">$ make qemu-gdb</span><br><span class="line">xargs: OK (2.1s) </span><br><span class="line">== Test <span class="keyword">time</span> == </span><br><span class="line"><span class="keyword">time</span>: OK </span><br><span class="line">Score: 100/100</span><br></pre></td></tr></table></figure>
+
+<h2 id="primes-c"><a href="#primes-c" class="headerlink" title="primes.c"></a><code>primes.c</code></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/types.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;user/user.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">sieve</span><span class="params">(<span class="type">int</span> left_fd)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="keyword">if</span>(read(left_fd, &amp;n, <span class="number">4</span>) &lt;= <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;prime %d\n&quot;</span>, n);</span><br><span class="line">    <span class="type">int</span> p[<span class="number">2</span>];</span><br><span class="line">    pipe(p);</span><br><span class="line">    <span class="keyword">if</span>(fork() == <span class="number">0</span>)&#123;</span><br><span class="line">        close(p[<span class="number">1</span>]);</span><br><span class="line">        close(left_fd);</span><br><span class="line">        sieve(p[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    close(p[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> num;</span><br><span class="line">    <span class="keyword">while</span>(read(left_fd, &amp;num, <span class="number">4</span>) == <span class="number">4</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span>(num % n != <span class="number">0</span>)&#123;</span><br><span class="line">            write(p[<span class="number">1</span>], &amp;num, <span class="number">4</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    close(p[<span class="number">1</span>]);</span><br><span class="line">    wait(<span class="number">0</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> p[<span class="number">2</span>];</span><br><span class="line">    pipe(p);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>(fork() == <span class="number">0</span>)&#123;</span><br><span class="line">        close(p[<span class="number">1</span>]);</span><br><span class="line">        sieve(p[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    close(p[<span class="number">0</span>]);</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">2</span>;i &lt;= <span class="number">35</span>; i++)&#123;</span><br><span class="line">        write(p[<span class="number">1</span>], &amp;i, <span class="number">4</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    close(p[<span class="number">1</span>]);</span><br><span class="line">    wait(<span class="number">0</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>这个代码是解决2到35的素数筛。</p>
+<p>主函数先创建一个管道<code>pipe</code>（读通道为<code>p[0]</code>，写通道为<code>p[1]</code>）连接进程1（父进程）与进程2（子进程），把父进程的读通道关闭，把2到35写入进程2中。进程2（子进程）关闭写通道（只需要读）。调用<code>sieve</code>函数，传入子进程的读通道（p[0]），在递归过程中，这个就是用来读取上个管道传入的筛下来的数。需要注意的是这里的<code>write(p[1], &amp;i, 4);</code>写入的是4字节，因为int类型为4字节。</p>
+<p><code>sieve</code>函数中要做的是筛素数，然后把筛下来的素数传入下一个筛中。这里<code>fork</code>的逻辑与主函数没什么差别，但记得关闭父进程因<code>fork</code>传给子进程的<code>left_fd</code>。这里的<code>n</code>是上个进程传入该进程的第一个数字，也是最小数字。这个数字代表我们筛不掉，也就是它无法被前面的数字整除，那么它一定为素数，打印出来。我们用<code>num</code>来对<code>n</code>取余，如果不为0表示无法整除，也就是筛不掉，于是写入下一个筛子。记得关闭通道。</p>
+<h2 id="find-c"><a href="#find-c" class="headerlink" title="find.c"></a><code>find.c</code></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/types.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/stat.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;user/user.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/fs.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">find</span><span class="params">(<span class="type">char</span> *path, <span class="type">char</span> *filename)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> buf[<span class="number">512</span>], *p;</span><br><span class="line">    <span class="type">int</span> fd;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">dirent</span> <span class="title">de</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">st</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((fd = open(path, <span class="number">0</span>)) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="number">2</span>, <span class="string">&quot;find: cannot open %s\n&quot;</span>, path);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (fstat(fd, &amp;st) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="number">2</span>, <span class="string">&quot;find: cannot stat %s\n&quot;</span>, path);</span><br><span class="line">        close(fd);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">switch</span> (st.type)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="keyword">case</span> T_FILE:</span><br><span class="line">        <span class="keyword">for</span> (p = path + <span class="built_in">strlen</span>(path); p &gt; path &amp;&amp; *p != <span class="string">&#x27;/&#x27;</span>; p--)</span><br><span class="line">            ;</span><br><span class="line">        <span class="keyword">if</span> (*p == <span class="string">&#x27;/&#x27;</span>)</span><br><span class="line">            p++;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">strcmp</span>(p, filename) == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, path);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> T_DIR:</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">strlen</span>(path) + <span class="number">1</span> + DIRSIZ + <span class="number">1</span> &gt; <span class="keyword">sizeof</span> buf)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;find: path too long\n&quot;</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">strcpy</span>(buf, path);</span><br><span class="line">        p = buf + <span class="built_in">strlen</span>(buf);</span><br><span class="line">        *p++ = <span class="string">&#x27;/&#x27;</span>;</span><br><span class="line">        <span class="keyword">while</span> (read(fd, &amp;de, <span class="keyword">sizeof</span>(de)) == <span class="keyword">sizeof</span>(de))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (de.inum == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (de.name[<span class="number">0</span>] == <span class="string">&#x27;.&#x27;</span> &amp;&amp; (de.name[<span class="number">1</span>] == <span class="string">&#x27;\0&#x27;</span> || (de.name[<span class="number">1</span>] == <span class="string">&#x27;.&#x27;</span> &amp;&amp; de.name[<span class="number">2</span>] == <span class="string">&#x27;\0&#x27;</span>)))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            memmove(p, de.name, DIRSIZ);</span><br><span class="line">            p[DIRSIZ] = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">strcmp</span>(p, filename) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, buf);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (stat(buf, &amp;st) &lt; <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;find: cannot stat %s\n&quot;</span>, buf);</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(st.type == T_DIR)&#123;</span><br><span class="line">                find(buf, filename);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    close(fd);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (argc == <span class="number">2</span>) &#123;</span><br><span class="line">        find(<span class="string">&quot;.&quot;</span>, argv[<span class="number">1</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (argc == <span class="number">3</span>) &#123;</span><br><span class="line">        find(argv[<span class="number">1</span>], argv[<span class="number">2</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;find: please enter right argv\n&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="dirent"><a href="#dirent" class="headerlink" title="dirent"></a><code>dirent</code></h3><p> <code>dirent</code> 是 directory entry（目录项）的缩写。定义如下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// Directory is a file containing a sequence of dirent structures.</span><br><span class="line">#define DIRSIZ 14</span><br><span class="line"></span><br><span class="line">struct dirent &#123;</span><br><span class="line">  ushort inum;</span><br><span class="line">  char name[DIRSIZ];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>ushort inum</code>（索引节点号）是该文件或目录在磁盘上的 inode 编号（索引节点号）。通过这个文件系统可以找到文件的位置（<code>struct dinode</code>），从而来获得文件的信息。如果 <code>inum</code> 为 0，表示这个目录槽位是空的（未被使用），即该位置没有文件。</p>
+<p><code>char name[DIRSIZ]</code>（文件名）<code>DIRSIZ</code> 被定义为 14，所以文件名最长只能有 14 个字符。在这里因为最长文件名为14，后面的 <code>&#39;\0&#39;</code>可能会被占位。因此进行比较的时候应该注意。</p>
+<p>例如，在本目录创建一个README文件。那么在磁盘上，根目录这个文件的数据块里，会存放这样一条 <code>dirent</code> 记录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">inum = 5</span><br><span class="line">name = &quot;README\0\0\0\0\0\0\0\0&quot;  (填充至14字节)</span><br></pre></td></tr></table></figure>
+
+<h3 id="stat"><a href="#stat" class="headerlink" title="stat"></a><code>stat</code></h3><p><code>stat</code>是用户用来获取文件信息的接口。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> T_DIR     1   <span class="comment">// Directory</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> T_FILE    2   <span class="comment">// File</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> T_DEVICE  3   <span class="comment">// Device</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">  <span class="type">int</span> dev;     <span class="comment">// File system&#x27;s disk device</span></span><br><span class="line">  uint ino;    <span class="comment">// Inode number</span></span><br><span class="line">  <span class="type">short</span> type;  <span class="comment">// Type of file</span></span><br><span class="line">  <span class="type">short</span> nlink; <span class="comment">// Number of links to file</span></span><br><span class="line">  uint64 size; <span class="comment">// Size of file in bytes</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>本程序主要使用了<code>type</code>来判断这个文件是什么类型。</p>
+<h3 id="解析-1"><a href="#解析-1" class="headerlink" title="解析"></a>解析</h3><p><code>find</code>主要的作用是用来查找当前目录下与查找文件名匹配的文件或者文件夹。因此思路为，判断当前路径是文件还是文件夹。若为文件，则尝试判断是否匹配。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (p = path + <span class="built_in">strlen</span>(path); p &gt; path &amp;&amp; *p != <span class="string">&#x27;/&#x27;</span>; p--)</span><br><span class="line">            ;</span><br><span class="line">        <span class="keyword">if</span> (*p == <span class="string">&#x27;/&#x27;</span>)</span><br><span class="line">            p++;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码通过让<code>char</code>类型指针指向路径字符串的末尾，然后从后往前减，最终指向符号<code>/</code>的后面（如果有的话，没有的话就还是指向最前面）。</p>
+<p>如果当前路径是文件夹，通过<code>strlen(path) + 1 + DIRSIZ + 1 &gt; sizeof buf</code>来判断是否超出缓冲区。（长度为路径 + <code>&#39;/&#39;</code> + 文件名最大长度 + <code>&#39;\0&#39;</code>）安全检查之后，将<code>path</code>加入到缓冲区，在之后加上<code>&#39;/&#39;</code>，之后对当前目录（即当前文件夹）中的文件或者文件夹逐个检查（注意忽略当前目录<code>&#39;.&#39;</code>和上级目录<code>&#39;..&#39;</code>），注意对该目录下的文件夹使用<code>find</code>进行递归调用。</p>
+<h2 id="xargs-c"><a href="#xargs-c" class="headerlink" title="xargs.c"></a><code>xargs.c</code></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/types.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/stat.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;user/user.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/param.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">split</span><span class="params">(<span class="type">char</span> *buf, <span class="type">char</span> *words[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> in_word = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">char</span> *p = buf; *p; p++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (*p == <span class="string">&#x27; &#x27;</span> || *p == <span class="string">&#x27;\t&#x27;</span>) &#123;</span><br><span class="line">            in_word = <span class="number">0</span>;</span><br><span class="line">            *p = <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!in_word) &#123;</span><br><span class="line">            words[count++] = p;</span><br><span class="line">            in_word = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> count;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> buf[<span class="number">512</span>];</span><br><span class="line">    <span class="type">int</span> n = <span class="number">0</span>;</span><br><span class="line">    <span class="type">char</span> c;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (read(<span class="number">0</span>, &amp;c, <span class="number">1</span>) == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (c == <span class="string">&#x27;\n&#x27;</span>) &#123;</span><br><span class="line">            buf[n] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (n &gt; <span class="number">0</span>) &#123;</span><br><span class="line"></span><br><span class="line">                <span class="type">char</span> *new_argv[MAXARG];</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; argc; i++) new_argv[i] = argv[i];</span><br><span class="line">                <span class="type">int</span> words = split(buf, &amp;new_argv[argc]);</span><br><span class="line">                new_argv[argc + words] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (fork() == <span class="number">0</span>) &#123;</span><br><span class="line">                    exec(new_argv[<span class="number">1</span>], new_argv + <span class="number">1</span>);</span><br><span class="line">                    <span class="built_in">printf</span>(<span class="string">&quot;exec failed\n&quot;</span>);</span><br><span class="line">                    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                wait(<span class="number">0</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            n = <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            buf[n++] = c;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析-2"><a href="#解析-2" class="headerlink" title="解析"></a>解析</h3><p><code>xargs</code>命令经常与管道一起用。主要作用是捕获一个程序的输出然后将它作为参数传给下一个程序。</p>
+<p>如<code>echo hello too | xargs echo bye</code>这一条命令。<code>xargs</code>将捕获前面<code>echo</code>的输出<code>hello too</code>，将其作为参数，将其与<code>bye</code>一起传给<code>xargs</code>的<code>argv[1]</code>也就是<code>echo</code>命令，将<code>bye hello too</code>作为<code>echo</code>的参数。这个程序将会输出<code>bye hello too</code>。</p>
+<p>该主程序的主要想法是读取<code>stdin</code>即标准输入的字符，将其按行<strong>逐次</strong>放入缓冲区中，比如<code>echo hello too | xargs echo bye</code>将<code>hello too</code>放入缓冲区中，声明一个<code>char</code>类型指针数组，先把<code>echo bye</code>放入，之后通过<code>split</code>函数把buf中的字符串按空格或制表符分割，拼接到指针数组中。创建子进程执行<code>echo bye hello too</code>。等待子进程，如有下一行，则继续。</p>
+<p>这里逻辑比上两个简单一些，但是这个程序的巧妙之处在于：</p>
+<p>1.<code>split</code>函数返回一个统计数，用来给<code>new_argv[]</code>指针数组确定末尾<code>&#39;\0&#39;</code>的位置</p>
+<p>2.<code>int words = split(buf, &amp;new_argv[argc]);</code>中传入的是<code>&amp;new_argv[argc]</code>，此时<code>int split(char *buf, char *words[])</code>中，<code>words[0]</code>指的是<code>new_argv[argc]</code>，在例子中指的是<code>hello</code>。</p>
+<p>3.<code>in_word</code>是一个<code>flag</code>，用来处理连续空格，制表符的问题。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/09/06/MIT6-S081-lab-util/">http://gazettm.github.io/2026/09/06/MIT6-S081-lab-util/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/OS/"># OS</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/09/05/MIT6-S081-redirect/">MIT6.S081:redirect</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
