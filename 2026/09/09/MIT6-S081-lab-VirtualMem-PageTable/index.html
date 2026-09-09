@@ -312,6 +312,7 @@
 <td align="left">沿用（保持用户态陷阱入口）</td>
 </tr>
 </tbody></table>
+<p><img src="/../images/MIT6-S081-lab-VirtualMem&PageTable.png" alt="MIT6-S081-lab-VirtualMem&amp;PageTable"></p>
 <h3 id="关于页表切换"><a href="#关于页表切换" class="headerlink" title="关于页表切换"></a>关于页表切换</h3><p>每次页表切换时，原先的TLB快表存储的对应地址会失效，每次都需要重新加载。因此这样xv6这样频繁的切换会导致性能的浪费。所以Linux、Windows 等通用操作系统通常采用内核映射常驻每个进程页表的设计，大大降低了系统调用的成本。</p>
 
         </div>
