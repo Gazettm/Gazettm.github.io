@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>MIT6-S081-lab-pgtbl | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">MIT6-S081-lab-pgtbl</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">九月 11, 2026&nbsp;&nbsp;18:23:48</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/OS/">OS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>测试完毕，如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">== Test pgtbltest == (2.5s) </span><br><span class="line">== Test   pgtbltest: ugetpid == </span><br><span class="line">  pgtbltest: ugetpid: OK </span><br><span class="line">== Test   pgtbltest: pgaccess == </span><br><span class="line">  pgtbltest: pgaccess: OK </span><br><span class="line">== Test pte printout == pte printout: OK (0.6s) </span><br><span class="line">== Test answers-pgtbl.txt == answers-pgtbl.txt: OK </span><br><span class="line">== Test usertests == (105.3s) </span><br><span class="line">== Test   usertests: all tests == </span><br><span class="line">  usertests: all tests: OK </span><br><span class="line">== Test <span class="keyword">time</span> == </span><br><span class="line"><span class="keyword">time</span>: OK </span><br><span class="line">Score: 46/46</span><br></pre></td></tr></table></figure>
+
+<h2 id="Speed-up-system-calls"><a href="#Speed-up-system-calls" class="headerlink" title="Speed up system calls"></a>Speed up system calls</h2><p>这个比较简单，这个实验主要是由于<code>getpid</code>这个系统调用，每次使用时都需要<code>ecall</code>来切换到内核，性能开销比较大，因此这个实验要我们做一个<code>ugetpid</code>来加快获取速度。还记得我们之前讲过的用户页表吗，在用户页表中我们设置了<code>trampoline</code>和<code>trapframe</code>页，一个时用于切换内核与用户之间的页，一个是用于陷入内核时存储当前寄存器状态的页。在这个实验中我们的思想是在用户页表中再设置一个固定虚拟地址的页，用于存储一个存储着<code>pid</code>的结构体。这样，我们创建进程之后，存储着<code>pid</code>的结构体也被创建，我们获取<code>pid</code>只需要访问这个页就行。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> LAB_PGTBL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> USYSCALL (TRAPFRAME - PGSIZE)</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">usyscall</span> &#123;</span></span><br><span class="line">  <span class="type">int</span> pid;  <span class="comment">// Process ID</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>存储在倒数第三页。</p>
+<p>在<code>allocproc</code>中使用<code>kalloc</code>分配一个物理页表，让固定虚拟地址指向它。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> LAB_PGTBL</span></span><br><span class="line">  <span class="keyword">if</span>((p-&gt;usyscall = (<span class="keyword">struct</span> usyscall *)kalloc()) == <span class="number">0</span>)&#123;</span><br><span class="line">    freeproc(p);</span><br><span class="line">    release(&amp;p-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  p-&gt;usyscall-&gt;pid = p-&gt;pid;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>freeproc</code>中使用kfree来释放物理页表。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#ifdef LAB_PGTBL</span><br><span class="line">  if(p-&gt;usyscall)</span><br><span class="line">    kfree((void*)p-&gt;usyscall);</span><br><span class="line">  p-&gt;usyscall = 0;</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<p>还有两处这里就不给出了。</p>
+<p>官方给出了一个思考题，还有什么函数能够这样优化。我认为这里只要不涉及到修改内核，仅仅少量读取内核状态的都可以加速。</p>
+<h2 id="Print-a-page-table"><a href="#Print-a-page-table" class="headerlink" title="Print a page table"></a>Print a page table</h2><p>这个官方给出的难度等级也是easy。目标是打印第一个进程的三级页表。主要难点是递归的打印。但是可以模仿<code>freewalk</code></p>
+<h3 id="vmprint"><a href="#vmprint" class="headerlink" title="vmprint"></a><code>vmprint</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">vmprint</span><span class="params">(<span class="type">pagetable_t</span> pagetable, <span class="type">int</span> depth)</span>&#123;</span><br><span class="line">  <span class="type">int</span> i,j;</span><br><span class="line">  <span class="keyword">if</span>(depth == <span class="number">0</span>) <span class="built_in">printf</span>(<span class="string">&quot;page table %p\n&quot;</span>, pagetable);</span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; <span class="number">512</span>; i++)&#123;</span><br><span class="line">    <span class="type">pte_t</span> pte = pagetable[i];</span><br><span class="line">    <span class="keyword">if</span>((pte &amp; PTE_V))&#123;</span><br><span class="line">      uint64 child = PTE2PA(pte);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">for</span>(j = <span class="number">0</span>;j &lt;= depth;j++)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot; ..&quot;</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;%d: pte %p pa %p\n&quot;</span>,i ,pte, child);</span><br><span class="line">      <span class="keyword">if</span> ((pte &amp; (PTE_R|PTE_W|PTE_X)) == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 只有指向下级页表的 PTE 才递归</span></span><br><span class="line">        vmprint((<span class="type">pagetable_t</span>)child, depth+<span class="number">1</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里我使用了<code>depth</code>来判断这是第几层</p>
+<h2 id="Detecting-which-pages-have-been-accessed"><a href="#Detecting-which-pages-have-been-accessed" class="headerlink" title="Detecting which pages have been accessed"></a>Detecting which pages have been accessed</h2><p>这个实验要求写一个系统调用，用来追踪哪些页表最近被访问过。因此这个实验与页面置换算法是挂钩的。（快表中需要）</p>
+<p>要求传入三个参数，分别为，用户的页表起始地址，查阅页表个数与写入用户缓冲区的地址。<code>pgaccess(addr, npages, user_bitmask)</code>对 <code>[addr, addr+npages*PGSIZE]</code> 范围内的每一页：找到它的 PTE（通过<code>walk</code>函数），读出 A 位 → 写进内核里的临时位图，清掉 A 位，最后把位图 <code>copyout</code> 给用户。</p>
+<p>通过这个设计思路我们可以思考如何写代码。这里的位图是指每一个位（bit）对应一个页表是否被访问，但是c语言中没有只占1bit的数据类型，因此我们需要按位操作来操作数据。</p>
+<h3 id="sys-pgaccess"><a href="#sys-pgaccess" class="headerlink" title="sys_pgaccess"></a><code>sys_pgaccess</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> LAB_PGTBL</span></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">sys_pgaccess</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  uint64 uvmaddr, bufaddr;</span><br><span class="line">  <span class="type">int</span> size;</span><br><span class="line">  <span class="keyword">if</span>(argaddr(<span class="number">0</span>, &amp;uvmaddr) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span>(argint(<span class="number">1</span>, &amp;size) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span>(argaddr(<span class="number">2</span>, &amp;bufaddr) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span>(pgaccess(uvmaddr, size, bufaddr) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="comment">// lab pgtbl: your code here.</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里返回0表示没有出错，否则返回-1。</p>
+<h3 id="pgaccess"><a href="#pgaccess" class="headerlink" title="pgaccess"></a><code>pgaccess</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">pgaccess</span><span class="params">(uint64 uvmaddress, <span class="type">int</span> size, uint64 bufaddr)</span>&#123;</span><br><span class="line">  uint64 bitmap = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line">  <span class="type">pte_t</span> *pte;</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> n = size / <span class="number">64</span>;</span><br><span class="line">  <span class="type">int</span> m = size % <span class="number">64</span>;</span><br><span class="line">  <span class="type">int</span> i, j, k;</span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; n; i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>(j = <span class="number">0</span>;j &lt; <span class="number">64</span>;j++)&#123;</span><br><span class="line">      pte = walk(p -&gt; pagetable, uvmaddress, <span class="number">0</span>);</span><br><span class="line">      <span class="keyword">if</span>(pte == <span class="number">0</span>)&#123;</span><br><span class="line">        uvmaddress += PGSIZE;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span>(*pte &amp; PTE_A)&#123;</span><br><span class="line">        bitmap |= ((uint64)<span class="number">1</span> &lt;&lt; j);</span><br><span class="line">      &#125;</span><br><span class="line">    *pte = *pte &amp; ~PTE_A;</span><br><span class="line">      uvmaddress += PGSIZE;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(copyout(p-&gt;pagetable, bufaddr, (<span class="type">char</span> *)&amp;bitmap, <span class="keyword">sizeof</span>(bitmap)) &lt; <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    bufaddr += <span class="number">8</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  bitmap = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(k = <span class="number">0</span>;k &lt; m; k++)&#123;</span><br><span class="line">    pte = walk(p -&gt; pagetable, uvmaddress, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(pte == <span class="number">0</span>)&#123;</span><br><span class="line">      uvmaddress += PGSIZE;</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(*pte &amp; PTE_A)&#123;</span><br><span class="line">      bitmap |= ((uint64)<span class="number">1</span> &lt;&lt; k);</span><br><span class="line">    &#125;</span><br><span class="line">    *pte = *pte &amp; ~PTE_A;</span><br><span class="line">    uvmaddress += PGSIZE;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(copyout(p-&gt;pagetable, bufaddr, (<span class="type">char</span> *)&amp;bitmap, <span class="keyword">sizeof</span>(bitmap)) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的代码有些长。我这里的逻辑是，仅仅使用<code>uint64</code>这个数据类型来当作位图，通过多次调用<code>copyout</code>来避免用户栈的溢出。（官方推荐定义一个上限来限制查找页表0的大小。</p>
+<p>这里由于查找页表个数不一定为64的倍数，因此先处理<code>size / 64</code>再处理<code>size % 64</code>。我们使用<code>walk</code>函数来传入页表，虚拟地址和一个标志位。<code>walk</code>函数通过页表来查找这个虚拟地址所对应的<code>PTE</code>（页表项，<code>PTE</code>的低十位是标志位），当标志位为0的时候，如果有页表未分配的情况（也就是虚拟地址拆开之后查找下一个页表，但是下一个页表没有被分配），会返回0；当标志位为1的时候则会新分配一个页表。我们不需要分配新的页表，只需要验证，因此这里我们选择0，当返回0的时候，我们的变量<code>pte</code>就会变成0，加一个判断来确定是否获取到了<code>PTE</code>。</p>
+<p>另外就是一些细节问题，考验代码编写能力，比如记得每次<code>bufaddr</code>的地址需要+8（这里+8是指+8字节），记得每次<code>uvmaddr</code>+<code>PGSIZE</code>的大小（确保遍历每个页的标志位），还有对位的操作是与上左移的数。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/09/11/MIT6-S081-lab-pgtbl/">http://gazettm.github.io/2026/09/11/MIT6-S081-lab-pgtbl/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/OS/"># OS</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/09/09/MIT6-S081-lab-VirtualMem-PageTable/">MIT6-S081-lab:VirtualMem&PageTable</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
