@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>MIT6-S081-lab-traps | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">MIT6-S081-lab-traps</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">九月 14, 2026&nbsp;&nbsp;16:45:24</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/OS/">OS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>lab-traps已完成，如下:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">== Test answers-traps.txt == answers-traps.txt: OK </span><br><span class="line">== Test backtrace <span class="built_in">test</span> == backtrace <span class="built_in">test</span>: OK (0.8s) </span><br><span class="line">== Test running alarmtest == (3.6s) </span><br><span class="line">== Test   alarmtest: test0 == </span><br><span class="line">  alarmtest: test0: OK </span><br><span class="line">== Test   alarmtest: test1 == </span><br><span class="line">  alarmtest: test1: OK </span><br><span class="line">== Test   alarmtest: test2 == </span><br><span class="line">  alarmtest: test2: OK </span><br><span class="line">== Test usertests == usertests: OK (144.2s) </span><br><span class="line">== Test <span class="keyword">time</span> == </span><br><span class="line"><span class="keyword">time</span>: OK </span><br><span class="line">Score: 85/85</span><br></pre></td></tr></table></figure>
+
+<h2 id="RISC-V-assembly"><a href="#RISC-V-assembly" class="headerlink" title="RISC-V assembly"></a>RISC-V assembly</h2><p>Q1: Which registers contain arguments to functions? For example, which register holds 13 in main’s call to printf?</p>
+<p>A: Function arguments are passed in registers a0-a7 (a0 &#x3D; first argument, a1 &#x3D; second, and so on). In user&#x2F;call.c, main calls printf(“%d %d\n”, f(8)+1, 13), so a0 holds the format string, a1 holds f(8)+1 (&#x3D; 12), and a2 holds 13.</p>
+<p>Q2: Where is the call to function f in the assembly code for main? Where is the call to g? (Hint: the compiler may inline functions.)</p>
+<p>A: Neither call appears in the assembly. Since f and g are trivial, the compiler inlined them and then constant-folded the result: f(8) &#x3D; g(8) &#x3D; 8 + 3 &#x3D; 11, so f(8) + 1 becomes the constant 12. The generated code simply loads that constant (“li a1,12”); there is no jal&#x2F;jalr targeting f or g anywhere in main.</p>
+<p>Q3: At what address is the function printf located?</p>
+<p>A: printf is at address 0x640.</p>
+<p>Q4: What value is in the register ra just after the jalr to printf in main?</p>
+<p>A: 0x40. The relevant instructions are:</p>
+<pre><code>38: auipc ra,0x0      # ra = PC + 0 = 0x38
+3c: jalr 1544(ra)     # jump to 0x38 + 1544 = 0x640 (printf) and set
+                      # ra = address of the following instruction = 0x40
+</code></pre>
+<p>So when printf eventually returns, execution resumes at 0x40.</p>
+<p>Q5: Run the following code … what is the output? … (little-endian questions)</p>
+<p>A: The output is “He110 World”.</p>
+<ul>
+<li>%x prints 57616 in hexadecimal. 57616 &#x3D; 0xe110, so after the leading “H” the output is “e110”.</li>
+<li>%s prints the bytes of i as a C string. i &#x3D; 0x00646c72 is stored little-endian as the byte sequence 72 6c 64 00, i.e. ‘r’ ‘l’ ‘d’ ‘\0’, so it prints “rld”.</li>
+</ul>
+<p>If RISC-V were big-endian, i would have to be 0x726c6400 so that the bytes are again stored as 72 6c 64 00 and %s still prints “rld”. 57616 would NOT need to change: %x prints the numeric value 0xe110, and a number’s value is independent of byte order. Only the in-memory byte layout of i matters to %s.</p>
+<p>Q6: In the following code, what is going to be printed after ‘y&#x3D;’? (note: the answer is not a specific value.) Why does this happen?</p>
+<p>A: A garbage (indeterminate) value rather than any fixed number. printf reads its third argument from register a2, but the call printf(“x&#x3D;%d y&#x3D;%d”, 3) supplies only two arguments, so a2 still contains whatever value happened to be left there by earlier code. The behavior is undefined; the value printed depends on what was in a2 at that moment.</p>
+<h2 id="Backtrace"><a href="#Backtrace" class="headerlink" title="Backtrace"></a>Backtrace</h2><p>在这个实验中需要我们在<code>prinf.c</code>中加入一个<code>backtrace</code>函数，用于追踪调用过它的函数。</p>
+<h3 id="栈指针fp"><a href="#栈指针fp" class="headerlink" title="栈指针fp"></a>栈指针fp</h3><p>编译器在每个栈帧里存一个帧指针（frame pointer），它指向调用者的帧指针——形成一条链。<code>backtrace</code> 就是顺着这条链往上走，打印每一帧里保存的返回地址。帧指针的<code>fp-8</code>偏移位置，存着该函数的返回地址。也就是调用这个<code>backtrace</code>函数的函数。调用者的<code>fp</code>则在<code>fp-16</code>位置。栈帧如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">更高地址</span><br><span class="line">        G 的栈帧</span><br><span class="line">        +----------------------------+</span><br><span class="line">        | ...                        |</span><br><span class="line">        +----------------------------+  &lt;-- G 的 fp = 0x9000</span><br><span class="line">        | G 的 caller 栈顶内容        |</span><br><span class="line">        +----------------------------+  &lt;-- 0x8ff8</span><br><span class="line">        | G 的 saved ra              |</span><br><span class="line">        +----------------------------+  &lt;-- 0x8ff0</span><br><span class="line">        | G 的 saved old fp          |</span><br><span class="line">        +----------------------------+</span><br><span class="line"></span><br><span class="line">        F 的栈帧</span><br><span class="line">        +----------------------------+</span><br><span class="line">        | ...                        |</span><br><span class="line">        +----------------------------+  &lt;-- F 的 fp = 0x8000</span><br><span class="line">        | F 的 caller 栈顶内容        |</span><br><span class="line">        +----------------------------+  &lt;-- 0x7ff8</span><br><span class="line">        | F 的 saved ra              |</span><br><span class="line">        +----------------------------+  &lt;-- 0x7ff0</span><br><span class="line">        | F 的 saved old fp = 0x9000 |</span><br><span class="line">        +----------------------------+  &lt;-- F 的 sp</span><br><span class="line">更低地址</span><br></pre></td></tr></table></figure>
+
+<h3 id="backtrace实现"><a href="#backtrace实现" class="headerlink" title="backtrace实现"></a><code>backtrace</code>实现</h3><p>懂得了<code>fp</code>指针，我们就好写这个函数了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">backtrace</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">  uint64 fp = r_fp();</span><br><span class="line">  uint64 originfp = fp;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;backtrace:\n&quot;</span>);</span><br><span class="line">  <span class="keyword">while</span>(fp &lt; PGROUNDUP(originfp))&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%p\n&quot;</span>,*(uint64 *)(fp - <span class="number">8</span>));</span><br><span class="line">    fp = *(uint64 *)(fp<span class="number">-16</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>fp</code>从高往低走，因此我们回溯的时候会往高处走，因此需要判断fp是否小于这个顶部，若小于就退出，否则则要打印出<code>caller</code>的地址。</p>
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>这里有一个问题，<code>PGROUNDUP</code>这个函数接受一个地址，返回这个地址处于页表的最高处地址，这就表示我们backtrace只能在一个<code>PAGE</code>中进行回溯。然而，每一个内核栈唯一对应一个用户进程，而且大小被设置为<code>PGSIZE</code>的大小，因此我们不必担心超出范围。</p>
+<h2 id="Alarm"><a href="#Alarm" class="headerlink" title="Alarm"></a>Alarm</h2><p>这个实验要求我们写两个系统调用，<code>sigalarm(interval, handler)</code>和<code>sigreturn()</code>。<code>sigalarm</code>接收一个<code>interval</code>，CPU每次经过<code>interval</code>tick之后，调用<code>handler</code>地址处的函数一次。</p>
+<h3 id="CPU中断"><a href="#CPU中断" class="headerlink" title="CPU中断"></a>CPU中断</h3><p>要实现这个任务，我们必须清除CPU中断的逻辑：每个 CPU 都会有一个硬件定时器，它每隔一个固定的时间间隔（一个 <strong>tick</strong>）就会触发一次定时器中断。如果用户进程正在运行，CPU 在 <code>U-mode</code>，定时器中断会进入 <code>usertrap()</code>，然后进行判断（跟stm32的软件计时逻辑差不多）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if(which_dev == 2)&#123;</span><br><span class="line">  yield();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>知道了CPU每一个tick都会进行一次<code>trap</code>之后我们就好写了。我们需要在<code>proc</code>里面重新加入五个变量。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> alarmcountdown;          <span class="comment">// alarm count down</span></span><br><span class="line"><span class="type">int</span> inalarmhandler;          <span class="comment">// 1 is in alarm handler, need to return</span></span><br><span class="line"><span class="type">int</span> alarminterval;</span><br><span class="line">uint64 handler;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">trapframe</span> *<span class="title">saved</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>这五个值，在系统调用<code>sigalarm(interval, handler)</code>之后，<code>interval</code>赋值给<code>alarminterval</code>，<code>handler</code>赋值给<code>handler</code>，<code>inalarmhandler</code>用于判断是否已经在<code>handler</code>函数中执行了，避免重复调用。<code>alarmcountdown</code>用于每次CPU计时器中断之后自减少，减少到0即触发中断。但是这里怎么跳入<code>handler</code>中呢？答案是寄存器<code>epc</code>，这个寄存器存储着从内核返回之后应该回到的地址，当我们修改这个之后，我们就可以跳入到<code>handler</code>中，但是还有一个问题，我们跳入之后如何返回到原先调用<code>sigalarm</code>的程序呢？答案是一个备份，因此我们需要在<code>proc</code>结构体中加入<code>saved</code>用于备份<code>trapframe</code>（选择这个是因为这个结构体是现成的保存寄存器的结构体，另外记得在<code>allocproc</code>中使用<code>kalloc</code>分配页表，在<code>freeproc</code>中释放内存）。</p>
+<h4 id="中断"><a href="#中断" class="headerlink" title="中断"></a>中断</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(which_dev == <span class="number">2</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(p-&gt;alarminterval &gt; <span class="number">0</span> &amp;&amp; p-&gt;inalarmhandler == <span class="number">0</span>)&#123;</span><br><span class="line">      p-&gt;alarmcountdown--;</span><br><span class="line">      <span class="keyword">if</span>(p-&gt;alarmcountdown == <span class="number">0</span>)&#123;</span><br><span class="line">        p-&gt;inalarmhandler = <span class="number">1</span>;</span><br><span class="line">        memmove(p-&gt;saved, p-&gt;trapframe, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> trapframe));</span><br><span class="line">        p -&gt; trapframe -&gt; epc = p -&gt; handler;</span><br><span class="line">        p-&gt;alarmcountdown = p-&gt;alarminterval;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    yield();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里逻辑相信大家都能看懂。<code>memmove(p-&gt;saved, p-&gt;trapframe, sizeof(struct trapframe));</code>这里将<code>trapframe</code>拷贝到<code>saved</code>中，用于备份。</p>
+<h4 id="sigalarm-c"><a href="#sigalarm-c" class="headerlink" title="sigalarm.c"></a><code>sigalarm.c</code></h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">sigalarm</span><span class="params">(<span class="type">int</span> n,uint64 handler)</span></span><br><span class="line">&#123; </span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span>* <span class="title">p</span> =</span> myproc();</span><br><span class="line">  p -&gt; handler = handler;</span><br><span class="line">  p -&gt; alarminterval = n;</span><br><span class="line"></span><br><span class="line">  p -&gt; alarmcountdown = n;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="sys-sigreturn-sys-sigalarm"><a href="#sys-sigreturn-sys-sigalarm" class="headerlink" title="sys_sigreturn&amp;sys_sigalarm"></a><code>sys_sigreturn</code>&amp;<code>sys_sigalarm</code></h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">uint64</span><br><span class="line"><span class="title function_">sys_sigreturn</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span>* <span class="title">p</span> =</span> myproc();</span><br><span class="line">  memmove(p-&gt;trapframe, p-&gt;saved, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> trapframe));</span><br><span class="line">  p-&gt;inalarmhandler = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">uint64</span><br><span class="line"><span class="title function_">sys_sigalarm</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> n;</span><br><span class="line">  uint64 fn;</span><br><span class="line">  <span class="keyword">if</span>(argint(<span class="number">0</span>, &amp;n) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span>(argaddr(<span class="number">1</span>, &amp;fn) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span>(sigalarm(n,fn) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里务必记得在<code>sigreturn</code>的时候要<code>memmove(p-&gt;trapframe, p-&gt;saved, sizeof(struct trapframe));</code>把备份恢复到<code>trapframe</code>中，并将<code>inalarmhandler</code>重新设置为0，以便下一次<code>sigalarm</code>。</p>
+<h3 id="思考-1"><a href="#思考-1" class="headerlink" title="思考"></a>思考</h3><p>这里每次1tick（在XV6中约为0.1s一次）进入timer trap，从用户态陷入内核需要：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1. 硬件：保存用户寄存器到 trapframe，切换特权级 U -&gt; S</span><br><span class="line">2. usertrap()：读 scause、调用 devintr()</span><br><span class="line">3. devintr()：识别定时器中断，重设 mtimecmp</span><br><span class="line">4. yield()：acquire 锁、改状态、调 sched()</span><br><span class="line">5. sched()：swtch() 保存当前上下文，切到调度器</span><br><span class="line">6. scheduler()：遍历 proc 数组，找 RUNNABLE 进程</span><br><span class="line">7. swtch()：切到新进程，恢复其上下文</span><br><span class="line">8. 返回用户态：恢复 trapframe，sret</span><br></pre></td></tr></table></figure>
+
+<p>但每次只有几微秒。假设为10微秒，也仅仅栈0.1秒的0.01%，这个开销是可以接受的。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/09/14/MIT6-S081-lab-traps/">http://gazettm.github.io/2026/09/14/MIT6-S081-lab-traps/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/OS/"># OS</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/09/11/MIT6-S081-lab-pgtbl/">MIT6-S081-lab-pgtbl</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
