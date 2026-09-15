@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>MIT6-S081-lab-cow | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">MIT6-S081-lab-cow</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">九月 15, 2026&nbsp;&nbsp;23:54:51</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/OS/">OS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这个实验确实比较难，环环相扣，因此我觉得写实验之前先将逻辑思考一遍，将逻辑链构造完成之后再写，可以事半功倍。</p>
+<p>测试完毕，如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">== Test running cowtest == (5.4s) </span><br><span class="line">== Test   simple == </span><br><span class="line">  simple: OK </span><br><span class="line">== Test   three == </span><br><span class="line">  three: OK </span><br><span class="line">== Test   file == </span><br><span class="line">  file: OK </span><br><span class="line">== Test usertests == (94.7s) </span><br><span class="line">    (Old xv6.out.usertests failure <span class="built_in">log</span> removed)</span><br><span class="line">== Test   usertests: copyin == </span><br><span class="line">  usertests: copyin: OK </span><br><span class="line">== Test   usertests: copyout == </span><br><span class="line">  usertests: copyout: OK </span><br><span class="line">== Test   usertests: all tests == </span><br><span class="line">  usertests: all tests: OK </span><br><span class="line">== Test <span class="keyword">time</span> == </span><br><span class="line"><span class="keyword">time</span>: OK </span><br><span class="line">Score: 110/110</span><br></pre></td></tr></table></figure>
+
+<h2 id="COW"><a href="#COW" class="headerlink" title="COW"></a>COW</h2><p>COW，为copy-on-write的缩写。在某个程序<code>fork</code>创建子进程的时候，把子进程的虚拟地址映射到与父进程的虚拟地址相同的物理地址。也就是说子进程的物理页与父进程的物理页完全一致。这样便省去了复制物理页的麻烦，不仅可以减小开销，最重要可以节省内存。但是随之而来的问题是我们如果要写父进程或者子进程，那么就必然的会使两者的数据都改变，因此我们需要一个标志位来标记这个页表是COW策略的，并且如果要写的话必须再分配，复制出来一个物理页，这样两者才不会互相干扰。</p>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>我们设想这样一个场景：一个父进程<code>fork</code>之后，进入函数<code>uvmcopy</code>执行把子进程的虚拟地址映射到与父进程的虚拟地址相同的物理地址的操作。这样两进程映射到同一个物理地址。之后我们需要在父进程中写一个值，写这个值我们触发了page fault（我们在复制的时候将共享的物理页标记为不可写，这样是为了触发<code>cowfault</code>，<code>cowfault</code>的目的是分配一个新的页，分开映射到同一个物理地址的两个进程），然后进入<code>cowfault</code>，分配新的页并<code>return</code>到触发page fault的地方。</p>
+<h3 id="kcow"><a href="#kcow" class="headerlink" title="kcow"></a><code>kcow</code></h3><p>这里我定义了一个新的结构体，叫<code>kcow</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">spinlock</span> <span class="title">lock</span>;</span></span><br><span class="line">  uint8 cowcount[(PHYSTOP - KERNBASE) / PGSIZE];</span><br><span class="line">&#125; kcow;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>kcow</code>带了一把锁，并且有一个比较大的数组，大小为<code>(PHYSTOP - KERNBASE) / PGSIZE</code>字节，存储着xv6操作系统中的每一个物理页的<strong>引用数</strong>。</p>
+<h3 id="kalloc"><a href="#kalloc" class="headerlink" title="kalloc"></a><code>kalloc</code></h3><p>对于引用数，我们的设想是：对<code>kalloc</code>新分配的页引用数置为1表示只有他自己。对<code>kfree</code>释放页表这个函数，我们对引用数-1，并判断引用数是否为0，若为0表示没有任何页表引用包括他自己，因此可以释放；若不为0则表示还有人在引用它，可能是他自己或者它的子进程，因此我们暂时不释放。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">kinit</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  initlock(&amp;kmem.lock, <span class="string">&quot;kmem&quot;</span>);</span><br><span class="line">  initlock(&amp;kcow.lock, <span class="string">&quot;kcow&quot;</span>);</span><br><span class="line">  <span class="built_in">memset</span>(&amp;kcow.cowcount, <span class="number">1</span>, (PHYSTOP - KERNBASE) / PGSIZE);</span><br><span class="line">  freerange(end, (<span class="type">void</span>*)PHYSTOP);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在这个<code>kinit</code>中我们进行初始化。对每个引用数初始化为1。因为<code>freerange</code>会对初始化的每个页表进行<code>kfree</code>，使得引用数-1。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">kaddref</span><span class="params">(uint64 pa)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(((uint64)pa % PGSIZE) != <span class="number">0</span> || (<span class="type">char</span>*)pa &lt; end || (uint64)pa &gt;= PHYSTOP)</span><br><span class="line">    panic(<span class="string">&quot;kaddref&quot;</span>);</span><br><span class="line"></span><br><span class="line">  acquire(&amp;kcow.lock);</span><br><span class="line">  <span class="keyword">if</span>(kcow.cowcount[(pa - KERNBASE) / PGSIZE] == <span class="number">0</span>)&#123;</span><br><span class="line">    panic(<span class="string">&quot;kaddref:wrong cnt&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  kcow.cowcount[(pa - KERNBASE) / PGSIZE]++;</span><br><span class="line">  release(&amp;kcow.lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>kaddref</code>是提供给其他函数的一个接口，其他函数可以调用<code>kaddref</code>来进行对页表+1，也可以调用<code>kfree</code>对页表进行-1。</p>
+<p>（记得修改<code>kalloc</code>和<code>kfree</code>函数，在这里不给出）</p>
+<h3 id="usertrap"><a href="#usertrap" class="headerlink" title="usertrap"></a><code>usertrap</code></h3><p>我们需要修改<code>usertrap</code>函数的逻辑。<code>r_scause</code>读取 <code>scause</code> 寄存器，获得陷入的原因。在它的值为13 15时，分别表示加载页错误和存储页错误。（往一个不可写的页中写数据就是触发的15）</p>
+<p>因此我们需要加一个判断：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (r_scause() == <span class="number">13</span> || r_scause() == <span class="number">15</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(cowfault(p-&gt;pagetable, r_stval()) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;usertrap(): unexpected page fault pid=%d\n&quot;</span>, p-&gt;pid);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;            sepc=%p stval=%p\n&quot;</span>, r_sepc(), r_stval());</span><br><span class="line">      p -&gt; killed = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>cowfault(p-&gt;pagetable, r_stval()) &lt; 0</code>这里的<code>cowfault</code>已经给出。传入的是一个根页表，一个出错的虚拟地址位置。</p>
+<h3 id="cowfault"><a href="#cowfault" class="headerlink" title="cowfault"></a><code>cowfault</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> </span><br><span class="line"><span class="title function_">cowfault</span><span class="params">(<span class="type">pagetable_t</span> pagetable, uint64 va)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">pte_t</span> *pte;</span><br><span class="line">  uint64 pa, newpa;</span><br><span class="line">  uint flags;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(va &gt;= MAXVA)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((pte = walk(pagetable, va, <span class="number">0</span>)) == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((*pte &amp; PTE_V) == <span class="number">0</span> || (*pte &amp; PTE_COW) == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  pa = PTE2PA(*pte);</span><br><span class="line">  flags = (PTE_FLAGS(*pte) &amp; ~PTE_COW) | PTE_W;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((newpa = (uint64)kalloc()) == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  memmove((<span class="type">char</span>*)newpa, (<span class="type">char</span>*)pa, PGSIZE);</span><br><span class="line">  *pte = PA2PTE(newpa) | flags;</span><br><span class="line">  kfree((<span class="type">void</span>*)pa);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里就是我们的<code>cowfault</code>函数的具体实现了。这里通过<code>pagetable</code>和虚拟地址获取到出错的物理地址<code>pa</code>，使用<code>newpa</code>获取一个新分配的物理页表，然后使用<code>memmove</code>函数将<code>pa</code>中的内容复制到<code>newpa</code>，并清理<code>newpa</code>页的标志位（把新页的（PTE）标志位算成”原标志清 COW、加 W），最后调用<code>kfree</code>，传入需要释放（或者让其引用数-1）的<code>pa</code>。</p>
+<p>简单来说，<code>cowfault</code>将传入的出错的虚拟地址重新映射到一个新的物理页中，每次仅仅处理一页。</p>
+<h3 id="uvmcopy"><a href="#uvmcopy" class="headerlink" title="uvmcopy"></a><code>uvmcopy</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">uvmcopy</span><span class="params">(<span class="type">pagetable_t</span> old, <span class="type">pagetable_t</span> new, uint64 sz)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">pte_t</span> *pte;</span><br><span class="line">  uint64 pa, i;</span><br><span class="line">  uint flags;</span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; sz; i += PGSIZE)&#123;</span><br><span class="line">    <span class="keyword">if</span>((pte = walk(old, i, <span class="number">0</span>)) == <span class="number">0</span>)</span><br><span class="line">      panic(<span class="string">&quot;uvmcopy: pte should exist&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>((*pte &amp; PTE_V) == <span class="number">0</span>)</span><br><span class="line">      panic(<span class="string">&quot;uvmcopy: page not present&quot;</span>);</span><br><span class="line">    pa = PTE2PA(*pte);</span><br><span class="line">    flags = PTE_FLAGS(*pte);</span><br><span class="line">    flags = (flags &amp; ~PTE_W) | PTE_COW;</span><br><span class="line">    *pte = (*pte &amp; ~PTE_W) | PTE_COW;</span><br><span class="line">    kaddref(pa);</span><br><span class="line">    <span class="keyword">if</span>(mappages(new, i, PGSIZE, pa, flags) != <span class="number">0</span>)&#123;</span><br><span class="line">      <span class="keyword">goto</span> err;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"> err:</span><br><span class="line">  uvmunmap(new, <span class="number">0</span>, i / PGSIZE, <span class="number">1</span>);</span><br><span class="line">  kfree((<span class="type">void</span>*)pa);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>uvmcopy</code>函数则需要通过循环来更改每个页的标志位，更改每个页表项的映射，映射到相同的页中。这里的错误处理，不仅需要使用<code>uvmunmap</code>来解除映射并<code>kfree</code>（<code>uvmunmap</code>中的<code>kfree</code>）（因为之前调用了<code>kaddref</code>使得计数+1，所以这里-1回到了原先的状态，即使这里的标志位<code>PTE_COW</code>被更改，之后使用时触发page fault仍然会重新分配一页并<strong>释放</strong>旧的页）最后调用<code>kfree()</code>来对当前的<code>pa</code>-1。</p>
+<h3 id="copyout"><a href="#copyout" class="headerlink" title="copyout"></a><code>copyout</code></h3><p>我们还需要处理一个函数：<code>copyout</code>。它的作用是把内核的数据写进用户的地址空间（比如<code>read</code>系统调用把文件内容读进用户的buffer）。这里容易有一个误解，就是我们可能会想：既然用户的页已经被标成了COW页（不可写），那内核往这个页里写数据，不也会触发page fault吗？</p>
+<p>答案是<strong>不会</strong>。原因在于<code>copyout</code>的实现方式：它并不是直接往用户的虚拟地址写数据，而是先用<code>walkaddr</code>把用户的虚拟地址翻译成<strong>物理地址</strong>，然后直接往这个物理地址上<code>memmove</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pa0 = walkaddr(pagetable, va0);</span><br><span class="line">...</span><br><span class="line">memmove((<span class="type">void</span> *)(pa0 + (dstva - va0)), src, n);</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，写数据的时候走的并不是用户页表，而是内核页表（内核页表把整个物理内存都做了恒等映射，而且都是可写的）。页表里的COW标志位、<code>PTE_W</code>清零这些，<strong>只对用户态的访问生效</strong>（用户态访问要经过MMU用用户页表来翻译），内核通过<code>copyout</code>直接操作物理内存的时候，硬件是不会帮我们拦下来的。</p>
+<p>所以如果我们什么都不做，就会出现这样的情况：一个物理页被父子进程共享（引用数为2），内核通过<code>copyout</code>往这个页里写数据，没有fault，直接写进了共享页，于是另一个进程看到的数据也被改掉了，这会引发严重的错误，而且难以发现。</p>
+<p>因此我们需要手动处理：在<code>copyout</code>里检查目标页是不是COW页，如果是就先调用<code>cowfault</code>把它复制一份，然后再写。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">copyout</span><span class="params">(<span class="type">pagetable_t</span> pagetable, uint64 dstva, <span class="type">char</span> *src, uint64 len)</span></span><br><span class="line">&#123;</span><br><span class="line">  uint64 n, va0, pa0;</span><br><span class="line">  <span class="type">pte_t</span> *pte;</span><br><span class="line">  <span class="keyword">while</span>(len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">    va0 = PGROUNDDOWN(dstva);</span><br><span class="line">    <span class="keyword">if</span>(va0 &gt;= MAXVA)</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    pte = walk(pagetable, va0, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(pte == <span class="number">0</span> || (*pte &amp; PTE_V) == <span class="number">0</span> || (*pte &amp; PTE_U) == <span class="number">0</span>)&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(*pte &amp; PTE_COW)&#123;</span><br><span class="line">      <span class="keyword">if</span>(cowfault(pagetable, va0) &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    pa0 = PTE2PA(*pte);</span><br><span class="line">    n = PGSIZE - (dstva - va0);</span><br><span class="line">    <span class="keyword">if</span>(n &gt; len)</span><br><span class="line">      n = len;</span><br><span class="line">    memmove((<span class="type">void</span> *)(pa0 + (dstva - va0)), src, n);</span><br><span class="line"></span><br><span class="line">    len -= n;</span><br><span class="line">    src += n;</span><br><span class="line">    dstva = va0 + PGSIZE;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>continue</code>值得一提：<code>cowfault</code>执行完之后，我们并没有改变虚拟地址，只是改变了页表项，让它指向新分配的物理页。所以直接<code>continue</code>回到循环开头，重新<code>walk</code>一次就能拿到更新后的页表项（这时候它已经指向新页、可写、COW标志也被清掉了），这样就可以正常写入了。</p>
+<p>另外几个判断也需要注意。<code>walk</code>在<code>va &gt;= MAXVA</code>时会直接<code>panic</code>，原版的<code>copyout</code>用的是<code>walkaddr</code>（它在调用<code>walk</code>之前会先检查<code>va</code>），我们绕过<code>walkaddr</code>直接调用<code>walk</code>之后，这个检查就要自己做——否则<code>usertests</code>（官方给的测试）里的<code>copyout</code>测试会传入<code>0xffffffffffffffff</code>这样的地址，直接让内核panic。<code>PTE_U</code>的检查同理，原版<code>walkaddr</code>要求页是”有效且用户可访问”的，我们自己写的时候也不能把这个丢掉。</p>
+<h2 id="问题与思考"><a href="#问题与思考" class="headerlink" title="问题与思考"></a>问题与思考</h2><p>这个lab是我目前踩坑最多的一个，而且基本上每个坑都和”引用计数”或者”标志位”有关。这里记录一下，或许比上面的实现本身更有价值。</p>
+<h3 id="引用计数数组的大小"><a href="#引用计数数组的大小" class="headerlink" title="引用计数数组的大小"></a>引用计数数组的大小</h3><p>我最开始写的是<code>uint8 cowcount[PHYSTOP - KERNBASE]</code>，想的是”每个物理页一个计数”。但实际上这个数组的大小是<code>0x8000000</code>，也就是128MB——而xv6的总物理内存就只有128MB，一个数组直接把内存吃光了，内核根本起不来。</p>
+<p>正确的做法是除以页大小：<code>uint8 cowcount[(PHYSTOP - KERNBASE) / PGSIZE]</code>，也就是32768个字节。</p>
+<h3 id="运算符优先级"><a href="#运算符优先级" class="headerlink" title="运算符优先级"></a>运算符优先级</h3><p>在<code>usertrap</code>里判断”这个页表项是不是COW页”的时候，我一开始写成了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(*pte &amp; PTE_V == <span class="number">0</span> &amp;&amp; *pte &amp; PTE_COW == <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这个判断永远为假。因为C语言里<code>==</code>的优先级比<code>&amp;</code>高，编译器实际看到的是<code>*pte &amp; (PTE_V == 0)</code>，也就是<code>*pte &amp; 0</code>，结果恒为0，检查完全失效，任何野指针都会一路走到<code>cowfault</code>里去。加括号写成<code>(*pte &amp; PTE_V) == 0</code>才是我们想要的意思。顺便，这里的逻辑还应该用<code>||</code>而不是<code>&amp;&amp;</code>：”不是COW页”的意思是”无效<strong>或者</strong>没有COW标记”，只要有一个不满足就不是COW页。</p>
+<h3 id="kfree的语义变了"><a href="#kfree的语义变了" class="headerlink" title="kfree的语义变了"></a><code>kfree</code>的语义变了</h3><p>原版的<code>kfree</code>是”调用即释放”，所以它开头有一句<code>memset(pa, 1, PGSIZE)</code>，把页填成垃圾值，用来尽快暴露悬空引用。</p>
+<p>但是在COW里，<code>kfree</code>变成了”引用数减一，减到0才真的释放”。这时候如果还保留开头那句<code>memset</code>就会出问题：当一个页被两个进程共享时，其中一个进程<code>kfree</code>它，页并不会被释放（另一个进程还在用），但内容已经被填成垃圾了——另一个进程读到的全是垃圾。</p>
+<p>所以这句<code>memset</code>必须挪到”引用数减到0、真正要释放”的那个分支里去。</p>
+<h3 id="错误处理里的配对"><a href="#错误处理里的配对" class="headerlink" title="错误处理里的配对"></a>错误处理里的配对</h3><p><code>uvmcopy</code>的错误路径里，<code>uvmunmap(new, 0, i / PGSIZE, 1)</code>这一行的最后一个参数是<code>1</code>，意思是”解除映射的同时调用<code>kfree</code>“。因为我们在循环里对每个页都<code>kaddref</code>过（引用数+1），所以解除映射的时候必须把这个引用还回去，解除映射和归还引用是要配对的。</p>
+<p>还有一个容易忽略的地方：失败的那一页（<code>mappages</code>失败的当前页）也要单独<code>kfree</code>一次。因为<code>kaddref</code>是在<code>mappages</code>之前调用的，计数已经加上了，但映射并没有建立起来，所以<code>uvmunmap</code>不会处理它，必须自己把这一个引用还掉。</p>
+<h3 id="copyout的边界"><a href="#copyout的边界" class="headerlink" title="copyout的边界"></a><code>copyout</code>的边界</h3><p><code>copyout</code>里我们绕过了<code>walkaddr</code>自己调用<code>walk</code>，这样做的代价是丢掉了<code>walkaddr</code>里的一些检查。除了前面提到的<code>PTE_U</code>的范围，还有<code>va</code>的范围检查：<code>walk</code>在<code>va &gt;= MAXVA</code>的时候会直接<code>panic(&quot;walk&quot;)</code>。usertests的<code>copyout</code>测试会专门传入<code>0xffffffffffffffff</code>这样的地址来测边界，所以我们必须自己先判断<code>va0 &gt;= MAXVA</code>并返回-1。</p>
+<p>这个坑的表现形式是<code>test copyout: panic: walk</code>，看起来和COW没什么关系，但其实是我们修改<code>copyout</code>引入的——这也说明改动一个函数的时候，要把它原本依赖的那些检查一起接过来。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/09/15/MIT6-S081-lab-cow/">http://gazettm.github.io/2026/09/15/MIT6-S081-lab-cow/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/OS/"># OS</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/09/14/MIT6-S081-lab-traps/">MIT6-S081-lab-traps</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
