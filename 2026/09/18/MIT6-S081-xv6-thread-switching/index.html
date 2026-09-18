@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>MIT6-S081-xv6-thread-switching | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">MIT6-S081-xv6-thread-switching</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">九月 18, 2026&nbsp;&nbsp;21:59:56</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/OS/">OS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文章讨论<code>XV6</code>实验系统如何实现线程之间的上下文切换。微观上一个单核CPU同一时刻只能运行一个线程，而宏观上却表现为并发。</p>
+<h2 id="设计层面"><a href="#设计层面" class="headerlink" title="设计层面"></a>设计层面</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>我们先从设计层面来讲如何实现上下文切换。</p>
+<p>设想我们有两个线程，其中一个为线程A，另一个为线程B。我们为了进行上下文切换，必须要保存线程A和线程B的状态之后才能切换，否则寄存器无法恢复。那么我们知道每一个线程都有一个<code>trapframe</code>页用于存储寄存器，那么我们能用这个吗？答案是不可以。因为这个<code>trapframe</code>页用于进入内核时保存寄存器状态，而且用户态的权限问题导致我们必须从内核中进行切换，因此最好的办法是使用内核统一管理，通过内核来访问内核中定义的CPU来进行上下文的切换。在xv6中，我们为每个进程定义了一个<code>context</code>用于在切换上下文时保存寄存器和PC寄存器等信息。（这里的<code>context</code>结构体定义在<code>proc</code>中，只有在内核中可以访问）。在线程A切换到线程B之前，我们需要保存线程A的状态到<code>context</code>中，然后恢复定义的<code>cpu</code>结构体中的<code>context</code>（这里 <code>cpu</code> 中定义结构体，是因为从进程切到调度器、再从调度器切到另一个进程，是两次独立的 <code>swtch</code>——调度器本身也是一条执行流，它被切走之后同样需要能“从上次的断点继续”，所以它自己的寄存器状态也要有个地方存），恢复了<code>cpu</code>的<code>context</code>之后，程序计数器此时进入调度器代码。调度器代码会循环遍历 <code>proc</code> 数组，找到第一个处于 <code>RUNNABLE</code> 的进程。跳入线程B之前，重新保存<code>cpu</code>的<code>context</code>（虽然我们的调度器代码映射在固定位置，但是我们的其他寄存器状态可能不同，比如<code>sp</code>栈指针不同，有时大有时小，与调度深度有关），随后进入线程B，将线程B的<code>context</code>恢复。</p>
+<p>线程A保存上下文 -&gt; <code>cpu</code>恢复上下文 -&gt; 执行调度器代码 -&gt; <code>cpu</code>保存上下文 -&gt; 线程B恢复上下文（<code>struct cpu</code> 是 xv6 里每个物理 CPU 核心的软件状态结构体，不是物理 CPU 硬件本身。它既用于调度器，也用于记录当前核上运行的进程和中断状态）</p>
+<p>这里我们仅仅讨论了线程B是一个旧的线程，如果线程B是一个新分配的线程，我们需要先对他进行分配，有一些细节上的不同我们到代码部分讲解。</p>
+<p>类比下来就像是游戏中的存档一样。每次我们切换一条剧情线，需要先保存当前线A，然后返回主界面（假设不能直接加载），主界面加载上次保存的设置（比如语言，背景图），然后进行一些操作，保存这次的设置之后，进入另一条剧情线B并加载剧情线B的细节。</p>
+<table>
+<thead>
+<tr>
+<th align="left">阶段</th>
+<th align="left"><code>ra</code></th>
+<th align="left"><code>sp</code></th>
+<th align="left"><code>s0~s11</code></th>
+<th align="left"><code>a0~a7/t0~t6</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">A 运行中</td>
+<td align="left">A 的代码地址</td>
+<td align="left">A 内核栈</td>
+<td align="left">A 的局部变量</td>
+<td align="left">A 的临时值</td>
+</tr>
+<tr>
+<td align="left">A 调用 <code>swtch</code> 保存</td>
+<td align="left">存入 <code>A-&gt;context</code></td>
+<td align="left">存入 <code>A-&gt;context</code></td>
+<td align="left">存入 <code>A-&gt;context</code></td>
+<td align="left">已在 A 内核栈上</td>
+</tr>
+<tr>
+<td align="left">从 <code>cpu0-&gt;context</code> 恢复</td>
+<td align="left">调度器断点</td>
+<td align="left">调度器栈</td>
+<td align="left">调度器局部变量</td>
+<td align="left">仍是 A 的值（但调度器不用）</td>
+</tr>
+<tr>
+<td align="left">调度器调用 <code>swtch</code> 保存</td>
+<td align="left">存入 <code>cpu0-&gt;context</code></td>
+<td align="left">存入 <code>cpu0-&gt;context</code></td>
+<td align="left">存入 <code>cpu0-&gt;context</code></td>
+<td align="left">已在调度器栈上</td>
+</tr>
+<tr>
+<td align="left">从 <code>B-&gt;context</code> 恢复</td>
+<td align="left">B 的断点</td>
+<td align="left">B 内核栈</td>
+<td align="left">B 的局部变量</td>
+<td align="left">仍是调度器的值（但 B 不用）</td>
+</tr>
+<tr>
+<td align="left">B 运行中</td>
+<td align="left">B 的代码地址</td>
+<td align="left">B 内核栈</td>
+<td align="left">B 的局部变量</td>
+<td align="left">B 从自己栈上重新加载</td>
+</tr>
+</tbody></table>
+<p>其中我们需要记得，<code>caller</code>和<code>callee</code>寄存器的区别。（<code>context</code>不保存<code>a0~a7</code>、<code>t0~t6</code>）</p>
+<p><code>swtch</code> 是被当作普通函数调用的（<code>call swtch</code>），按照 RISC-V 的调用约定，<code>a0~a7</code>、<code>t0~t6</code> 这些 caller-saved 寄存器本来就由调用者负责——如果 <code>sched</code> 里有需要跨切换保留的临时值，编译器会把它放到栈上或者 callee-saved 寄存器里，所以 <code>context</code> 只需要保存 <code>ra</code>、<code>sp</code> 和 <code>s0~s11</code> 这些 callee-saved 寄存器就够了。</p>
+<h3 id="切换时机"><a href="#切换时机" class="headerlink" title="切换时机"></a>切换时机</h3><p>在xv6中，切换时机一般为</p>
+<ol>
+<li>定时器中断导致进程让出 CPU</li>
+<li><code>sleep</code>函数的调用</li>
+<li>从磁盘中读取数据</li>
+<li>等待管道的输入输出</li>
+<li><code>exit</code>进程退出</li>
+<li><code>wait</code>等待子进程</li>
+</ol>
+<p>其中，等待子进程，磁盘I&#x2F;O，管道的等待都是通过<code>sleep</code>函数来实现。</p>
+<h2 id="代码层面"><a href="#代码层面" class="headerlink" title="代码层面"></a>代码层面</h2><p>接下来我们通过代码来看一看如何进行上下文切换的。</p>
+<h3 id="context"><a href="#context" class="headerlink" title="context"></a><code>context</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">context</span> &#123;</span></span><br><span class="line">  uint64 ra;</span><br><span class="line">  uint64 sp;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// callee-saved</span></span><br><span class="line">  uint64 s0;</span><br><span class="line">  uint64 s1;</span><br><span class="line">  uint64 s2;</span><br><span class="line">  uint64 s3;</span><br><span class="line">  uint64 s4;</span><br><span class="line">  uint64 s5;</span><br><span class="line">  uint64 s6;</span><br><span class="line">  uint64 s7;</span><br><span class="line">  uint64 s8;</span><br><span class="line">  uint64 s9;</span><br><span class="line">  uint64 s10;</span><br><span class="line">  uint64 s11;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这个就是<code>context</code>结构体。</p>
+<h3 id="cpu"><a href="#cpu" class="headerlink" title="cpu"></a><code>cpu</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cpu</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">proc</span>;</span>          <span class="comment">// The process running on this cpu, or null.</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">context</span> <span class="title">context</span>;</span>     <span class="comment">// swtch() here to enter scheduler().</span></span><br><span class="line">  <span class="type">int</span> noff;                   <span class="comment">// Depth of push_off() nesting.</span></span><br><span class="line">  <span class="type">int</span> intena;                 <span class="comment">// Were interrupts enabled before push_off()?</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这是软件定义的<code>cpu</code>结构体。</p>
+<p>  <code>struct context context;     // swtch() here to enter scheduler().</code>为调度器保存的上下文结构。</p>
+<h3 id="proc"><a href="#proc" class="headerlink" title="proc"></a><code>proc</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">procstate</span> &#123;</span> UNUSED, USED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Per-process state</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">proc</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">spinlock</span> <span class="title">lock</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// p-&gt;lock must be held when using these:</span></span><br><span class="line">  <span class="class"><span class="keyword">enum</span> <span class="title">procstate</span> <span class="title">state</span>;</span>        <span class="comment">// Process state</span></span><br><span class="line">  <span class="type">void</span> *chan;                  <span class="comment">// If non-zero, sleeping on chan</span></span><br><span class="line">  <span class="type">int</span> killed;                  <span class="comment">// If non-zero, have been killed</span></span><br><span class="line">  <span class="type">int</span> xstate;                  <span class="comment">// Exit status to be returned to parent&#x27;s wait</span></span><br><span class="line">  <span class="type">int</span> pid;                     <span class="comment">// Process ID</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// wait_lock must be held when using this:</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">parent</span>;</span>         <span class="comment">// Parent process</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// these are private to the process, so p-&gt;lock need not be held.</span></span><br><span class="line">  uint64 kstack;               <span class="comment">// Virtual address of kernel stack</span></span><br><span class="line">  uint64 sz;                   <span class="comment">// Size of process memory (bytes)</span></span><br><span class="line">  <span class="type">pagetable_t</span> pagetable;       <span class="comment">// User page table</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">trapframe</span> *<span class="title">trapframe</span>;</span> <span class="comment">// data page for trampoline.S</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">context</span> <span class="title">context</span>;</span>      <span class="comment">// swtch() here to run process</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">ofile</span>[<span class="title">NOFILE</span>];</span>  <span class="comment">// Open files</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">inode</span> *<span class="title">cwd</span>;</span>           <span class="comment">// Current directory</span></span><br><span class="line">  <span class="type">char</span> name[<span class="number">16</span>];               <span class="comment">// Process name (debugging)</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>  <code> enum procstate state;        // Process state</code>保存了进程状态。</p>
+<p>  <code>uint64 kstack;               // Virtual address of kernel stack</code>内核栈，进程A切换上下文之后<code>a0</code>等等寄存器保存在栈中。</p>
+<p><code> struct context context;      // swtch() here to run process</code>每个进程都有的上下文结构。</p>
+<h3 id="上下文切换分析"><a href="#上下文切换分析" class="headerlink" title="上下文切换分析"></a>上下文切换分析</h3><p>我们以定时器中断导致进程让出 CPU 的上下文切换为例。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// give up the CPU if this is a timer interrupt.</span></span><br><span class="line"><span class="keyword">if</span>(which_dev == <span class="number">2</span>)</span><br><span class="line">  yield();</span><br></pre></td></tr></table></figure>
+
+<p>上面一段代码定义在<code>trap.c</code>中，定时器中断触发之后，<code>which_dev</code>如果为2，即触发了定时器中断而进入了陷阱，那么就调用<code>yield</code>函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Give up the CPU for one scheduling round.</span></span><br><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">yield</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line">  acquire(&amp;p-&gt;lock);</span><br><span class="line">  p-&gt;state = RUNNABLE;</span><br><span class="line">  sched();</span><br><span class="line">  release(&amp;p-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里获得了进程<code>p</code>的锁，防止因为其他CPU因某些原因更改进程状态。将<code>p</code>的<code>state</code>变为<code>RUNNABLE</code>（之前应该为<code>RUNNING</code>），进入<code>sched</code>调度器代码中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">sched</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> intena;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(!holding(&amp;p-&gt;lock))</span><br><span class="line">    panic(<span class="string">&quot;sched p-&gt;lock&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span>(mycpu()-&gt;noff != <span class="number">1</span>)</span><br><span class="line">    panic(<span class="string">&quot;sched locks&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span>(p-&gt;state == RUNNING)</span><br><span class="line">    panic(<span class="string">&quot;sched running&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span>(intr_get())</span><br><span class="line">    panic(<span class="string">&quot;sched interruptible&quot;</span>);</span><br><span class="line"></span><br><span class="line">  intena = mycpu()-&gt;intena;</span><br><span class="line">  swtch(&amp;p-&gt;context, &amp;mycpu()-&gt;context);</span><br><span class="line">  mycpu()-&gt;intena = intena;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>mycpu()-&gt;noff != 1</code>是什么？<code>noff</code>指的是当前 CPU 上，中断被关了多少层。</p>
+<p>如果为0，表明中断没有关闭，那么可能在执行过程中被中断，导致调度器的状态混乱，锁也会变得混乱。</p>
+<p>如果大于1，说明当前有嵌套的情况，外层嵌套可能未释放一个锁，同样会导致错误。</p>
+<p><code>intena</code>同样与中断有关，指的是<code>interrupt enable</code> ，用于开关中断。（<code>sched</code>函数调用前可能处于关中断状态，这里需要保存，之后<code>swtch</code>之后再进行恢复。）</p>
+<p>然后是调用<code>swtch</code>函数。</p>
+<p><code>swtch</code> 必须用汇编来写。因为它要做的事情是“精确地保存和恢复每一个寄存器”，而 C 编译器在编译函数时会自作主张地使用这些寄存器（比如把某个变量放进 <code>s0</code>），这样就没办法保证“保存下来的就是调用之前的状态”了。这类直接操作机器的代码只能用汇编来控制。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"># Context switch</span><br><span class="line">#</span><br><span class="line">#   void swtch(struct context *old, struct context *new);</span><br><span class="line"># </span><br><span class="line"># Save current registers in old. Load from new.	</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.globl swtch</span><br><span class="line">swtch:</span><br><span class="line">        sd ra, 0(a0)</span><br><span class="line">        sd sp, 8(a0)</span><br><span class="line">        sd s0, 16(a0)</span><br><span class="line">        sd s1, 24(a0)</span><br><span class="line">        sd s2, 32(a0)</span><br><span class="line">        sd s3, 40(a0)</span><br><span class="line">        sd s4, 48(a0)</span><br><span class="line">        sd s5, 56(a0)</span><br><span class="line">        sd s6, 64(a0)</span><br><span class="line">        sd s7, 72(a0)</span><br><span class="line">        sd s8, 80(a0)</span><br><span class="line">        sd s9, 88(a0)</span><br><span class="line">        sd s10, 96(a0)</span><br><span class="line">        sd s11, 104(a0)</span><br><span class="line"></span><br><span class="line">        ld ra, 0(a1)</span><br><span class="line">        ld sp, 8(a1)</span><br><span class="line">        ld s0, 16(a1)</span><br><span class="line">        ld s1, 24(a1)</span><br><span class="line">        ld s2, 32(a1)</span><br><span class="line">        ld s3, 40(a1)</span><br><span class="line">        ld s4, 48(a1)</span><br><span class="line">        ld s5, 56(a1)</span><br><span class="line">        ld s6, 64(a1)</span><br><span class="line">        ld s7, 72(a1)</span><br><span class="line">        ld s8, 80(a1)</span><br><span class="line">        ld s9, 88(a1)</span><br><span class="line">        ld s10, 96(a1)</span><br><span class="line">        ld s11, 104(a1)</span><br><span class="line">        </span><br><span class="line">        ret</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>swtch</code> 函数很简单：在两个 <code>context</code> 结构体之间，一个保存、一个加载。这时，A的<code>ra</code>寄存器被保存到</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">swtch(&amp;p-&gt;context, &amp;mycpu()-&gt;context);</span><br><span class="line">mycpu()-&gt;intena = intena; <span class="comment">//&lt;-- 这里是线程A被保存的ra寄存器，之后从其他进程进入A之后从这里开始</span></span><br></pre></td></tr></table></figure>
+
+<p>而调度器的<code>ra</code>寄存器被加载进来指向的是<code>scheduler</code>函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">scheduler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">cpu</span> *<span class="title">c</span> =</span> mycpu();</span><br><span class="line">  </span><br><span class="line">  c-&gt;proc = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(;;)&#123;</span><br><span class="line">    <span class="comment">// Avoid deadlock by ensuring that devices can interrupt.</span></span><br><span class="line">    intr_on();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(p = proc; p &lt; &amp;proc[NPROC]; p++) &#123;</span><br><span class="line">      acquire(&amp;p-&gt;lock);</span><br><span class="line">      <span class="keyword">if</span>(p-&gt;state == RUNNABLE) &#123;</span><br><span class="line">        <span class="comment">// Switch to chosen process.  It is the process&#x27;s job</span></span><br><span class="line">        <span class="comment">// to release its lock and then reacquire it</span></span><br><span class="line">        <span class="comment">// before jumping back to us.</span></span><br><span class="line">        p-&gt;state = RUNNING;</span><br><span class="line">        c-&gt;proc = p;</span><br><span class="line">        swtch(&amp;c-&gt;context, &amp;p-&gt;context);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Process is done running for now.</span></span><br><span class="line">        <span class="comment">// It should have changed its p-&gt;state before coming back.</span></span><br><span class="line">        c-&gt;proc = <span class="number">0</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      release(&amp;p-&gt;lock);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时，调度器开始查找进程，如果哪个进程<code>RUNNABLE</code>，那么就改为<code>RUNNING</code>，再进行切换。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">p-&gt;state = RUNNING;</span><br><span class="line">c-&gt;proc = p;</span><br><span class="line">swtch(&amp;c-&gt;context, &amp;p-&gt;context);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Process is done running for now.</span></span><br><span class="line"><span class="comment">// It should have changed its p-&gt;state before coming back.</span></span><br><span class="line">c-&gt;proc = <span class="number">0</span>;   <span class="comment">// &lt;-- 调度器上次的调用点这次保存的ra</span></span><br></pre></td></tr></table></figure>
+
+<p>此时寄存器又被更新为B之前的上下文，跳转到<code>swtch</code>函数，在函数中<code>return</code>，跳转到B之前的进程。此时有一处细节：如果线程B是新创建的，那么将跳转到<code>forkret</code>函数。</p>
+<p><code>forkret</code> 里做了几件收尾的事情：释放 <code>p-&gt;lock</code>（新进程在 <code>allocproc</code> 之后一直持有它）、初始化文件系统（只有第一个进程需要），最后调用 <code>usertrapret()</code> 回到用户态——这就是一个新进程第一次进入用户态的路径。</p>
+<p>设置<code>context</code>的相关代码在<code>allocproc()</code>函数里：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Set up new context to start executing at forkret,</span></span><br><span class="line"><span class="comment">// which returns to user space.</span></span><br><span class="line"><span class="built_in">memset</span>(&amp;p-&gt;context, <span class="number">0</span>, <span class="keyword">sizeof</span>(p-&gt;context));</span><br><span class="line">p-&gt;context.ra = (uint64)forkret;</span><br><span class="line">p-&gt;context.sp = p-&gt;kstack + PGSIZE;</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> p;</span><br></pre></td></tr></table></figure>
+
+<h3 id="上下文切换时间线"><a href="#上下文切换时间线" class="headerlink" title="上下文切换时间线"></a>上下文切换时间线</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">时间 →</span><br><span class="line"></span><br><span class="line">A 在 sched() 里：</span><br><span class="line">    swtch(&amp;A-&gt;context, &amp;cpu-&gt;context);   ← 调用点</span><br><span class="line">    mycpu()-&gt;intena = intena;              ← A-&gt;context.ra 指向这里（A 以后从这里继续）</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">swtch 执行：</span><br><span class="line">    保存 A 的 ra/sp/s0~s11 到 A-&gt;context</span><br><span class="line">    从 cpu-&gt;context 加载 ra/sp/s0~s11</span><br><span class="line">    ret  →  跳到 cpu-&gt;context.ra</span><br><span class="line"></span><br><span class="line">cpu-&gt;context.ra 指向：</span><br><span class="line">    scheduler() 里：</span><br><span class="line">        swtch(&amp;c-&gt;context, &amp;p-&gt;context);   ← 调度器上次的调用点</span><br><span class="line">        c-&gt;proc = 0;                         ← 跳到这里继续</span><br><span class="line">        release(&amp;p-&gt;lock);</span><br><span class="line">        ... 循环找下一个进程 ...</span><br><span class="line"></span><br><span class="line">调度器找到 B：</span><br><span class="line">    swtch(&amp;c-&gt;context, &amp;B-&gt;context);       ← 调度器这次调用点</span><br><span class="line">    c-&gt;proc = 0;                             ← cpu-&gt;context.ra 更新为这里（下次切回来从这里继续）</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">swtch 执行：</span><br><span class="line">    保存调度器的 ra/sp/s0~s11 到 cpu-&gt;context</span><br><span class="line">    从 B-&gt;context 加载 ra/sp/s0~s11</span><br><span class="line">    ret  →  跳到 B-&gt;context.ra</span><br><span class="line"></span><br><span class="line">B-&gt;context.ra 指向：</span><br><span class="line">    旧进程：B 的 sched() 里 swtch 之后</span><br><span class="line">    新进程：forkret</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/09/18/MIT6-S081-xv6-thread-switching/">http://gazettm.github.io/2026/09/18/MIT6-S081-xv6-thread-switching/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/OS/"># OS</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/09/15/MIT6-S081-lab-cow/">MIT6-S081-lab-cow</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
