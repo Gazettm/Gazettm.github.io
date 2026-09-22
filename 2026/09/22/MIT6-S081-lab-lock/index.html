@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>MIT6-S081-lab-lock | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">MIT6-S081-lab-lock</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">九月 22, 2026&nbsp;&nbsp;21:05:58</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/OS/">OS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>暂时还没写完，只写了任务1</p>
+<h2 id="Memory-allocator"><a href="#Memory-allocator" class="headerlink" title="Memory allocator"></a>Memory allocator</h2><p>xv6中的<code>kalloc.c</code>中定义了<code>kmem</code>结构体，这里的结构体用于存储<code>freelist</code>所有空余的物理页组成的链表，用于给申请的进程分配。由于多核CPU需要协调工作，因此当我们访问<code>kmem</code>的时候需要加锁。但是如果8个核心同时申请，那么就会出现锁自旋等待的情况。因此，这里我们需要给每一个CPU都分配一个<code>kmem</code>结构体，这样加锁只会在对应的<code>kmem</code>结构体中加，增加了并行性能。（此处8来自于CPU核心数，定义在<code>param.h</code>中：<code>#define NCPU 8</code>）</p>
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>但是这同样会带来很多问题。</p>
+<ol>
+<li>我们加入了8个<code>kmem</code>结构体，如何初始化每一个<code>kmem</code>？如何分配<code>freelist</code>呢？</li>
+<li>如果我们定死<code>kmem</code>结构体<code>freelist</code>能存入的物理页个数，那么是否会出现一个CPU拥有很多物理页而另一个CPU没有物理页呢？</li>
+<li>对于8个<code>kmem</code>结构体，我们应该如何处理锁，才能使锁既能保护数据的安全又不会出现死锁？</li>
+</ol>
+<p>对于这些问题我们需要做出回答。我刚开始的构思是，每八个物理页中的0 1 2 3…分别分配给CPU的0 1 2 3…但是这样做无法解决问题2。而且内核启动之后的<code>main</code>函数中，必须是CPU0才能够继续运行，那么在<code>kinit</code>中，我们使用的<code>cpuid</code>获取到的CPU的索引遇到的将都是CPU0。</p>
+<p>这里实验给我们提示，我们可以把所有的物理页只分配给CPU0，当其他CPU运行的时候，这时候我们可以调用一个函数“偷”CPU0的页，这样其他CPU就能够有物理页去<code>kalloc</code>了。但是我们必须处理一些细节问题。</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">spinlock</span> <span class="title">lock</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">freelist</span>;</span></span><br><span class="line">&#125; kmem[NCPU];</span><br></pre></td></tr></table></figure>
+
+<p>给<code>kmem</code>变为数组。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">kinit</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> i;</span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; NCPU;i++)&#123;</span><br><span class="line">    initlock(&amp;kmem[i].lock, <span class="string">&quot;kmem&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  freerange(end, (<span class="type">void</span>*)PHYSTOP);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>初始化<code>kmem</code>中的<code>lock</code>，但是所有的物理页只分配给CPU0。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> run* <span class="title function_">ksteal</span><span class="params">(<span class="type">int</span> cpui)</span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">r</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">tmp</span> =</span> <span class="number">0</span>;</span><br><span class="line">  <span class="type">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> i = (cpui + <span class="number">1</span>) % NCPU; i != cpui ; i = (i + <span class="number">1</span>) % NCPU)</span><br><span class="line">  &#123;</span><br><span class="line">    acquire(&amp;kmem[i].lock);</span><br><span class="line">    <span class="comment">//steal page form other</span></span><br><span class="line">    <span class="keyword">while</span>(kmem[i].freelist &amp;&amp; cnt &lt; STEALCNT)&#123;</span><br><span class="line">      </span><br><span class="line">      r = kmem[i].freelist;</span><br><span class="line">      kmem[i].freelist = kmem[i].freelist -&gt; next;</span><br><span class="line">      r-&gt;next = tmp;</span><br><span class="line">      tmp = r;</span><br><span class="line">      cnt++;</span><br><span class="line">    &#125;</span><br><span class="line">    release(&amp;kmem[i].lock);</span><br><span class="line">    <span class="keyword">if</span> (tmp)</span><br><span class="line">      <span class="keyword">break</span>;                 <span class="comment">//success and quit</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> tmp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里有很多细节。我们需要一个<code>ksteal</code>函数，是用来偷页的。但是我们偷多少页？怎么偷？这里我的思路是，这个<code>ksteal</code>函数用来偷页，返回一个<code>run</code>结构体类型的指针。（注意：这里的<code>tmp</code>是一个临时变量，我们返回<code>tmp</code>返回的是一个地址，而这个地址内的链表是不会被栈销毁，因为节点不是在他这里分配的）注意这里的锁，因为我们这里访问了<code>kmem[i]</code>也就是其他CPU里面的<code>kmem</code>因此我们必须加锁访问，否则当我们在这里把<code>tmp</code>链表变长的过程中，可能这里的<code>tmp</code>链表之内的某些节点已经被使用了。另外还有细节是<code>for</code>循环的条件，这里逻辑为：从这个CPU的下一个开始找，再遍历回来。（比如4，从5开始遍历到7，再到0遍历到3，到4退出）另外还有一点是<code>STEALCNT</code>，这个我定义为64，表示最多偷64页。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *</span><br><span class="line"><span class="title function_">kalloc</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">r</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">tmp</span>;</span></span><br><span class="line">  <span class="type">int</span> cpui;</span><br><span class="line">  push_off();</span><br><span class="line">  cpui = cpuid();</span><br><span class="line">  acquire(&amp;kmem[cpui].lock);</span><br><span class="line">  r = kmem[cpui].freelist;</span><br><span class="line">  <span class="keyword">if</span>(!r)&#123;								<span class="comment">//new...</span></span><br><span class="line">    release(&amp;kmem[cpui].lock);</span><br><span class="line">    tmp = ksteal(cpui);</span><br><span class="line">    acquire(&amp;kmem[cpui].lock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (tmp)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">n</span> =</span> tmp-&gt;next;</span><br><span class="line">      tmp-&gt;next = kmem[cpui].freelist;</span><br><span class="line">      kmem[cpui].freelist = tmp;</span><br><span class="line">      tmp = n;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    r = kmem[cpui].freelist;</span><br><span class="line">  &#125;										<span class="comment">//new...</span></span><br><span class="line">  <span class="keyword">if</span>(r)</span><br><span class="line">    kmem[cpui].freelist = r-&gt;next;</span><br><span class="line">  release(&amp;kmem[cpui].lock);</span><br><span class="line">  pop_off();</span><br><span class="line">  <span class="keyword">if</span>(r)</span><br><span class="line">    <span class="built_in">memset</span>((<span class="type">char</span>*)r, <span class="number">5</span>, PGSIZE); <span class="comment">// fill with junk</span></span><br><span class="line">  <span class="keyword">return</span> (<span class="type">void</span>*)r;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个<code>kalloc</code>修改的主要是加了一个判断，如果当前分配的时候，<code>freelist</code>里面的页为空，那么就先释放自己的锁（防止同时拥有两个锁，这里的锁我们没有顺序，可能死锁）然后进入<code>ksteal</code>中获取其他CPU的锁遍历偷空页。</p>
+<p><code>push_off();</code>和<code>pop_off();</code>是关闭中断与开启中断。为什么这样？这里<code>cpuid</code>的要求。当我们获取CPU的id的时候，如果此时被中断，那么进入调度器，变成<code>RUNNABLE</code>可能会让其他CPU接管，这时候，询问时与获取时的CPU的id不同。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (tmp)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">n</span> =</span> tmp-&gt;next;</span><br><span class="line">      tmp-&gt;next = kmem[cpui].freelist;</span><br><span class="line">      kmem[cpui].freelist = tmp;</span><br><span class="line">      tmp = n;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这一段有必要吗？我一开始以为必须”接在旧头前面”，理由是：窗口期内别的核可能往这个链上 <code>kfree</code>。 推了一遍才发现这是错的：<code>kfree</code> 的页归属是”执行它的那个 CPU”，而不是”页原来的主人”——别的核 <code>kfree</code> 只会加到它们自己的链上。所以拿回锁时我的链必然是空的，直接赋值也能跑。 但是我最后还是保留了这个写法。</p>
+<h3 id="关于锁的问题"><a href="#关于锁的问题" class="headerlink" title="关于锁的问题"></a>关于锁的问题</h3><p>这里有一个问题，为什么我们不能同时有两个锁？</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CPU0 获取CPU0的锁 -&gt; 遍历直到CPU4 -&gt; 尝试获取CPU4的锁 自旋</span><br><span class="line">CPU4 获取CPU4的锁 -&gt; 遍历直到CPU0 -&gt; 尝试获取CPU0的锁 自旋</span><br><span class="line">结果：死锁</span><br></pre></td></tr></table></figure>
+
+<p>因此，持有两个锁，在这两个锁没有顺序的情况下是非常危险的。</p>
+<p>但是我的代码里面，CPU0到尝试获取CPU4的锁和CPU4尝试获取CPU0的锁只会发生在物理页没有剩余的情况。但是还是不能同时有两个锁，其他的函数里面也可能出问题导致全部死锁。</p>
+<p>总而言之，两把锁其实并不危险，危险的是没有顺序的两把锁，因此我们需要好好注意一下锁的顺序。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/09/22/MIT6-S081-lab-lock/">http://gazettm.github.io/2026/09/22/MIT6-S081-lab-lock/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/OS/"># OS</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/09/20/MIT6-S081-lab-thread/">MIT6-S081-lab-thread</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
