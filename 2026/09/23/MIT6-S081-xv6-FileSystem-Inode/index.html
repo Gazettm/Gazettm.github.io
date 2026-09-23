@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>MIT6-S081-xv6-FileSystem&amp;Inode | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">MIT6-S081-xv6-FileSystem&amp;Inode</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">九月 23, 2026&nbsp;&nbsp;20:56:25</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/OS/">OS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文章讨论 <code>XV6</code> 实验系统如何实现文件系统，包括磁盘布局、<code>inode</code>、目录、路径查找、块缓存、<code>icache</code> 与日志。</p>
+<p>用户通过 <code>open</code>、<code>read</code>、<code>write</code>、<code>link</code>、<code>unlink</code> 等系统调用使用文件系统。但系统调用背后，文件系统必须把“人类可读的路径名”映射到“磁盘上的块号”，并且保证掉电重启后数据仍然一致。</p>
+<h2 id="术语与概念"><a href="#术语与概念" class="headerlink" title="术语与概念"></a>术语与概念</h2><h3 id="磁盘块与扇区"><a href="#磁盘块与扇区" class="headerlink" title="磁盘块与扇区"></a>磁盘块与扇区</h3><p>磁盘通常被看成一个巨大的块数组：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">块 0, 块 1, 块 2, ... 块 N</span><br></pre></td></tr></table></figure>
+
+<p>历史上，扇区是磁盘读写的最小单位，通常是 512 字节。块是操作系统或文件系统使用的单位。在 xv6 中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> BSIZE 1024</span></span><br></pre></td></tr></table></figure>
+
+<p>也就是一个块 1024 字节，等于两个扇区。</p>
+<p>文件系统内部引用磁盘位置时，通常使用块号，而不是字节偏移。块号是逻辑上的编号，磁盘驱动负责把它转换成设备能理解的读写命令。</p>
+<h3 id="inode"><a href="#inode" class="headerlink" title="inode"></a><code>inode</code></h3><p><code>inode</code> 是文件系统中最核心的数据结构之一。它表示一个文件，但<strong>与文件名无关</strong>。</p>
+<p>也就是说：</p>
+<ul>
+<li>文件名只是目录里的一个标签；</li>
+<li><code>inode</code> 才是文件真正的内容和元数据；</li>
+<li>同一个 <code>inode</code> 可以有多个名字，这叫硬链接。</li>
+</ul>
+<p>xv6 中，磁盘 <code>inode</code> 大小为 64 字节。多个 <code>inode</code> 被打包进一个磁盘块：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1024 / 64 = 16</span><br></pre></td></tr></table></figure>
+
+<p>所以一个磁盘块可以放 16 个磁盘 <code>inode</code>。</p>
+<h3 id="目录项"><a href="#目录项" class="headerlink" title="目录项"></a>目录项</h3><p>在 Unix 风格文件系统中，目录本质上也是文件。目录的内容有固定格式，xv6 中称为目录项：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dirent</span> &#123;</span></span><br><span class="line">  ushort inum;</span><br><span class="line">  <span class="type">char</span> name[DIRSIZ];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<ul>
+<li><code>inum</code>：2 字节，<code>inode</code> 编号；</li>
+<li><code>name</code>：14 字节，文件名；</li>
+<li>总共 16 字节。</li>
+</ul>
+<p>所以一个 1024 字节的目录块可以放：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1024 / 16 = 64</span><br></pre></td></tr></table></figure>
+
+<p>也就是 64 个目录项。</p>
+<h3 id="块缓存"><a href="#块缓存" class="headerlink" title="块缓存"></a>块缓存</h3><p>磁盘很慢。SSD 读写一个块可能要几百微秒到毫秒级，硬盘可能十毫秒级。CPU 在这段时间可以执行大量指令。因此文件系统必须在内存中缓存磁盘块。</p>
+<p>xv6 的块缓存是一个全局数组：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">buf</span> <span class="title">buf</span>[<span class="title">NBUF</span>];</span></span><br></pre></td></tr></table></figure>
+
+<p><code>NBUF</code> 通常是 30。每个 <code>struct buf</code> 中有一个：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uchar data[BSIZE];  <span class="comment">// BSIZE = 1024</span></span><br></pre></td></tr></table></figure>
+
+<p>所以块缓存的数据部分约为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">30 * 1024 = 30KB</span><br></pre></td></tr></table></figure>
+
+<p>块缓存有两个关键规则：</p>
+<ol>
+<li>同一个磁盘块在内存中只能有一份副本；</li>
+<li>使用 LRU 策略淘汰最久未使用的块。</li>
+</ol>
+<h3 id="icache"><a href="#icache" class="headerlink" title="icache"></a><code>icache</code></h3><p><code>icache</code> 是 <code>inode</code> 缓存。块缓存缓存的是磁盘块，而 <code>icache</code> 缓存的是内存 <code>inode</code>。</p>
+<p>xv6 中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">spinlock</span> <span class="title">lock</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">inode</span> <span class="title">inode</span>[<span class="title">NINODE</span>];</span></span><br><span class="line">&#125; icache;</span><br></pre></td></tr></table></figure>
+
+<p><code>NINODE</code> 通常是 50。也就是说，xv6 内存中最多同时缓存 50 个 <code>inode</code>。</p>
+<p>频繁访问的文件，它的 <code>inode</code> 很可能一直留在 <code>icache</code> 中，不需要反复读磁盘。</p>
+<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><p>文件系统操作通常要修改多个位置：位图、<code>inode</code>、目录、数据块。如果改到一半断电，文件系统就可能不一致。</p>
+<p>日志的基本思想是：</p>
+<blockquote>
+<p>先把要做的事写到日志区，像写操作清单。<br>清单完整后，再真正修改文件系统。<br>如果中途崩溃，重启后根据日志决定重做还是丢弃。</p>
+</blockquote>
+<p>xv6 中，日志区通常从块 2 到块 31，共 30 个块。</p>
+<h2 id="XV6系统中实现"><a href="#XV6系统中实现" class="headerlink" title="XV6系统中实现"></a>XV6系统中实现</h2><h3 id="磁盘布局"><a href="#磁盘布局" class="headerlink" title="磁盘布局"></a>磁盘布局</h3><p>xv6 使用非常简单的磁盘布局：</p>
+<table>
+<thead>
+<tr>
+<th>块号</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>引导块</td>
+</tr>
+<tr>
+<td>1</td>
+<td>超级块</td>
+</tr>
+<tr>
+<td>2 ~ 31</td>
+<td>日志区</td>
+</tr>
+<tr>
+<td>32 ~ 44</td>
+<td><code>inode</code> 区</td>
+</tr>
+<tr>
+<td>45</td>
+<td>位图</td>
+</tr>
+<tr>
+<td>46 ~ …</td>
+<td>数据块</td>
+</tr>
+</tbody></table>
+<p>超级块描述整个文件系统，例如有多少块、日志多长等。位图跟踪数据块是否空闲。数据块保存文件内容或目录内容。</p>
+<p>给出 <code>inode</code> 编号后，可以计算它在磁盘上的位置：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">块号 = 32 + (inode号 * 64) / 1024</span><br><span class="line">块内偏移 = (inode号 * 64) % 1024</span><br></pre></td></tr></table></figure>
+
+<p>例如 <code>inode</code> 17：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">17 * 64 = 1088</span><br><span class="line">1088 / 1024 = 1</span><br></pre></td></tr></table></figure>
+
+<p>所以 <code>inode</code> 17 在块 33。</p>
+<h3 id="inode-结构"><a href="#inode-结构" class="headerlink" title="inode 结构"></a><code>inode</code> 结构</h3><p>磁盘 <code>inode</code> 的定义大致如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dinode</span> &#123;</span></span><br><span class="line">  <span class="type">short</span> type;           <span class="comment">// 文件、目录或空闲</span></span><br><span class="line">  <span class="type">short</span> major;          <span class="comment">// 主设备号</span></span><br><span class="line">  <span class="type">short</span> minor;          <span class="comment">// 次设备号</span></span><br><span class="line">  <span class="type">short</span> nlink;          <span class="comment">// 链接计数</span></span><br><span class="line">  uint size;            <span class="comment">// 文件大小，字节</span></span><br><span class="line">  uint addrs[NDIRECT+<span class="number">1</span>]; <span class="comment">// 数据块号</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>内存 <code>inode</code> 则包含更多运行时信息：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">inode</span> &#123;</span></span><br><span class="line">  uint dev;</span><br><span class="line">  uint inum;</span><br><span class="line">  <span class="type">int</span> ref;              <span class="comment">// 引用计数</span></span><br><span class="line">  <span class="type">int</span> valid;            <span class="comment">// 磁盘内容是否有效</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sleeplock</span> <span class="title">lock</span>;</span></span><br><span class="line">  <span class="type">short</span> type;</span><br><span class="line">  <span class="type">short</span> major;</span><br><span class="line">  <span class="type">short</span> minor;</span><br><span class="line">  <span class="type">short</span> nlink;</span><br><span class="line">  uint size;</span><br><span class="line">  uint addrs[NDIRECT+<span class="number">1</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>xv6 中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> NDIRECT 12</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NINDIRECT (BSIZE / sizeof(uint))</span></span><br></pre></td></tr></table></figure>
+
+<p>因为一个块 1024 字节，一个块号 4 字节：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NINDIRECT = 1024 / 4 = 256</span><br></pre></td></tr></table></figure>
+
+<p>所以最大文件为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(12 + 256) * 1024 = 268KB</span><br></pre></td></tr></table></figure>
+
+<p>这也是 xv6 文件系统非常简单、容量很小的原因之一。</p>
+<h3 id="目录与路径查找"><a href="#目录与路径查找" class="headerlink" title="目录与路径查找"></a>目录与路径查找</h3><p>目录也是文件，只是内容由目录项组成。路径查找的核心是逐级解析目录。</p>
+<p>以查找 <code>y/x</code> 为例：</p>
+<ol>
+<li>根 <code>inode</code> 编号固定为 1；</li>
+<li>读取根 <code>inode</code>；</li>
+<li>扫描根目录的数据块，查找名字 <code>y</code>；</li>
+<li>找到 <code>y</code> 的目录项，得到它的 <code>inode</code> 编号；</li>
+<li>读取 <code>y</code> 的 <code>inode</code>；</li>
+<li>扫描 <code>y</code> 的目录块，查找名字 <code>x</code>；</li>
+<li>返回 <code>x</code> 的 <code>inode</code>。</li>
+</ol>
+<p>xv6 中的路径查找大致由 <code>namei</code>、<code>dirlookup</code>、<code>ilookup</code> 完成。它是线性扫描，简单但效率不高。真实文件系统可能使用哈希表、B 树等加速。</p>
+<h3 id="块缓存与锁"><a href="#块缓存与锁" class="headerlink" title="块缓存与锁"></a>块缓存与锁</h3><p>块缓存的关键函数是 <code>bget</code>、<code>bread</code>、<code>bwrite</code>、<code>brelse</code>。</p>
+<p><code>bget</code> 的核心逻辑是：先在缓存中查找目标块。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(b = bcache.head.next; b != &amp;bcache.head; b = b-&gt;next)&#123;</span><br><span class="line">  <span class="keyword">if</span>(b-&gt;dev == dev &amp;&amp; b-&gt;blockno == blockno)&#123;</span><br><span class="line">    b-&gt;refcnt++;</span><br><span class="line">    release(&amp;bcache.lock);</span><br><span class="line">    acquiresleep(&amp;b-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> b;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里有两级锁：</p>
+<table>
+<thead>
+<tr>
+<th>锁</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>bcache.lock</code></td>
+<td>保护块缓存本身，例如链表、引用计数</td>
+</tr>
+<tr>
+<td><code>b-&gt;lock</code></td>
+<td>睡眠锁，保护某个块的内容</td>
+</tr>
+</tbody></table>
+<p>为什么块内容用睡眠锁，而不是自旋锁？</p>
+<p>因为磁盘操作很慢，可能睡眠。自旋锁会关闭中断，不能长时间持有，也不能在持有自旋锁时睡眠。睡眠锁允许进程在等待时让出 CPU。</p>
+<p><code>brelse</code> 会释放睡眠锁，获取 <code>bcache.lock</code>，减少引用计数，然后按 LRU 策略把缓冲区移到“最近使用”的位置。</p>
+<h3 id="创建文件与写入文件"><a href="#创建文件与写入文件" class="headerlink" title="创建文件与写入文件"></a>创建文件与写入文件</h3><p>以 <code>echo hi &gt; x</code> 为例，大致分为两个阶段。</p>
+<p><strong>第一阶段：创建文件 <code>x</code></strong></p>
+<ol>
+<li>在 <code>inode</code> 区找一个空闲 <code>inode</code>；</li>
+<li>把 <code>inode</code> 类型改成文件；</li>
+<li>在根目录中加入目录项 <code>x -&gt; inode</code>；</li>
+<li>更新根目录 <code>inode</code> 的大小；</li>
+<li>把修改写回磁盘。</li>
+</ol>
+<p><strong>第二阶段：写入 <code>hi</code></strong></p>
+<ol>
+<li>在位图中找一个空闲数据块；</li>
+<li>把位图对应位设为 1；</li>
+<li>把 <code>h</code>、<code>i</code> 写入数据块；</li>
+<li>更新文件 <code>inode</code> 的大小和块号；</li>
+<li>最后写入换行符。</li>
+</ol>
+<p>课程中观察到的磁盘写入顺序大致是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">33 33 46 32 45 595 595 33</span><br></pre></td></tr></table></figure>
+
+<p>这些块分别对应：</p>
+<table>
+<thead>
+<tr>
+<th>块号</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>33</td>
+<td>分配并初始化文件 <code>inode</code></td>
+</tr>
+<tr>
+<td>46</td>
+<td>根目录数据块，加入 <code>x</code></td>
+</tr>
+<tr>
+<td>32</td>
+<td>根 <code>inode</code>，更新目录大小</td>
+</tr>
+<tr>
+<td>45</td>
+<td>位图，分配数据块</td>
+</tr>
+<tr>
+<td>595</td>
+<td>文件 <code>x</code> 的数据块</td>
+</tr>
+</tbody></table>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><h3 id="关于同一磁盘块只能有一份内存副本"><a href="#关于同一磁盘块只能有一份内存副本" class="headerlink" title="关于同一磁盘块只能有一份内存副本"></a>关于同一磁盘块只能有一份内存副本</h3><p>假设块 33 里有两个 <code>inode</code>，<code>inode</code> 18 和 <code>inode</code> 19。</p>
+<p>如果内存中有两份块 33：</p>
+<ul>
+<li>进程 A 改 <code>inode</code> 18；</li>
+<li>进程 B 改 <code>inode</code> 19；</li>
+<li>A 写回时覆盖 B，B 写回时覆盖 A；</li>
+<li>最后磁盘数据就乱了。</li>
+</ul>
+<p>所以块缓存必须维护一个不变量：</p>
+<blockquote>
+<p>同一个磁盘块，在内存中只能有一份副本。</p>
+</blockquote>
+<p>这也是块缓存实验和锁实验要重点维护的内容。</p>
+<h3 id="关于睡眠锁与自旋锁"><a href="#关于睡眠锁与自旋锁" class="headerlink" title="关于睡眠锁与自旋锁"></a>关于睡眠锁与自旋锁</h3><p>块缓存中，<code>bcache.lock</code> 是自旋锁，<code>b-&gt;lock</code> 是睡眠锁。</p>
+<p>为什么块内容用睡眠锁？</p>
+<p>因为读写磁盘很慢。如果持有自旋锁等待磁盘 I&#x2F;O，会导致：</p>
+<ul>
+<li>中断被关闭；</li>
+<li>其他进程无法获得锁；</li>
+<li>CPU 可能空转；</li>
+<li>在单核情况下甚至可能死锁。</li>
+</ul>
+<p>睡眠锁允许进程在等待时调用 <code>sleep</code> 让出 CPU，等磁盘操作完成后再被唤醒。</p>
+<p>所以：</p>
+<table>
+<thead>
+<tr>
+<th>锁类型</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>自旋锁</td>
+<td>短时间保护内存数据结构</td>
+</tr>
+<tr>
+<td>睡眠锁</td>
+<td>可能跨越磁盘 I&#x2F;O 的长时间保护</td>
+</tr>
+</tbody></table>
+<h3 id="关于频繁访问的-inode-与块"><a href="#关于频繁访问的-inode-与块" class="headerlink" title="关于频繁访问的 inode 与块"></a>关于频繁访问的 <code>inode</code> 与块</h3><p>如果一个文件被频繁访问，它的 <code>inode</code> 很可能在 <code>icache</code> 中。只要 <code>ref &gt; 0</code>，它就不会被复用。</p>
+<p>如果 <code>icache</code> 中没有，才会调用 <code>bread</code> 去读 <code>inode</code> 所在块。此时，这个磁盘块很可能已经在 <code>bcache</code> 中。</p>
+<p>所以是两层缓存：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">进程 -&gt; 文件描述符 -&gt; 内存 inode（icache）</span><br><span class="line">                         |</span><br><span class="line">                         v</span><br><span class="line">                   磁盘块（bcache）</span><br><span class="line">                         |</span><br><span class="line">                         v</span><br><span class="line">                       磁盘</span><br></pre></td></tr></table></figure>
+
+<p>频繁访问的文件，通常不会频繁读磁盘。</p>
+<h3 id="关于-xv6-文件系统比主存小"><a href="#关于-xv6-文件系统比主存小" class="headerlink" title="关于 xv6 文件系统比主存小"></a>关于 xv6 文件系统比主存小</h3><p>xv6 在 QEMU 中通常配置 128MB 主存。但它的文件系统大约只有 1000 个块：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1000 * 1024 = 1MB</span><br></pre></td></tr></table></figure>
+
+<p>块缓存只有 30KB，<code>icache</code> 只有 50 个 <code>inode</code>。磁盘比主存小很多。</p>
+<p>这是因为 xv6 是教学操作系统，目标是：</p>
+<ul>
+<li>代码简单；</li>
+<li>启动快；</li>
+<li>方便做实验；</li>
+<li>能在几节课讲完。</li>
+</ul>
+<p>真实系统中，磁盘通常远大于主存。例如笔记本 SSD 可能是 512GB，而主存只有 16GB。所以真实文件系统必须更复杂，缓存只能覆盖一小部分磁盘。</p>
+<h3 id="关于-inode-存储在哪里"><a href="#关于-inode-存储在哪里" class="headerlink" title="关于 inode 存储在哪里"></a>关于 <code>inode</code> 存储在哪里</h3><p><code>inode</code> 分两个层面。</p>
+<p><strong>磁盘上：</strong></p>
+<ul>
+<li>xv6：固定 <code>inode</code> 区，块 32 到 44；</li>
+<li>ext4：每个块组有一张 <code>inode</code> 表；</li>
+<li>XFS&#x2F;Btrfs：动态分配，作为 B 树的一部分。</li>
+</ul>
+<p><strong>内存中：</strong></p>
+<ul>
+<li>xv6：<code>icache</code>；</li>
+<li>Linux：<code>inode</code> cache &#x2F; <code>dentry</code> cache。</li>
+</ul>
+<p>进程通过文件描述符找到内存 <code>inode</code>，再通过内存 <code>inode</code> 找到磁盘块。</p>
+<h3 id="关于现代文件系统如何扩展"><a href="#关于现代文件系统如何扩展" class="headerlink" title="关于现代文件系统如何扩展"></a>关于现代文件系统如何扩展</h3><p>xv6 最大文件只有 268KB，原因是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">12 个直接块 + 1 个间接块</span><br></pre></td></tr></table></figure>
+
+<p>现代文件系统用多种方法支持大文件：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>更大的块号</td>
+<td>ext4 使用 48 位块号</td>
+</tr>
+<tr>
+<td>更大块大小</td>
+<td>4KB 块</td>
+</tr>
+<tr>
+<td>双重&#x2F;三重间接</td>
+<td>类似页表的多级结构</td>
+</tr>
+<tr>
+<td>extent</td>
+<td>用一个结构表示连续块区间</td>
+</tr>
+<tr>
+<td>B 树</td>
+<td>XFS、Btrfs</td>
+</tr>
+</tbody></table>
+<p>FAT32 单文件最大 4GB，并不是 <code>inode</code> 或块号不够，而是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">文件大小字段只有 32 位</span><br><span class="line">2^32 字节 = 4GB</span><br></pre></td></tr></table></figure>
+
+<p>所以 FAT32 的限制来自文件大小字段，而不是 <code>inode</code> 数量。</p>
+<h3 id="关于文件数量限制"><a href="#关于文件数量限制" class="headerlink" title="关于文件数量限制"></a>关于文件数量限制</h3><p>文件数量是否受 <code>inode</code> 数量限制，取决于文件系统：</p>
+<table>
+<thead>
+<tr>
+<th>文件系统</th>
+<th>文件数量限制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ext2&#x2F;3&#x2F;4</td>
+<td>受 <code>inode</code> 总数限制</td>
+</tr>
+<tr>
+<td>xv6</td>
+<td>受 <code>inode</code> 总数限制</td>
+</tr>
+<tr>
+<td>XFS&#x2F;Btrfs</td>
+<td>动态 <code>inode</code>，基本不受固定数量限制</td>
+</tr>
+<tr>
+<td>FAT32</td>
+<td>没有 <code>inode</code>，受目录项和磁盘空间限制</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>inode</code> 是文件的“身份证 + 地址本”。磁盘上存一份，内存里缓存一份。频繁访问时，它会在 <code>icache</code>；它所在的块会在 <code>bcache</code>。xv6 很小，是教学简化；真实文件系统更大、更复杂，但核心思想仍然是 <code>inode</code>、目录、块缓存和日志。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/09/23/MIT6-S081-xv6-FileSystem-Inode/">http://gazettm.github.io/2026/09/23/MIT6-S081-xv6-FileSystem-Inode/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/OS/"># OS</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/09/22/MIT6-S081-lab-lock/">MIT6-S081-lab-lock</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
