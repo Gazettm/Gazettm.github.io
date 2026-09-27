@@ -221,7 +221,7 @@
         </header>
 
         <div class="post-content">
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Lab 7 分两半：上半场是物理内存分配器（per-CPU freelist + 偷页），下半场是块缓存（buffer cache）的并行化。这篇记录我的设计思路和踩过的坑。</p>
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Lab 7 分两半：上半场是物理内存分配器（per-CPU freelist + 偷页），下半场是块缓存（buffer cache）的并行化。</p>
 <h2 id="Memory-allocator"><a href="#Memory-allocator" class="headerlink" title="Memory allocator"></a>Memory allocator</h2><p>xv6中的<code>kalloc.c</code>中定义了<code>kmem</code>结构体，这里的结构体用于存储<code>freelist</code>所有空余的物理页组成的链表，用于给申请的进程分配。由于多核CPU需要协调工作，因此当我们访问<code>kmem</code>的时候需要加锁。但是如果8个核心同时申请，那么就会出现锁自旋等待的情况。因此，这里我们需要给每一个CPU都分配一个<code>kmem</code>结构体，这样加锁只会在对应的<code>kmem</code>结构体中加，增加了并行性能。（此处8来自于CPU核心数，定义在<code>param.h</code>中：<code>#define NCPU 8</code>。注意 <code>NCPU</code> 是最多支持的核数，qemu 默认只启 <code>CPUS := 3</code> 个核，所以 8 个 <code>kmem</code> 里通常只有 3 个真的有页）</p>
 <h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>但是这同样会带来很多问题。</p>
 <ol>
