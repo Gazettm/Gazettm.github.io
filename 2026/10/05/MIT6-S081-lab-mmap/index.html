@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>MIT6-S081-lab-mmap | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">MIT6-S081-lab-mmap</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十月 5, 2026&nbsp;&nbsp;16:48:23</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/OS/">OS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这个 lab 主要让我们实现 <code>mmap</code> 和 <code>munmap</code> 两个系统调用：把文件的内容映射进进程的地址空间，之后像访问数组一样读写它，需要的时候再写回文件。实现用的是 lazy 策略，也就是 <code>mmap</code> 本身既不读文件也不分配内存，等用户真的读到或者写到那一页、触发了缺页中断，才把对应的页填上。测试集传的长度都是按页对齐的，所以这里没有做对齐处理。</p>
+<p>测试通过，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">== Test running mmaptest == (1.9s) </span><br><span class="line">== Test   mmaptest: mmap f == </span><br><span class="line">  mmaptest: mmap f: OK </span><br><span class="line">== Test   mmaptest: mmap private == </span><br><span class="line">  mmaptest: mmap private: OK </span><br><span class="line">== Test   mmaptest: mmap read-only == </span><br><span class="line">  mmaptest: mmap read-only: OK </span><br><span class="line">== Test   mmaptest: mmap read/write == </span><br><span class="line">  mmaptest: mmap read/write: OK </span><br><span class="line">== Test   mmaptest: mmap dirty == </span><br><span class="line">  mmaptest: mmap dirty: OK </span><br><span class="line">== Test   mmaptest: not-mapped unmap == </span><br><span class="line">  mmaptest: not-mapped unmap: OK </span><br><span class="line">== Test   mmaptest: two files == </span><br><span class="line">  mmaptest: two files: OK </span><br><span class="line">== Test   mmaptest: fork_test == </span><br><span class="line">  mmaptest: fork_test: OK </span><br><span class="line">== Test usertests == usertests: OK (108.1s) </span><br><span class="line">== Test time == </span><br><span class="line">time: OK </span><br><span class="line">Score: 140/140</span><br></pre></td></tr></table></figure>
+
+<h2 id="设计思考"><a href="#设计思考" class="headerlink" title="设计思考"></a>设计思考</h2><p>通过test代码我们可以看到如下的类似代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> *p = mmap(<span class="number">0</span>, PGSIZE*<span class="number">2</span>, PROT_READ, MAP_PRIVATE, fd, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这一行说明 <code>mmap</code> 返回的是虚拟地址。六个参数分别是：第一个是”我希望映射到哪个地址”，传 0 表示让内核自己挑一段空闲的（本 lab 只支持这一种，原因见最后一节）；第二个是要映射多少字节；第三个 <code>prot</code> 是”我要对这块内存做什么”，取值是 <code>PROT_READ</code> &#x2F; <code>PROT_WRITE</code>；第四个 <code>flags</code> 是”改动要不要落到文件上”，<code>MAP_PRIVATE</code> 表示不写回（改动只留在内存里），<code>MAP_SHARED</code> 表示要写回；第五个是文件描述符，指定映射哪个文件；第六个是文件内的起始偏移量。</p>
+<p>我们为什么需要lazy策略？如果我们不进行lazy操作，那么读一个文件之后需要将这个文件的所有部分都写入内存，而lazy操作可以让我们一页一页的读写，如果我们只访问了这个文件的一小部分，那么带来的是巨大的性能提升。但是这同样带给我们挑战，因为我们必须处理<code>pagefault</code>的问题，我们需要在读写缺失的时候再把缺少的页从文件映射进内存里面。</p>
+<p>我们需要一个结构体来记录”哪一段虚拟地址对应哪个文件的哪一部分”，因为缺页的时候要靠它找到对应的文件、把内容读进主存。这里有个关键点：记录的是 <code>struct file *</code> 而不是 <code>fd</code> 号。因为 <code>fd</code> 会被 <code>close</code>，而且 <code>fd</code> 号之后会被新的 <code>open</code> 复用——<code>test mmap private</code> 里就是 <code>mmap</code> 完立刻 <code>close(fd)</code>，可映射还得继续能用。所以每条映射必须自己抓一份文件结构体、用 <code>filedup</code> 让它活着。于是我们定义结构体 <code>vma</code>，存下面这些东西，并在 proc 结构体里放一个 <code>vma</code> 数组，大小是 16。另外要记住：进程槽位是复用的，所以这个数组必须在 <code>allocproc</code> 里清空，否则新进程会看到上一个进程留下的登记。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">vma</span> &#123;</span></span><br><span class="line">  uint64 addr;</span><br><span class="line">  uint64 length;</span><br><span class="line">  <span class="type">int</span> prot;</span><br><span class="line">  <span class="type">int</span> flags;</span><br><span class="line">  uint64 offset;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> * <span class="title">file</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里还有一个问题：把文件映射到哪？用户虚拟地址的最上面两页是 <code>TRAMPOLINE</code> 和 <code>TRAPFRAME</code>；下面依次是用户栈、heap、data&#x2F;text。注意 <code>p-&gt;sz</code> 是”这个进程占用的内存到哪儿为止”这个边界值，用户栈就在 <code>[0, p-&gt;sz)</code> 的最高处（<code>exec</code> 分配的两页，其中低的那页清掉 <code>PTE_U</code> 当 guard page）。我们显然不能把映射塞进栈里面，所以选 <code>p-&gt;sz</code> 到 <code>TRAPFRAME</code> 之间那片空地，刚好把这些空闲的地址用起来。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MAXVA  ─────────────────────────────</span><br><span class="line">       TRAMPOLINE                    最高一页</span><br><span class="line">       TRAPFRAME                     跳板下面那页（MAXVA - 2*PGSIZE）</span><br><span class="line">       ┌────────────────────────────┐</span><br><span class="line">       │  ← mmap 的区域该放这一带    │  一大片空地</span><br><span class="line">       ├────────────────────────────┤</span><br><span class="line">p-&gt;sz ─┤  用户栈（一页）            │  ← p-&gt;sz 正好等于栈顶</span><br><span class="line">       │  guard page（清掉了 PTE_U）│</span><br><span class="line">       │  heap（sbrk 往上推 p-&gt;sz） │</span><br><span class="line">       │  data / text                │</span><br><span class="line">   0   └────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p>这里还有一个问题：映射了多个文件之后再解除映射，会出现空洞。例如先在前面一段地址映射文件 A，再在后面一段映射文件 B，然后解除 A 的映射，A 那一段就成了空洞。我的做法是不回头：每次新映射都取”所有已有映射里最大的结束地址”当起点，于是空洞永远不会被复用。敢这么做的理由是，从 <code>p-&gt;sz</code> 到 <code>TRAPFRAME</code> 之间有大约 256GB 的余地（整个用户地址空间的上界 <code>MAXVA</code> 是 2 的 38 次方），而这个 lab 最多只有 16 条映射，浪费几个洞完全无所谓；换来的是”新映射一定在所有已有映射之上”这个自明的性质，不用再去论证区域之间会不会重叠。真实系统不会这么干——它们要复用空洞，否则一个长期运行、反复 <code>mmap</code>&#x2F;<code>munmap</code> 的进程，地址空间会被慢慢吃掉。</p>
+<p>于是整个过程是：<code>mmap</code> 在 VMA 表里登记一条记录并返回一个虚拟地址；用户对这个地址读写；因为懒策略，那些页还不在内存里，于是触发缺页、进入 <code>mmapfault</code>。</p>
+<p>缺页处理里最关键的一步，是理解”同一张物理页、两套页表”。<code>kalloc()</code> 给我的是一页物理内存，内核页表把整块 RAM 直接映射（内核虚拟地址等于物理地址），所以内核拿这个地址直接 <code>memset</code>、<code>readi</code> 都没问题；接着 <code>mappages</code> 做的事是”在用户页表里再记一条：这个虚拟地址也指向同一张物理页”。这就是多对一——一张物理页，两套页表都能到达它。之后用户读写那个虚拟地址，走用户页表，落到同一张页上；内核那条直接映射一直存在，但它不算”引用”，所以释放的时候只 <code>kfree</code> 一次。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="mmap"><a href="#mmap" class="headerlink" title="mmap"></a><code>mmap</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">uint64</span><br><span class="line"><span class="title function_">sys_mmap</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  uint64 addr, length, offset;</span><br><span class="line">  <span class="type">int</span> prot, flags, fd;</span><br><span class="line">  <span class="type">int</span> i;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span>* <span class="title">f</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line">  uint64 vmaaddr = PGROUNDUP(p-&gt;sz);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// check parameter</span></span><br><span class="line">  <span class="keyword">if</span>(argaddr(<span class="number">0</span>, &amp;addr) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="comment">// xv6 parameter 0 must be zero.</span></span><br><span class="line">  <span class="keyword">if</span>(addr != <span class="number">0</span>) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(argaddr(<span class="number">1</span>, &amp;length) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(argint(<span class="number">2</span>, &amp;prot) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(argint(<span class="number">3</span>, &amp;flags) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(argint(<span class="number">4</span>, &amp;fd) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// fd parameter must be vaild</span></span><br><span class="line">  <span class="keyword">if</span>(fd &lt; <span class="number">0</span> || fd &gt;= NOFILE || (p-&gt;ofile[fd]) == <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(argaddr(<span class="number">5</span>, &amp;offset) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// update vmaaddr to bigest</span></span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++)&#123;</span><br><span class="line">    <span class="keyword">if</span>(p-&gt;vma[i].file &amp;&amp; (p-&gt;vma[i].addr + p-&gt;vma[i].length &gt; vmaaddr))</span><br><span class="line">      vmaaddr = p-&gt;vma[i].addr + p-&gt;vma[i].length;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(vmaaddr + length &gt; TRAPFRAME) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; <span class="number">16</span>;i++)&#123;</span><br><span class="line">    <span class="keyword">if</span>(!p-&gt;vma[i].file)</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(i == <span class="number">16</span>) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  </span><br><span class="line">  f = p-&gt;ofile[fd];</span><br><span class="line"></span><br><span class="line">  <span class="comment">//check</span></span><br><span class="line">  <span class="keyword">if</span>((prot &amp; PROT_READ) &amp;&amp; !f-&gt;readable) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span>((prot &amp; PROT_WRITE) &amp;&amp; (flags &amp; MAP_SHARED) &amp;&amp; !f-&gt;writable) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  filedup(f);</span><br><span class="line"></span><br><span class="line">  p-&gt;vma[i].addr = vmaaddr;</span><br><span class="line">  p-&gt;vma[i].length = length;</span><br><span class="line">  p-&gt;vma[i].prot = prot;</span><br><span class="line">  p-&gt;vma[i].flags = flags;</span><br><span class="line">  p-&gt;vma[i].offset = offset;</span><br><span class="line">  p-&gt;vma[i].file = f;</span><br><span class="line">  <span class="keyword">return</span> p-&gt;vma[i].addr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意这里的几处判断。空槽的判据是 <code>file == 0</code>：一个正在使用的映射一定带着文件，所以 <code>file</code> 为 0 就是空槽。这也要求所有遍历 VMA 表的地方都先判断 <code>file</code>（<code>mmap</code> 找空槽、<code>munmap</code> 找目标、缺页找目标、<code>exit</code> 清理、<code>fork</code> 复制，一共五处），否则会拿残留的地址去比较。前面提过，这个数组还必须在 <code>allocproc</code> 里清干净。</p>
+<h3 id="mmapfault"><a href="#mmapfault" class="headerlink" title="mmapfault"></a><code>mmapfault</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">mmapfault</span><span class="params">(<span class="keyword">struct</span> proc* p, uint64 vaddr, <span class="type">int</span> scause)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> i, perm;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">vma</span>* <span class="title">v</span> =</span> <span class="number">0</span>;</span><br><span class="line">  uint64 pa;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">inode</span>* <span class="title">ip</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; <span class="number">16</span>;i++)&#123;</span><br><span class="line">    <span class="keyword">if</span>((p-&gt;vma[i].file != <span class="number">0</span>) &amp;&amp; (p-&gt;vma[i].addr &lt;= vaddr) &amp;&amp; ((p-&gt;vma[i].addr + p-&gt;vma[i].length) &gt; vaddr))&#123;</span><br><span class="line">      v = &amp;(p-&gt;vma[i]);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(v == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span>(scause == <span class="number">13</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(!(v-&gt;prot &amp; PROT_READ))&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(scause == <span class="number">15</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(!(v-&gt;prot &amp; PROT_WRITE))&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  pa = (uint64)kalloc();</span><br><span class="line">  <span class="keyword">if</span>(pa == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="built_in">memset</span>((<span class="type">void</span>*)pa, <span class="number">0</span>, PGSIZE);</span><br><span class="line"></span><br><span class="line">  ip = v-&gt;file-&gt;ip;</span><br><span class="line"></span><br><span class="line">  begin_op();</span><br><span class="line">  ilock(ip);</span><br><span class="line">  readi(ip, <span class="number">0</span>, pa, (PGROUNDDOWN(vaddr) - v-&gt;addr + v-&gt;offset), PGSIZE);</span><br><span class="line">  iunlock(ip);</span><br><span class="line">  end_op();</span><br><span class="line"></span><br><span class="line">  perm = PTE_U;</span><br><span class="line">  <span class="keyword">if</span>(v-&gt;prot &amp; PROT_READ)  perm |= PTE_R;</span><br><span class="line">  <span class="keyword">if</span>(v-&gt;prot &amp; PROT_WRITE) perm |= PTE_W;</span><br><span class="line">  <span class="keyword">if</span>(mappages(p-&gt;pagetable, PGROUNDDOWN(vaddr), PGSIZE, pa, perm) != <span class="number">0</span>)&#123;</span><br><span class="line">    kfree((<span class="type">void</span>*)pa);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数在缺页时被调用：<code>usertrap</code> 里判断 <code>r_scause()</code> 是 13（读缺页，load page fault）还是 15（写缺页，store page fault），是的话就调它。</p>
+<p>这里有个我之前的错误：页表项的权限必须一次性按 VMA 里的 <code>prot</code> 算全（<code>PROT_READ</code> 给 <code>PTE_R</code>、<code>PROT_WRITE</code> 给 <code>PTE_W</code>）。我一开始是按 <code>scause</code> 推的——读缺页就只给 <code>PTE_R</code>——结果用户接着写同一页时又缺页，处理函数对着一个已经映射好的页再调一次 <code>mappages</code>，直接 <code>panic(&quot;mappages: remap&quot;)</code>。<code>scause</code> 只用来判断”这次访问合不合法”，不用来决定权限。</p>
+<h3 id="vmaunmap"><a href="#vmaunmap" class="headerlink" title="vmaunmap"></a><code>vmaunmap</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">vmaunmap</span><span class="params">(uint64 origin, uint64 edge, <span class="keyword">struct</span> vma *v, <span class="keyword">struct</span> proc* p)</span></span><br><span class="line">&#123;</span><br><span class="line">  uint64 pa;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">inode</span> *<span class="title">ip</span> =</span> v-&gt;file-&gt;ip;</span><br><span class="line">  <span class="keyword">while</span>(origin &lt; edge)&#123;</span><br><span class="line">    <span class="keyword">if</span>( (pa = walkaddr(p-&gt;pagetable, origin) ) == <span class="number">0</span>)&#123;</span><br><span class="line">      origin += PGSIZE;</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>((v-&gt;flags &amp; MAP_SHARED) &amp;&amp; (v-&gt;prot &amp; PROT_WRITE))&#123;</span><br><span class="line">      begin_op();</span><br><span class="line">      ilock(ip);</span><br><span class="line">      writei(ip, <span class="number">0</span>, pa, (PGROUNDDOWN(origin) - v-&gt;addr + v-&gt;offset), PGSIZE);</span><br><span class="line">      iunlock(ip);</span><br><span class="line">      end_op();</span><br><span class="line">    &#125;</span><br><span class="line">    uvmunmap(p-&gt;pagetable, PGROUNDDOWN(origin), <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">    origin += PGSIZE;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>辅助函数：把一段区域里的映射释放掉，需要写回的先写回。<code>sys_munmap</code> 和 <code>exit</code> 共用它。</p>
+<p>有两个细节：一是每一页都要先用 <code>walkaddr</code> 判断”这一页在不在”（返回 0 就是从来没被访问过；懒映射下这种页一定有，直接对它调 <code>uvmunmap</code> 会 <code>panic(&quot;uvmunmap: not mapped&quot;)</code>）；二是写回的条件是 <code>MAP_SHARED</code> 并且 <code>prot</code> 里带 <code>PROT_WRITE</code>（只读的共享映射没必要写回，而且那个文件可能本来就是只读打开的）。</p>
+<h3 id="munmap"><a href="#munmap" class="headerlink" title="munmap"></a><code>munmap</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">uint64</span><br><span class="line"><span class="title function_">sys_munmap</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  uint64 uaddr, length;</span><br><span class="line">  <span class="type">int</span> i;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(argaddr(<span class="number">0</span>, &amp;uaddr) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span>(argaddr(<span class="number">1</span>, &amp;length) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">vma</span> *<span class="title">v</span> =</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; <span class="number">16</span>;i++)&#123;</span><br><span class="line">    <span class="keyword">if</span>(p-&gt;vma[i].file &amp;&amp; (p-&gt;vma[i].addr &lt;= uaddr) &amp;&amp; uaddr + length &lt;= p-&gt;vma[i].addr + p-&gt;vma[i].length)&#123;</span><br><span class="line">      <span class="comment">//ok</span></span><br><span class="line">      v = &amp;(p-&gt;vma[i]);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(v == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  vmaunmap (uaddr, uaddr + length, v, p);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span>(uaddr == v-&gt;addr &amp;&amp; length == v-&gt;length)&#123;</span><br><span class="line">    fileclose(v-&gt;file);</span><br><span class="line">    v-&gt;file = <span class="number">0</span>;</span><br><span class="line">  &#125;<span class="keyword">else</span> <span class="keyword">if</span>(uaddr == v-&gt;addr &amp;&amp; length &lt; v-&gt;length)&#123;</span><br><span class="line">    v-&gt;addr += length;</span><br><span class="line">    v-&gt;length -= length;</span><br><span class="line">    v-&gt;offset += length;</span><br><span class="line">  &#125;<span class="keyword">else</span> <span class="keyword">if</span>(uaddr &gt; v-&gt;addr &amp;&amp; (uaddr + length) == (v-&gt;addr + v-&gt;length))&#123;</span><br><span class="line">    v-&gt;length -= length;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>用于解除映射，第一个参数是起始地址、第二个参数是长度。<code>mmaptest</code> 只会从两端拆（正好整段、拆掉开头一段、拆掉末尾一段），不会在中间挖洞，所以下面三个分支就够了。另外注意 <code>vmaunmap</code> 的参数是值传递，它不会改到这里这个 <code>uaddr</code>，所以后面那三个判断可以直接用原值。</p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>还有三处不贴代码，但值得记下来。</p>
+<p><code>fork</code>：把父进程在用的 VMA 条目复制给子进程，并且对每个复制过去的 <code>struct file *</code> 调一次 <code>filedup</code>（子进程要自己持一份文件引用）。页表不用管——<code>uvmcopy</code> 已经把”已经映射好的页”复制过去了；那些还没被访问过的页，让子进程自己缺页去填就行。</p>
+<p><code>exit</code>：把进程还挂着的映射按 <code>munmap</code> 的方式收尾，该写回的写回、该释放的物理页释放、最后 <code>fileclose</code>。这一步必须在 <code>proc_freepagetable</code> 之前做完，因为那之后页表就没了。</p>
+<p><code>trap.c</code>：在 <code>usertrap</code> 里加一个和系统调用分支并列的 <code>else if</code>，判断 <code>r_scause()</code> 是不是 13 或 15，是的话调用 <code>mmapfault</code>，返回值小于 0 就把进程标记成 killed。</p>
+<h2 id="其他思考"><a href="#其他思考" class="headerlink" title="其他思考"></a>其他思考</h2><h3 id="为什么这里的mmap第一个参数为0？"><a href="#为什么这里的mmap第一个参数为0？" class="headerlink" title="为什么这里的mmap第一个参数为0？"></a>为什么这里的<code>mmap</code>第一个参数为0？</h3><p><code>mmap</code> 的第一个参数在真实 API 里是”我希望放在哪个地址”（0 &#x3D; 随便挑；非 0 &#x3D; 提示；非 0 + <code>MAP_FIXED</code> &#x3D; 强制）。这个 lab 官方明确只要求 0 这一种。所以传了非 0 就返回失败——显式失败好过默默忽略（默默忽略会得到”映射成功了但地址和你要求的不一样”这种静默错误）。</p>
+<h3 id="这里的权限位是怎么回事？"><a href="#这里的权限位是怎么回事？" class="headerlink" title="这里的权限位是怎么回事？"></a>这里的权限位是怎么回事？</h3><p>在 <code>sys_mmap</code> 里做的这次检查，问的是”这个文件允许建立这样一组映射吗”，依据是 <code>struct file</code> 里的 <code>readable</code> &#x2F; <code>writable</code>（也就是这个文件当初是用什么模式打开的）。要求读，文件就必须可读；要求写、并且是 <code>MAP_SHARED</code>，文件就必须可写——因为”改这块内存”的语义就是”改文件”。这里有个容易混的地方：要求写但 flags 是 <code>MAP_PRIVATE</code> 时，文件可不可写都不管，改动只落在进程自己那份私有副本上，文件从头到尾没被碰过。这两条正好是 <code>test mmap private</code>（只读文件 + 可写 + private，要成功）和 <code>test mmap read-only</code>（只读文件 + 可写 + shared，必须失败）的正反面。失败时返回的是 -1（用户侧就是 <code>MAP_FAILED</code>），不是 0。</p>
+<p>在 <code>mmapfault</code> 里还有一次检查，问的是”这次访问被这条映射允许吗”，依据是 VMA 里的 <code>prot</code> 加上 <code>r_scause()</code> 给出的访问类型：读缺页要求 <code>prot</code> 里有 <code>PROT_READ</code>，写缺页要求有 <code>PROT_WRITE</code>，不符合就返回 -1，由 <code>usertrap</code> 把进程标记成 killed（也就是结束这个进程）。</p>
+<p>两次检查看起来重复，其实判据不同：<code>sys_mmap</code> 那次比的是”用户想要什么”和”文件能干什么”；<code>mmapfault</code> 那次比的是”这次访问想干什么”和”这条映射允许什么”。两次都不能省——少了后一次，往只读映射里写时会对已经映射的页再 <code>mappages</code>（就是上面那个 remap panic）；少了前一次，<code>test mmap read-only</code> 检查的 <code>mmap</code> 返回值就不对了。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/10/05/MIT6-S081-lab-mmap/">http://gazettm.github.io/2026/10/05/MIT6-S081-lab-mmap/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/OS/"># OS</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/09/27/MIT6-S081-lab-filesystem/">MIT6-S081-lab-filesystem</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
