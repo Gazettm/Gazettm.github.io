@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>MIT6-S081-lab-networking | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">MIT6-S081-lab-networking</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十月 6, 2026&nbsp;&nbsp;16:20:32</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/OS/">OS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>测试完毕，如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">== Test running nettests == (6.5s) </span><br><span class="line">== Test   nettest: ping == </span><br><span class="line">  nettest: ping: OK </span><br><span class="line">== Test   nettest: single process == </span><br><span class="line">  nettest: single process: OK </span><br><span class="line">== Test   nettest: multi-process == </span><br><span class="line">  nettest: multi-process: OK </span><br><span class="line">== Test   nettest: DNS == </span><br><span class="line">  nettest: DNS: OK </span><br><span class="line">== Test <span class="keyword">time</span> == </span><br><span class="line"><span class="keyword">time</span>: OK </span><br><span class="line">Score: 100/100</span><br></pre></td></tr></table></figure>
+
+<h2 id="networking"><a href="#networking" class="headerlink" title="networking"></a>networking</h2><p>这个实验要我们写两个函数，一个是<code>e1000_recv</code>，一个是<code>e1000_transmit</code>。一个用于接收网络信息，一个用于发送网络信息。</p>
+<p><code>e1000_recv</code>：网络进入e1000网卡，通过DMA传送到内存中，接下来我们需要使用这个函数从内存里面读取信息。</p>
+<p><code>e1000_transmit</code>：我们通过这个函数将信息（包）写入内存里面，之后通过DMA写入e1000网卡，然后网卡通过网络发送出去。</p>
+<p>这里有 <code>tx_ring</code> 和 <code>rx_ring</code> 两个环，前者用于发送、后者用于接收。环上各 16 个格子（描述符），写满就绕回第 0 格。</p>
+<p>先看一个格子里装了什么：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">一个发送描述符（tx_desc）：</span><br><span class="line">  addr    要发的包在内存里的起始地址（写的是 m-&gt;head，不是 m-&gt;buf）</span><br><span class="line">  length  包有多长（m-&gt;len）</span><br><span class="line">  cmd     命令位：RS = 发完请把状态写回描述符，EOP = 这是这个包的最后一个分片</span><br><span class="line">  status  状态位：DD = 网卡已经发完这一格，驱动靠它判断这一格能不能再复用</span><br><span class="line"></span><br><span class="line">一个接收描述符（rx_desc）：</span><br><span class="line">  addr    网卡应该把包 DMA 到哪块内存（就是 rx_mbufs[i]-&gt;head）</span><br><span class="line">  length  网卡填进来的实际包长（不含 CRC，因为初始化时设了 SECRC）</span><br><span class="line">  status  状态位：DD = 网卡已经在这一格放好一个包</span><br></pre></td></tr></table></figure>
+
+<p>发送环的两根指针：<code>TDH</code> 是网卡已经发到哪儿，<code>TDT</code> 是驱动下一个要填的格子。驱动只操作尾指针，头指针是给网卡用的、看都不用看。这里有点像工厂的流水线：两个工人站在传送带两端，中间是已经放上去、还没被处理掉的包。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">发送环 tx_ring（16 格，写满绕回第 0 格）</span><br><span class="line"></span><br><span class="line">   ┌──────┬──────┬──────┬──────┬──────┬──────┬──────┐</span><br><span class="line">   │  ..  │      │      │      │      │      │  ..  │</span><br><span class="line">   └──────┴──────┴──────┴──────┴──────┴──────┴──────┘</span><br><span class="line">            ▲                                ▲</span><br><span class="line">          TDH                              TDT</span><br><span class="line">    （网卡已经发到哪儿）            （驱动下一个要填的格子）</span><br><span class="line"></span><br><span class="line">   两根指针之间：已经交给网卡、正在排队等发的包</span><br><span class="line">                → 这些格子里的 mbuf 一个都不能释放</span><br><span class="line">   TDT 那一格能不能填，看它的 DD 位：</span><br><span class="line">                DD = 1 → 网卡已经发完这一格上一轮的包，可以复用</span><br><span class="line">                DD = 0 → 还在队列里没发完，不能碰，直接返回 -1</span><br></pre></td></tr></table></figure>
+
+<p>接收环是反过来的：网卡往环里写包（写到哪儿由 <code>RDH</code> 记录），驱动从 <code>RDT+1</code> 开始取包，<code>RDT</code> 是”驱动已经还给网卡的空缓冲到哪儿”这条线。所以两个环的方向正好相反——发送是驱动往前放，接收是驱动往前取。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">接收环 rx_ring（16 格）</span><br><span class="line"></span><br><span class="line">   ┌──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┐</span><br><span class="line">   │  0   │  1   │  2   │  3   │  4   │  5   │  6   │  7   │ ...</span><br><span class="line">   └──────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┘</span><br><span class="line">     ▲                            ▲</span><br><span class="line">   RDH                          RDT</span><br><span class="line">（网卡写到哪儿）        （已经还给网卡的空缓冲到哪儿）</span><br><span class="line"></span><br><span class="line">   RDT+1 到 RDH 之间：网卡已经装好包、等驱动来取的格子</span><br><span class="line">                       → 驱动从 RDT+1 开始，一格一格看 DD，取走 mbuf 交给 net_rx</span><br><span class="line">   RDH 到 RDT 之间：驱动已经还给网卡的空缓冲</span><br><span class="line">                       → 网卡会往这里装下一个包</span><br><span class="line">   取走一格之后要做三件事：补一块新 mbuf 写回 addr、把 status 清 0、把 RDT 推到这一格</span><br><span class="line">                         （最后一步的含义是&quot;这一格的空缓冲还给你了&quot;）</span><br></pre></td></tr></table></figure>
+
+<p>把整条路连起来看：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">nettests 里的 write(fd, ...)</span><br><span class="line">   → net.c 的 net_tx_eth()：补以太网头，必要时先发 ARP 问对方的 MAC</span><br><span class="line">   → e1000_transmit()：把包放进发送环、推进 TDT        ← 要写的第一个函数</span><br><span class="line">   → 网卡 DMA 发出去 → QEMU 的用户态网络栈（slirp）→ 宿主机的 make server</span><br><span class="line">   → 回包：网卡 DMA 进接收环 → 中断 → e1000_recv()      ← 要写的第二个函数</span><br><span class="line">   → net_rx()：解析以太网 / ARP / UDP / IP 头 → 唤醒 socket → nettests 的 read() 拿到数据</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="e1000-transmit"><a href="#e1000-transmit" class="headerlink" title="e1000_transmit"></a>e1000_transmit</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">e1000_transmit</span><span class="params">(<span class="keyword">struct</span> mbuf *m)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// Your code here.</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// the mbuf contains an ethernet frame; program it into</span></span><br><span class="line">  <span class="comment">// the TX descriptor ring so that the e1000 sends it. Stash</span></span><br><span class="line">  <span class="comment">// a pointer so that it can be freed after sending.</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  acquire(&amp;e1000_lock);</span><br><span class="line">  uint32 index = regs[E1000_TDT];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((tx_ring[index].status &amp; E1000_TXD_STAT_DD) == <span class="number">0</span>) &#123;</span><br><span class="line">    release(&amp;e1000_lock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(tx_mbufs[index])</span><br><span class="line">    mbuffree(tx_mbufs[index]);</span><br><span class="line"></span><br><span class="line">  tx_mbufs[index] = m;</span><br><span class="line">  tx_ring[index].length = m-&gt;len;</span><br><span class="line">  tx_ring[index].addr = (uint64)m-&gt;head;</span><br><span class="line">  tx_ring[index].cmd = E1000_TXD_CMD_RS | E1000_TXD_CMD_EOP;</span><br><span class="line"></span><br><span class="line">  regs[E1000_TDT] = (index+<span class="number">1</span>)%TX_RING_SIZE;   </span><br><span class="line">  release(&amp;e1000_lock);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里我们先获取锁，避免多个进程同时改这个环。然后把尾指针 <code>regs[E1000_TDT]</code> 读进 <code>index</code>——它指向”驱动下一个要填的格子”。（<code>#define E1000_TDT    (0x03818/4)  /* TX Descriptor Tail - RW */</code>）</p>
+<p>接着判断这一格是不是 done：看它 <code>status</code> 里的 <code>DD</code> 位有没有置位。没置位说明网卡还在发这一格上一轮的包，此时不能碰它，只能释放锁并返回 -1。返回 -1 之后那块 mbuf 由调用者释放——<code>net.c</code> 里的调用点就是 <code>if (e1000_transmit(m)) &#123; mbuffree(m); &#125;</code>。</p>
+<p><code>DD</code> 置位了才可以复用这一格，这时顺便把这一格上一次用的 mbuf 释放掉（<code>tx_mbufs[index]</code>）。这是它唯一安全的释放时机：<code>DD</code> 置位才代表网卡真的把那个包发出去了。然后把这次的 <code>m</code> 记进账本，填好描述符的 <code>addr</code>、<code>length</code> 和 <code>cmd</code>。</p>
+<p><code>cmd</code> 这两位都要设：<code>EOP</code> 表示”这是这个包的最后一个分片，可以发了”，<code>RS</code> 表示”发完请把状态写回描述符”——不设 <code>RS</code>，网卡就不会置 <code>DD</code>，下一轮就会把这一格永远当成”还在发”，整条发送路径直接死掉。</p>
+<p>最后一步是把 <code>TDT</code> 自增取余写回寄存器。这个写动作本身就是通知网卡”这一格交给你了”；顺序不能反——先把描述符内容写好，最后才动 <code>TDT</code>，否则网卡可能看到尾指针前移了、去读一个还没填好的描述符。</p>
+<h3 id="e1000-recv"><a href="#e1000-recv" class="headerlink" title="e1000_recv"></a><code>e1000_recv</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span></span><br><span class="line"><span class="title function_">e1000_recv</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// Your code here.</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// Check for packets that have arrived from the e1000</span></span><br><span class="line">  <span class="comment">// Create and deliver an mbuf for each packet (using net_rx()).</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">    uint32 index = (regs[E1000_RDT]+<span class="number">1</span>)%RX_RING_SIZE;  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>((rx_ring[index].status &amp; E1000_RXD_STAT_DD) == <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    rx_mbufs[index]-&gt;len = rx_ring[index].length;</span><br><span class="line">    net_rx(rx_mbufs[index]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>((rx_mbufs[index]=mbufalloc(<span class="number">0</span>)) == <span class="number">0</span>)</span><br><span class="line">      panic(<span class="string">&quot;e1000 _recv&quot;</span>);</span><br><span class="line"></span><br><span class="line">    rx_ring[index].addr = (uint64)rx_mbufs[index]-&gt;head;      </span><br><span class="line">    rx_ring[index].status = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    regs[E1000_RDT] = index;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接收的入口在中断里：网卡收到包之后发中断，<code>e1000_intr()</code> 先读 <code>ICR</code> 把中断清掉，然后调用这个函数。</p>
+<p>首先要明白环上可能攒着好几个包：一次中断可能对应环上排了好几个（网卡连着 DMA 了好几次），所以这里用 <code>while</code> 循环，一直处理到某一格的 <code>DD</code> 没置位为止。只处理一个的话，剩下的包要等下一次中断，而中断不一定会马上再来。</p>
+<p>每一轮做四件事：</p>
+<ol>
+<li>算出下一个可能有包的格子：<code>(RDT+1)%RX_RING_SIZE</code>。<code>RDT</code> 是”驱动已经还给网卡的空缓冲到哪儿”，所以它的下一格就是网卡最可能刚放好包的那一格。</li>
+<li>看这一格的 <code>DD</code>。没置位就是没有新包，直接返回。</li>
+<li>把描述符里报告的包长抄到 mbuf 上（<code>rx_mbufs[index]-&gt;len = rx_ring[index].length</code>），然后 <code>net_rx()</code> 把它交给网络栈。长度能直接当包长用，是因为 <code>e1000_init</code> 里把接收控制寄存器 <code>RCTL</code> 的 <code>SECRC</code> 位设上了——网卡已经把以太网尾部那 4 字节 CRC 剥掉了。这一步之后这块 mbuf 就归网络栈了，代码里再没碰它。</li>
+<li>立刻补一块新的 mbuf 写回描述符的 <code>addr</code>，把 <code>status</code> 清 0，再把 <code>RDT</code> 推到这一格。这三件都不能省：不补新 mbuf，网卡下一次 DMA 就会写进已经交给协议栈的那块内存里，表现为偶发数据损坏（最难查的一类）；不清 <code>status</code>，下一轮循环会把同一个包反复当成新包；不推 <code>RDT</code>，网卡就不知道这一格的空缓冲已经还回来了。</li>
+</ol>
+<p>（补 mbuf 时如果 <code>mbufalloc()</code> 返回 0 就直接 <code>panic</code>，和 <code>e1000_init</code> 里对同样情况的处理保持一致。）</p>
+<p>这个函数跑在中断上下文里，而它摸的 <code>rx_ring</code> &#x2F; <code>rx_mbufs</code> &#x2F; <code>RDT</code> 和发送路径的 <code>tx_ring</code> &#x2F; <code>tx_mbufs</code> &#x2F; <code>TDT</code> 完全不重叠，所以这里不需要加锁——锁只保护发送路径。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/10/06/MIT6-S081-lab-networking/">http://gazettm.github.io/2026/10/06/MIT6-S081-lab-networking/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/OS/"># OS</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/10/05/MIT6-S081-lab-mmap/">MIT6-S081-lab-mmap</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
