@@ -259,6 +259,30 @@
 <p>RENMAME可以改变某一列的名字</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE users RENAME COLUMN full_name TO name;</span><br></pre></td></tr></table></figure></li>
 </ul>
+<h2 id="DML"><a href="#DML" class="headerlink" title="DML"></a>DML</h2><p>DML：Data Manipulation Language 数据操作语言。</p>
+<h3 id="INSERT"><a href="#INSERT" class="headerlink" title="INSERT"></a>INSERT</h3><ul>
+<li><code>INSERT INTO tablename (字段名1, 字段名2 ...) VALUES (值1, 值2 ...);</code>向名为tablename的表中指定的字段插入值</li>
+<li><code>INSERT INTO tablename VALUES (值1, 值2 ...);</code>向名为tablename表中的所有字段插入值</li>
+<li><code>INSERT INTO tablename (字段名1, 字段名2 ...) VALUES (值1, 值2 ...), (值1, 值2);</code> 向名为tablename表中指定字段插入多个值组</li>
+<li><code>INSERT INTO tablename VALUES (值1, 值2 ...), (值1, 值2);</code> 向名为tablename表中所有字段插入多个值组</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO employee (id, workno, name, gender, age, idcard, date) VALUES (1, &#x27;1&#x27;, &#x27;Aimy&#x27;, &#x27;男&#x27;, 21, &#x27;123456789012345678&#x27;, &#x27;2005-10-1&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>这里必须记住，插入语句的日期，varchar类型必须用引号，否则会报错。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO employee VALUES (2, &#x27;2&#x27;, &#x27;Aili&#x27;, &#x27;女&#x27;, 22, &#x27;123456789012345987&#x27;,&#x27;2004-10-1&#x27;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="UPDATE"><a href="#UPDATE" class="headerlink" title="UPDATE"></a>UPDATE</h3><ul>
+<li><code>UPDATE tablename SET 字段1 = 值1, 字段2 = 值2,  ... WHERE 条件</code></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Update employee SET id = 4 WHERE id = 1; -- 将id原本为1的数据修改id为4</span><br></pre></td></tr></table></figure>
+
+<p>这个会更新所有的入职时间<code>date</code>为2024-1-1，注意DataGrip软件会进行提示危险操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE employee SET date = &#x27;2024-1-1&#x27;; </span><br></pre></td></tr></table></figure>
+
+<h3 id="DELETE"><a href="#DELETE" class="headerlink" title="DELETE"></a>DELETE</h3><p>delete指令用于删除表中数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE FROM employee where id = 1; --删除表中id为1的人</span><br></pre></td></tr></table></figure>
+
 
         </div>
 
