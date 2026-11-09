@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>SQL:基本语句 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">SQL:基本语句</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 9, 2026&nbsp;&nbsp;16:26:37</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/SQL/">SQL</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="SQL基本语法"><a href="#SQL基本语法" class="headerlink" title="SQL基本语法"></a>SQL基本语法</h1><h2 id="DDL"><a href="#DDL" class="headerlink" title="DDL"></a>DDL</h2><p>DDL：Data Definition Language，数据定义语言。</p>
+<h3 id="DDL数据库操作"><a href="#DDL数据库操作" class="headerlink" title="DDL数据库操作"></a>DDL数据库操作</h3><ul>
+<li><code>SHOW DATABASES;</code>展示所有数据库</li>
+<li><code>CREATE DATABASE name;</code>创建一个名为name的数据库</li>
+<li><code>USE name;</code> 当前使用名为name的数据库</li>
+<li><code>SELECT DATABASE();</code>查询当前数据库，返回当前数据库名，如果当下在name数据库中，返回name</li>
+<li><code>DROP DATABASE name;</code>删除名为name的数据库</li>
+</ul>
+<h3 id="DDL表操作"><a href="#DDL表操作" class="headerlink" title="DDL表操作"></a>DDL表操作</h3><ul>
+<li><p><code>SHOW TABLES;</code>展示当前所有表</p>
+</li>
+<li><p><code>CREATE TABLE name (字段 字段类型, 字段 字段类型);</code>创建一个表。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE employee&#123;</span><br><span class="line">	id int comment &#x27;编号&#x27;,</span><br><span class="line">	workno varchar(10) comment &#x27;工号&#x27;,</span><br><span class="line">	name varchar(10) comment &#x27;姓名&#x27;;</span><br><span class="line">	gender char(1) comment &#x27;性别&#x27;,</span><br><span class="line">	age tinyint unsigned comment &#x27;年龄&#x27;,</span><br><span class="line">	idcard char(18) comment &#x27;身份证件&#x27;,</span><br><span class="line">	entrydate date comment &#x27;入职时间&#x27;,</span><br><span class="line">&#125; comment &#x27;员工表&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>表示创建一个表名为<code>employee</code>的表，第一列为字段第二列为字段类型，<code>comment</code>为注释。</p>
+</li>
+<li><p><code>DESC name;</code>展示当前表结构，例如:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; DESC employee;</span><br><span class="line">+--------+------------------+------+-----+---------+-------+</span><br><span class="line">| Field  | Type             | Null | Key | Default | Extra |</span><br><span class="line">+--------+------------------+------+-----+---------+-------+</span><br><span class="line">| <span class="built_in">id</span>     | int              | YES  |     | NULL    |       |</span><br><span class="line">| workno | varchar(10)      | YES  |     | NULL    |       |</span><br><span class="line">| name   | varchar(10)      | YES  |     | NULL    |       |</span><br><span class="line">| gender | char(1)          | YES  |     | NULL    |       |</span><br><span class="line">| age    | tinyint unsigned | YES  |     | NULL    |       |</span><br><span class="line">| idcard | char(18)         | YES  |     | NULL    |       |</span><br><span class="line">| <span class="built_in">date</span>   | <span class="built_in">date</span>             | YES  |     | NULL    |       |</span><br><span class="line">+--------+------------------+------+-----+---------+-------+</span><br><span class="line">7 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>SHOW CREATE TABLE name;</code>展示创建表格的时候使用的语句;例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW CREATE TABLE employee;</span><br><span class="line">+----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span><br><span class="line">| Table    | Create Table                                                                                                                                                                                                                                                                                                                                                                                                                                        |</span><br><span class="line">+----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span><br><span class="line">| employee | CREATE TABLE `employee` (</span><br><span class="line">  `<span class="built_in">id</span>` int DEFAULT NULL COMMENT <span class="string">&#x27;编号&#x27;</span>,</span><br><span class="line">  `workno` varchar(10) DEFAULT NULL COMMENT <span class="string">&#x27;工号&#x27;</span>,</span><br><span class="line">  `name` varchar(10) DEFAULT NULL COMMENT <span class="string">&#x27;姓名&#x27;</span>,</span><br><span class="line">  `gender` char(1) DEFAULT NULL COMMENT <span class="string">&#x27;性别&#x27;</span>,</span><br><span class="line">  `age` tinyint unsigned DEFAULT NULL COMMENT <span class="string">&#x27;年龄&#x27;</span>,</span><br><span class="line">  `idcard` char(18) DEFAULT NULL COMMENT <span class="string">&#x27;身份证号&#x27;</span>,</span><br><span class="line">  `<span class="built_in">date</span>` <span class="built_in">date</span> DEFAULT NULL COMMENT <span class="string">&#x27;入职时间&#x27;</span></span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |</span><br><span class="line">+----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span><br><span class="line">1 row <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>ALTER TABLE name ADD/MODIFY/CHANGE/DROP//RENAME TO ...;</code>ALTER指令用于改变某一个数据。例如：</p>
+<p>ADD可以添加列</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">-- 在 employee 表末尾添加 new 列</span><br><span class="line">ALTER TABLE employee ADD COLUMN new INT NOT NULL;</span><br><span class="line"></span><br><span class="line">-- 将 new 列添加到 idcard 列之后</span><br><span class="line">ALTER TABLE employee ADD COLUMN new VARCHAR(100) AFTER idcard;</span><br><span class="line"></span><br><span class="line">-- 将 new 列添加到表的第一列</span><br><span class="line">ALTER TABLE employee ADD COLUMN rank INT FIRST;</span><br></pre></td></tr></table></figure>
+
+<p>MODIFY可以修改列的数据类型，约束，默认值，但是不修改列名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-- 将 orders 表的 total 列修改为 DECIMAL(10,2) 且不允许为空</span><br><span class="line">ALTER TABLE orders MODIFY total DECIMAL(10, 2) NOT NULL;</span><br></pre></td></tr></table></figure>
+
+<p>CHANGE可以同时修改列名和列定义</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-- 将 orders 表的 amount 列改名为 total，并修改类型为 DECIMAL(10,2)</span><br><span class="line">ALTER TABLE orders CHANGE amount total DECIMAL(10, 2) NOT NULL;</span><br><span class="line"></span><br><span class="line">-- 仅修改类型，不改变列名（c 改为 c）</span><br><span class="line">ALTER TABLE testalter_tbl CHANGE c c INT;</span><br></pre></td></tr></table></figure>
+
+<p>DROP可以删除某一列</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE users DROP COLUMN legacy;</span><br></pre></td></tr></table></figure>
+
+<p>RENMAME可以改变某一列的名字</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE users RENAME COLUMN full_name TO name;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/11/09/SQL-%E5%9F%BA%E6%9C%AC%E8%AF%AD%E5%8F%A5/">http://gazettm.github.io/2026/11/09/SQL-%E5%9F%BA%E6%9C%AC%E8%AF%AD%E5%8F%A5/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/SQL/"># SQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/10/06/MIT6-S081-lab-networking/">MIT6-S081-lab-networking</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
