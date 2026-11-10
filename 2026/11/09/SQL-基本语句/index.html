@@ -283,6 +283,193 @@
 <h3 id="DELETE"><a href="#DELETE" class="headerlink" title="DELETE"></a>DELETE</h3><p>delete指令用于删除表中数据</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE FROM employee where id = 1; --删除表中id为1的人</span><br></pre></td></tr></table></figure>
 
+<h2 id="DQL"><a href="#DQL" class="headerlink" title="DQL"></a>DQL</h2><p>DQL（Data Query Language，数据查询语言）用于查询表中的数据。</p>
+<h3 id="SELECT-基本查询"><a href="#SELECT-基本查询" class="headerlink" title="SELECT 基本查询"></a>SELECT 基本查询</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SELECT 字段列表</span><br><span class="line">FROM 表名列表</span><br><span class="line">[WHERE 条件]</span><br><span class="line">[GROUP BY 分组字段列表]</span><br><span class="line">[HAVING 分组后过滤条件]</span><br><span class="line">[ORDER BY 排序字段列表]</span><br><span class="line">[LIMIT 起始索引, 查询记录数];</span><br></pre></td></tr></table></figure>
+
+<p>方括号里的子句可以按需要添加，实际写 SQL 时不用写方括号。</p>
+<ul>
+<li><code>SELECT name, age FROM employee;</code>查询员工的姓名和年龄。</li>
+<li><code>SELECT * FROM employee;</code>查询员工表的所有字段。</li>
+</ul>
+<h3 id="WHERE-条件查询"><a href="#WHERE-条件查询" class="headerlink" title="WHERE 条件查询"></a>WHERE 条件查询</h3><p><code>SELECT 字段列表 FROM 表名 WHERE 条件;</code>只查询满足条件的数据。</p>
+<table>
+<thead>
+<tr>
+<th>比较运算符</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&gt;</code>、<code>&gt;=</code></td>
+<td>大于、大于等于</td>
+</tr>
+<tr>
+<td><code>&lt;</code>、<code>&lt;=</code></td>
+<td>小于、小于等于</td>
+</tr>
+<tr>
+<td><code>=</code></td>
+<td>等于</td>
+</tr>
+<tr>
+<td><code>&lt;&gt;</code> 或 <code>!=</code></td>
+<td>不等于</td>
+</tr>
+<tr>
+<td><code>BETWEEN ... AND ...</code></td>
+<td>在指定范围内，包含最小值和最大值</td>
+</tr>
+<tr>
+<td><code>IN (...)</code></td>
+<td>匹配列表中的任意一个值</td>
+</tr>
+<tr>
+<td><code>LIKE</code></td>
+<td>模糊匹配，<code>_</code> 匹配一个字符，<code>%</code> 匹配零个或多个字符</td>
+</tr>
+<tr>
+<td><code>IS NULL</code></td>
+<td>判断字段是否为 <code>NULL</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>逻辑运算符</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>AND</code> 或 <code>&amp;&amp;</code></td>
+<td>多个条件同时成立</td>
+</tr>
+<tr>
+<td><code>OR</code> 或 <code>||</code></td>
+<td>至少有一个条件成立</td>
+</tr>
+<tr>
+<td><code>NOT</code> 或 <code>!</code></td>
+<td>对条件取反</td>
+</tr>
+</tbody></table>
+<p>例子里统一用 <code>AND</code>、<code>OR</code> 和 <code>NOT</code>。MySQL 已弃用 <code>&amp;&amp;</code>、<code>||</code> 和 <code>!</code> 的逻辑写法，开启 <code>PIPES_AS_CONCAT</code> 时，<code>||</code> 用于拼接字符串。<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/logical-operators.html">MySQL 逻辑运算符</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">-- 查询年龄在 18 到 25 岁之间，并且姓名以 A 开头的员工</span><br><span class="line">SELECT name, age FROM employee</span><br><span class="line">WHERE age BETWEEN 18 AND 25 AND name LIKE &#x27;A%&#x27;;</span><br><span class="line"></span><br><span class="line">-- 查询工号为 1 或 2，或者身份证号为空的员工</span><br><span class="line">SELECT * FROM employee</span><br><span class="line">WHERE workno IN (&#x27;1&#x27;, &#x27;2&#x27;) OR idcard IS NULL;</span><br></pre></td></tr></table></figure>
+
+<h3 id="聚合函数"><a href="#聚合函数" class="headerlink" title="聚合函数"></a>聚合函数</h3><p>聚合函数将多行数据汇总成一个值，例如统计人数或计算平均年龄。</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>COUNT</code></td>
+<td>统计数量</td>
+</tr>
+<tr>
+<td><code>MAX</code></td>
+<td>求最大值</td>
+</tr>
+<tr>
+<td><code>MIN</code></td>
+<td>求最小值</td>
+</tr>
+<tr>
+<td><code>AVG</code></td>
+<td>求平均值</td>
+</tr>
+<tr>
+<td><code>SUM</code></td>
+<td>求和</td>
+</tr>
+</tbody></table>
+<p><code>COUNT(*)</code> 统计总行数，<code>COUNT(字段名)</code> 只统计该字段有值的行。这里的 <code>MAX</code>、<code>MIN</code>、<code>AVG</code> 和 <code>SUM</code> 也会跳过 <code>NULL</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT COUNT(*) AS total, COUNT(age) AS age_count, AVG(age) AS avg_age</span><br><span class="line">FROM employee;</span><br></pre></td></tr></table></figure>
+
+<h3 id="GROUP-BY-分组查询"><a href="#GROUP-BY-分组查询" class="headerlink" title="GROUP BY 分组查询"></a>GROUP BY 分组查询</h3><p><code>GROUP BY</code> 将分组字段相同的记录归到一组，通常配合聚合函数使用。分组查询的结果一般选取分组字段和聚合结果。</p>
+<ul>
+<li><code>WHERE</code> 在分组前筛选原始记录，条件里只能用这一阶段能取到的值。</li>
+<li><code>HAVING</code> 在分组和聚合之后筛选结果，可以用 <code>COUNT(*)</code> 等聚合结果作为条件。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-- 统计 18 岁及以上的员工，按性别分组，只保留至少有 2 人的组</span><br><span class="line">SELECT gender, COUNT(*) AS total</span><br><span class="line">FROM employee</span><br><span class="line">WHERE age &gt;= 18</span><br><span class="line">GROUP BY gender</span><br><span class="line">HAVING COUNT(*) &gt;= 2;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ORDER-BY-排序查询"><a href="#ORDER-BY-排序查询" class="headerlink" title="ORDER BY 排序查询"></a>ORDER BY 排序查询</h3><p><code>SELECT 字段列表 FROM 表名 ORDER BY 字段1 排序方式1, 字段2 排序方式2;</code>按指定字段对查询结果排序。</p>
+<ul>
+<li><code>ASC</code> 按升序排列，省略排序方式时默认使用升序。</li>
+<li><code>DESC</code> 按降序排列。</li>
+</ul>
+<p>有多个排序字段时，先按第一个字段排序，第一个字段的值相同才比较第二个字段。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-- 年龄从大到小排，年龄相同时按编号从小到大排</span><br><span class="line">SELECT id, name, age FROM employee ORDER BY age DESC, id ASC;</span><br></pre></td></tr></table></figure>
+
+<h3 id="LIMIT-分页查询"><a href="#LIMIT-分页查询" class="headerlink" title="LIMIT 分页查询"></a>LIMIT 分页查询</h3><p>MySQL 用 <code>LIMIT 起始索引, 查询记录数</code> 取出指定范围的记录。其他数据库的分页写法可能不同。</p>
+<ul>
+<li>起始索引从 <code>0</code> 开始，计算方式为 <code>(页码 - 1) * 每页记录数</code>。</li>
+<li>查询第一页时可以省略起始索引，例如 <code>LIMIT 10</code> 等同于 <code>LIMIT 0, 10</code>。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-- 按编号排序，每页 10 条，查询第 2 页</span><br><span class="line">SELECT id, name FROM employee ORDER BY id ASC LIMIT 10, 10;</span><br></pre></td></tr></table></figure>
+
+<h3 id="DQL-执行顺序"><a href="#DQL-执行顺序" class="headerlink" title="DQL 执行顺序"></a>DQL 执行顺序</h3><ul>
+<li>编写顺序为 <code>SELECT</code> → <code>FROM</code> → <code>WHERE</code> → <code>GROUP BY</code> → <code>HAVING</code> → <code>ORDER BY</code> → <code>LIMIT</code>。</li>
+<li>逻辑执行顺序为 <code>FROM</code> → <code>WHERE</code> → <code>GROUP BY</code>（分组并聚合）→ <code>HAVING</code> → <code>SELECT</code> → <code>ORDER BY</code> → <code>LIMIT</code>。</li>
+</ul>
+<h2 id="DCL"><a href="#DCL" class="headerlink" title="DCL"></a>DCL</h2><p>DCL（Data Control Language，数据控制语言）用于管理数据库用户和权限。</p>
+<h3 id="管理用户"><a href="#管理用户" class="headerlink" title="管理用户"></a>管理用户</h3><p>查询 MySQL 中的用户可以使用下面两条语句。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">USE mysql;</span><br><span class="line">SELECT * FROM user;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>CREATE USER &#39;用户名&#39;@&#39;主机名&#39; IDENTIFIED BY &#39;密码&#39;;</code>创建用户。</li>
+<li><code>ALTER USER &#39;用户名&#39;@&#39;主机名&#39; IDENTIFIED BY &#39;新密码&#39;;</code>修改用户密码。</li>
+<li><code>DROP USER &#39;用户名&#39;@&#39;主机名&#39;;</code>删除用户。</li>
+</ul>
+<p>MySQL 用 <code>&#39;用户名&#39;@&#39;主机名&#39;</code> 标识账号，例如 <code>&#39;reader&#39;@&#39;localhost&#39;</code> 表示从本机连接的 <code>reader</code>。</p>
+<h3 id="权限控制"><a href="#权限控制" class="headerlink" title="权限控制"></a>权限控制</h3><table>
+<thead>
+<tr>
+<th>权限</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ALL</code> 或 <code>ALL PRIVILEGES</code></td>
+<td>授予指定层级上的所有常规权限</td>
+</tr>
+<tr>
+<td><code>SELECT</code></td>
+<td>查询数据</td>
+</tr>
+<tr>
+<td><code>INSERT</code></td>
+<td>插入数据</td>
+</tr>
+<tr>
+<td><code>UPDATE</code></td>
+<td>修改数据</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td>删除数据</td>
+</tr>
+<tr>
+<td><code>ALTER</code></td>
+<td>修改表结构</td>
+</tr>
+<tr>
+<td><code>DROP</code></td>
+<td>删除数据库、表或视图</td>
+</tr>
+<tr>
+<td><code>CREATE</code></td>
+<td>创建数据库或表</td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>SHOW GRANTS FOR &#39;用户名&#39;@&#39;主机名&#39;;</code>查询用户的授权。</li>
+<li><code>GRANT 权限列表 ON 数据库名.表名 TO &#39;用户名&#39;@&#39;主机名&#39;;</code>授予权限。</li>
+<li><code>REVOKE 权限列表 ON 数据库名.表名 FROM &#39;用户名&#39;@&#39;主机名&#39;;</code>撤销权限。</li>
+</ul>
+<p>例如，假设 <code>company</code> 是 <code>employee</code> 表所在的数据库，<code>&#39;reader&#39;@&#39;localhost&#39;</code> 已经创建。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">-- 授予 employee 表的查询权限</span><br><span class="line">GRANT SELECT ON company.employee TO &#x27;reader&#x27;@&#x27;localhost&#x27;;</span><br><span class="line"></span><br><span class="line">-- 查看当前授权</span><br><span class="line">SHOW GRANTS FOR &#x27;reader&#x27;@&#x27;localhost&#x27;;</span><br><span class="line"></span><br><span class="line">-- 撤销刚授予的查询权限</span><br><span class="line">REVOKE SELECT ON company.employee FROM &#x27;reader&#x27;@&#x27;localhost&#x27;;</span><br></pre></td></tr></table></figure>
 
         </div>
 
