@@ -303,7 +303,7 @@
 </tbody></table>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">SELECT name, dept_id</span><br><span class="line">FROM emp_query_demo</span><br><span class="line">WHERE dept_id IN (</span><br><span class="line">    SELECT id FROM dept_query_demo</span><br><span class="line">    WHERE name = &#x27;销售部&#x27; OR name = &#x27;市场部&#x27;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">-- 工资比财务部每名员工都高</span><br><span class="line">SELECT name, salary</span><br><span class="line">FROM emp_query_demo</span><br><span class="line">WHERE salary &gt; ALL (</span><br><span class="line">    SELECT salary FROM emp_query_demo WHERE dept_id = 30</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
-<p><code>MAX</code> 会跳过 <code>NULL</code>，而 <code>ALL</code> 会逐项比较。例如，财务部的工资列如果包含 <code>7000</code>、<code>8000</code> 和 <code>NULL</code>，那么 <code>9000 &gt; MAX(...)</code> 成立，<code>9000 &gt; ALL (...)</code> 的结果是未知，在 <code>WHERE</code> 里会被过滤。用 <code>NOT IN</code> 时也要留意子查询里有没有 <code>NULL</code>。<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/all-subqueries.html">MySQL 的 ALL 子查询</a></p>
+<p><code>MAX</code> 会跳过 <code>NULL</code>，而 <code>ALL</code> 会逐项比较。例如，财务部的工资列如果包含 <code>7000</code>、<code>8000</code> 和 <code>NULL</code>，那么 <code>9000 &gt; MAX(...)</code> 成立，<code>9000 &gt; ALL (...)</code> 的结果是未知，在 <code>WHERE</code> 里会被过滤。用 <code>NOT IN</code> 时也要留意子查询里有没有 <code>NULL</code>。</p>
 <h3 id="行子查询"><a href="#行子查询" class="headerlink" title="行子查询"></a>行子查询</h3><p>行子查询返回一行，可以包含多个值。可以把多个字段写成 <code>(字段1, 字段2)</code> 这样的元组，用 <code>=</code> 或 <code>&lt;&gt;</code> 比较。下面根据主键查到 Alice 的部门和工资，再找同部门、同工资的其他员工，结果是 Bob。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SELECT name, dept_id, salary</span><br><span class="line">FROM emp_query_demo</span><br><span class="line">WHERE (dept_id, salary) = (</span><br><span class="line">    SELECT dept_id, salary FROM emp_query_demo WHERE id = 1</span><br><span class="line">)</span><br><span class="line">AND id &lt;&gt; 1;</span><br></pre></td></tr></table></figure>
 
@@ -353,7 +353,7 @@
 <li><strong>不可重复读</strong>。A 在同一事务中两次查询同一条记录，B 在两次查询之间修改并提交了它，A 两次读到的值不同。</li>
 <li><strong>幻读</strong>。A 在同一事务中按同一个条件查了两次，B 在两次查询之间插入或删除了符合条件的记录并提交，A 两次看到的记录集合不同。</li>
 </ul>
-<p>下面按 SQL 标准列出各级别允许出现的现象，数据库的实际实现可以提供更强的隔离。<a target="_blank" rel="noopener" href="https://www.postgresql.org/docs/current/transaction-iso.html">SQL 标准的隔离级别对照表</a></p>
+<p>下面按 SQL 标准列出各级别允许出现的现象，数据库的实际实现可以提供更强的隔离。</p>
 <table>
 <thead>
 <tr>
@@ -388,7 +388,7 @@
 <td>避免</td>
 </tr>
 </tbody></table>
-<p>MySQL 默认使用 <code>REPEATABLE READ</code>。可以查看当前连接的隔离级别，也可以用 <code>SET SESSION</code> 设置当前连接后续事务的隔离级别。换成 <code>SET GLOBAL</code> 会设置之后新连接的默认值。隔离更严格时，并发操作可能需要等待更久。<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/set-transaction.html">MySQL 的 SET TRANSACTION 语句</a></p>
+<p>MySQL 默认使用 <code>REPEATABLE READ</code>。可以查看当前连接的隔离级别，也可以用 <code>SET SESSION</code> 设置当前连接后续事务的隔离级别。换成 <code>SET GLOBAL</code> 会设置之后新连接的默认值。隔离更严格时，并发操作可能需要等待更久。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT @@transaction_isolation;</span><br><span class="line"></span><br><span class="line">SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;</span><br></pre></td></tr></table></figure>
 
         </div>
