@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>SQL:函数与约束 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">SQL:函数与约束</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 11, 2026&nbsp;&nbsp;17:51:30</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/SQL/">SQL</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="SQL-函数与约束"><a href="#SQL-函数与约束" class="headerlink" title="SQL 函数与约束"></a>SQL 函数与约束</h1><h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>MySQL 的内置函数可以用来处理字符串、计算数值、操作日期和按条件返回结果。先选中一个练习数据库。下面的查询示例共用一张临时员工表，建表和运行示例要在同一个 MySQL 连接里完成。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">CREATE TEMPORARY TABLE employee_func_demo (</span><br><span class="line">    id INT PRIMARY KEY,</span><br><span class="line">    workno VARCHAR(10),</span><br><span class="line">    name VARCHAR(20),</span><br><span class="line">    entrydate DATE,</span><br><span class="line">    score INT</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">INSERT INTO employee_func_demo (id, workno, name, entrydate, score) VALUES</span><br><span class="line">    (1, &#x27;1&#x27;, &#x27;Aimy&#x27;, &#x27;2024-10-01&#x27;, 92),</span><br><span class="line">    (2, &#x27;27&#x27;, &#x27;Aili&#x27;, &#x27;2025-03-15&#x27;, 76),</span><br><span class="line">    (3, &#x27;309&#x27;, &#x27;Leo&#x27;, &#x27;2025-06-13&#x27;, 58),</span><br><span class="line">    (4, &#x27;4812&#x27;, &#x27;Nina&#x27;, &#x27;2025-09-01&#x27;, NULL);</span><br></pre></td></tr></table></figure>
+
+<h3 id="字符串函数"><a href="#字符串函数" class="headerlink" title="字符串函数"></a>字符串函数</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CONCAT(s1, s2, ...)</code></td>
+<td>把多个字符串拼接起来</td>
+</tr>
+<tr>
+<td><code>LOWER(str)</code></td>
+<td>转为小写</td>
+</tr>
+<tr>
+<td><code>UPPER(str)</code></td>
+<td>转为大写</td>
+</tr>
+<tr>
+<td><code>LPAD(str, n, pad)</code></td>
+<td>在左边填充 <code>pad</code>，使结果达到 <code>n</code> 个字符</td>
+</tr>
+<tr>
+<td><code>RPAD(str, n, pad)</code></td>
+<td>在右边填充 <code>pad</code>，使结果达到 <code>n</code> 个字符</td>
+</tr>
+<tr>
+<td><code>TRIM(str)</code></td>
+<td>去掉首尾的空格</td>
+</tr>
+<tr>
+<td><code>SUBSTRING(str, start, len)</code></td>
+<td>从 <code>start</code> 开始取 <code>len</code> 个字符，从左边数时第一个字符的位置为 <code>1</code></td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SELECT CONCAT(&#x27;SQL&#x27;, &#x27;-&#x27;, &#x27;函数&#x27;) AS title,  -- SQL-函数</span><br><span class="line">       LOWER(&#x27;Aimy&#x27;) AS lower_name,         -- aimy</span><br><span class="line">       UPPER(&#x27;Aimy&#x27;) AS upper_name,         -- AIMY</span><br><span class="line">       RPAD(&#x27;27&#x27;, 5, &#x27;*&#x27;) AS padded,       -- 27***</span><br><span class="line">       TRIM(&#x27;  MySQL  &#x27;) AS trimmed,       -- MySQL</span><br><span class="line">       SUBSTRING(&#x27;MySQL&#x27;, 3, 3) AS part;   -- SQL</span><br></pre></td></tr></table></figure>
+
+<p>例如，把不足 5 位的工号在左边补 <code>0</code>，<code>&#39;27&#39;</code> 就会变成 <code>&#39;00027&#39;</code>。<code>LPAD</code> 在原字符串长于目标长度时会截断，所以这里用 <code>WHERE</code> 只更新不足 5 位的工号。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">UPDATE employee_func_demo</span><br><span class="line">SET workno = LPAD(workno, 5, &#x27;0&#x27;)</span><br><span class="line">WHERE CHAR_LENGTH(workno) &lt; 5;</span><br><span class="line"></span><br><span class="line">SELECT id, workno, name FROM employee_func_demo ORDER BY id;</span><br></pre></td></tr></table></figure>
+
+<h3 id="数值函数"><a href="#数值函数" class="headerlink" title="数值函数"></a>数值函数</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CEIL(x)</code></td>
+<td>向上取整</td>
+</tr>
+<tr>
+<td><code>FLOOR(x)</code></td>
+<td>向下取整</td>
+</tr>
+<tr>
+<td><code>MOD(x, y)</code></td>
+<td>返回 <code>x</code> 除以 <code>y</code> 的余数</td>
+</tr>
+<tr>
+<td><code>RAND()</code></td>
+<td>返回大于等于 <code>0</code>、小于 <code>1</code> 的随机数</td>
+</tr>
+<tr>
+<td><code>ROUND(x, y)</code></td>
+<td>将 <code>x</code> 舍入到指定的小数位数，<code>y</code> 为正时保留 <code>y</code> 位小数</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT CEIL(3.2) AS ceil_value,       -- 4</span><br><span class="line">       FLOOR(3.8) AS floor_value,     -- 3</span><br><span class="line">       MOD(17, 5) AS remainder,       -- 2</span><br><span class="line">       ROUND(12.345, 2) AS rounded;   -- 12.35</span><br></pre></td></tr></table></figure>
+
+<p>例如，随机生成一个固定 6 位的练习编号。先乘以 <code>1000000</code> 再用 <code>FLOOR</code>，得到 <code>0</code> 到 <code>999999</code> 的整数，最后用 <code>LPAD</code> 补齐前导零。用 <code>ROUND</code> 取整有可能得到 <code>1000000</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT LPAD(FLOOR(RAND() * 1000000), 6, &#x27;0&#x27;) AS random_code;</span><br></pre></td></tr></table></figure>
+
+<h3 id="日期函数"><a href="#日期函数" class="headerlink" title="日期函数"></a>日期函数</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CURDATE()</code></td>
+<td>返回当前日期</td>
+</tr>
+<tr>
+<td><code>CURTIME()</code></td>
+<td>返回当前时间</td>
+</tr>
+<tr>
+<td><code>NOW()</code></td>
+<td>返回当前日期和时间</td>
+</tr>
+<tr>
+<td><code>YEAR(date)</code></td>
+<td>取年份</td>
+</tr>
+<tr>
+<td><code>MONTH(date)</code></td>
+<td>取月份</td>
+</tr>
+<tr>
+<td><code>DAY(date)</code></td>
+<td>取日，也就是这个月的第几天</td>
+</tr>
+<tr>
+<td><code>DATE_ADD(date, INTERVAL expr unit)</code></td>
+<td>给日期或时间加上指定间隔，例如 <code>INTERVAL 90 MINUTE</code></td>
+</tr>
+<tr>
+<td><code>DATEDIFF(date1, date2)</code></td>
+<td>用第一个日期减去第二个日期，返回相差的天数，只比较日期部分</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">-- 当前时间往后推 90 分钟</span><br><span class="line">SELECT DATE_ADD(NOW(), INTERVAL 90 MINUTE) AS later_time;</span><br><span class="line"></span><br><span class="line">-- 第一个日期减第二个日期，结果是 2</span><br><span class="line">SELECT DATEDIFF(&#x27;2025-06-15&#x27;, &#x27;2025-06-13&#x27;) AS diff_days;</span><br><span class="line"></span><br><span class="line">-- 计算入职天数，从入职最久的员工开始显示</span><br><span class="line">SELECT name, entrydate, DATEDIFF(CURDATE(), entrydate) AS entrydays</span><br><span class="line">FROM employee_func_demo</span><br><span class="line">ORDER BY entrydays DESC;</span><br></pre></td></tr></table></figure>
+
+<h3 id="流程函数和-CASE-表达式"><a href="#流程函数和-CASE-表达式" class="headerlink" title="流程函数和 CASE 表达式"></a>流程函数和 CASE 表达式</h3><table>
+<thead>
+<tr>
+<th>写法</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>IF(条件, 值1, 值2)</code></td>
+<td>条件为真时返回值1，否则返回值2</td>
+</tr>
+<tr>
+<td><code>IFNULL(值1, 值2)</code></td>
+<td>值1为 <code>NULL</code> 时返回值2，否则返回值1</td>
+</tr>
+<tr>
+<td><code>CASE WHEN 条件 THEN 结果 ... ELSE 默认值 END</code></td>
+<td>从上往下判断，返回第一个成立的条件对应的结果</td>
+</tr>
+<tr>
+<td><code>CASE 表达式 WHEN 值 THEN 结果 ... ELSE 默认值 END</code></td>
+<td>把表达式的值逐个比较，返回第一个匹配的结果</td>
+</tr>
+</tbody></table>
+<p>例如，把成绩分为优秀、及格、不及格和未录入。多个条件可能同时成立，所以先判断 <code>score &gt;= 85</code>，再判断 <code>score &gt;= 60</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">SELECT id, name, score,</span><br><span class="line">       CASE</span><br><span class="line">           WHEN score IS NULL THEN &#x27;未录入&#x27;</span><br><span class="line">           WHEN score &gt;= 85 THEN &#x27;优秀&#x27;</span><br><span class="line">           WHEN score &gt;= 60 THEN &#x27;及格&#x27;</span><br><span class="line">           ELSE &#x27;不及格&#x27;</span><br><span class="line">       END AS score_level</span><br><span class="line">FROM employee_func_demo</span><br><span class="line">ORDER BY id;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">SELECT name,</span><br><span class="line">       IF(score IS NULL, &#x27;未录入&#x27;, &#x27;已录入&#x27;) AS score_status,</span><br><span class="line">       IFNULL(score, 0) AS display_score,</span><br><span class="line">       CASE name</span><br><span class="line">           WHEN &#x27;Aimy&#x27; THEN &#x27;组长&#x27;</span><br><span class="line">           ELSE &#x27;组员&#x27;</span><br><span class="line">       END AS team_role</span><br><span class="line">FROM employee_func_demo;</span><br></pre></td></tr></table></figure>
+
+<h2 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h2><p>约束是数据库对表中数据施加的规则，用来防止写入不符合要求的数据。例如，可以规定员工工号不能重复，或者规定员工填写的部门编号必须能在部门表里找到。</p>
+<table>
+<thead>
+<tr>
+<th>约束</th>
+<th>关键字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>非空约束</td>
+<td><code>NOT NULL</code></td>
+<td>字段不能为 <code>NULL</code></td>
+</tr>
+<tr>
+<td>唯一约束</td>
+<td><code>UNIQUE</code></td>
+<td>非 <code>NULL</code> 的值不能重复，允许为空的列可以有多个 <code>NULL</code></td>
+</tr>
+<tr>
+<td>主键约束</td>
+<td><code>PRIMARY KEY</code></td>
+<td>唯一标识一行记录，要求非空且唯一</td>
+</tr>
+<tr>
+<td>默认值</td>
+<td><code>DEFAULT</code></td>
+<td>插入记录时省略该字段，就使用默认值</td>
+</tr>
+<tr>
+<td>检查约束</td>
+<td><code>CHECK</code></td>
+<td>条件为假时拒绝写入，从 MySQL 8.0.16 起支持执行检查</td>
+</tr>
+<tr>
+<td>外键约束</td>
+<td><code>FOREIGN KEY</code></td>
+<td>子表中的非空外键值必须能匹配父表中的记录</td>
+</tr>
+</tbody></table>
+<h3 id="常用约束示例"><a href="#常用约束示例" class="headerlink" title="常用约束示例"></a>常用约束示例</h3><p>下面在当前练习数据库中建一张员工表。编号用 <code>AUTO_INCREMENT</code> 自动生成，工号必填且唯一，姓名必填，年龄要求在 18 到 65 岁之间，状态默认是 <code>&#39;在职&#39;</code>。年龄列同时加了 <code>NOT NULL</code>，因为 <code>CHECK</code> 只会拒绝条件为假的情况，<code>NULL</code> 可能使检查结果为未知。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE employee_constraint_demo (</span><br><span class="line">    id INT AUTO_INCREMENT PRIMARY KEY,</span><br><span class="line">    workno VARCHAR(10) NOT NULL UNIQUE,</span><br><span class="line">    name VARCHAR(20) NOT NULL,</span><br><span class="line">    age INT NOT NULL,</span><br><span class="line">    status VARCHAR(10) NOT NULL DEFAULT &#x27;在职&#x27;,</span><br><span class="line">    dept_id INT,</span><br><span class="line">    CONSTRAINT chk_employee_demo_age CHECK (age BETWEEN 18 AND 65)</span><br><span class="line">) DEFAULT CHARSET=utf8mb4;</span><br><span class="line"></span><br><span class="line">-- 省略 id 和 status，分别使用自动编号和默认值</span><br><span class="line">INSERT INTO employee_constraint_demo (workno, name, age)</span><br><span class="line">VALUES (&#x27;00001&#x27;, &#x27;Aimy&#x27;, 21);</span><br><span class="line"></span><br><span class="line">-- 以下语句可逐条单独尝试，都会被拒绝</span><br><span class="line">-- INSERT INTO employee_constraint_demo (workno, name, age) VALUES (&#x27;00001&#x27;, &#x27;Aili&#x27;, 22);</span><br><span class="line">-- INSERT INTO employee_constraint_demo (workno, name, age) VALUES (&#x27;00002&#x27;, NULL, 22);</span><br><span class="line">-- INSERT INTO employee_constraint_demo (workno, name, age) VALUES (&#x27;00003&#x27;, &#x27;Leo&#x27;, 17);</span><br><span class="line"></span><br><span class="line">SELECT id, workno, name, age, status FROM employee_constraint_demo;</span><br></pre></td></tr></table></figure>
+
+<h3 id="FOREIGN-KEY-外键约束"><a href="#FOREIGN-KEY-外键约束" class="headerlink" title="FOREIGN KEY 外键约束"></a>FOREIGN KEY 外键约束</h3><p>用部门和员工举例，部门表是父表，员工表是子表。<code>employee_constraint_demo.dept_id</code> 引用 <code>department_constraint_demo.id</code>。两列都用 <code>INT</code>，被引用的部门编号是主键。</p>
+<ul>
+<li>建子表时，可以在字段定义后加上 <code>CONSTRAINT 外键名 FOREIGN KEY (外键字段) REFERENCES 父表 (父表字段)</code>。</li>
+<li>子表已经存在时，可以用 <code>ALTER TABLE ... ADD CONSTRAINT ...</code> 添加外键。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE department_constraint_demo (</span><br><span class="line">    id INT PRIMARY KEY,</span><br><span class="line">    name VARCHAR(20) NOT NULL</span><br><span class="line">) DEFAULT CHARSET=utf8mb4;</span><br><span class="line"></span><br><span class="line">INSERT INTO department_constraint_demo (id, name) VALUES (10, &#x27;研发部&#x27;);</span><br><span class="line"></span><br><span class="line">ALTER TABLE employee_constraint_demo</span><br><span class="line">ADD CONSTRAINT fk_employee_demo_dept</span><br><span class="line">FOREIGN KEY (dept_id) REFERENCES department_constraint_demo (id);</span><br><span class="line"></span><br><span class="line">-- 部门 10 存在，可以把员工分到这个部门</span><br><span class="line">UPDATE employee_constraint_demo SET dept_id = 10 WHERE workno = &#x27;00001&#x27;;</span><br><span class="line"></span><br><span class="line">-- 部门 99 不存在，下面这条语句会被拒绝</span><br><span class="line">-- INSERT INTO employee_constraint_demo (workno, name, age, dept_id)</span><br><span class="line">-- VALUES (&#x27;00002&#x27;, &#x27;Aili&#x27;, 22, 99);</span><br></pre></td></tr></table></figure>
+
+<p>删除外键时，<code>DROP FOREIGN KEY</code> 后面写的是约束名。例如 <code>ALTER TABLE employee_constraint_demo DROP FOREIGN KEY fk_employee_demo_dept;</code>。</p>
+<h3 id="外键的删除和更新行为"><a href="#外键的删除和更新行为" class="headerlink" title="外键的删除和更新行为"></a>外键的删除和更新行为</h3><p><code>ON DELETE</code> 指定删除父表记录时怎么处理引用它的子表记录，<code>ON UPDATE</code> 指定父表被引用的键值发生变化时怎么处理子表。</p>
+<table>
+<thead>
+<tr>
+<th>行为</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>NO ACTION</code></td>
+<td>默认行为，有子表记录引用时拒绝删除或更新父表的键值</td>
+</tr>
+<tr>
+<td><code>RESTRICT</code></td>
+<td>与 <code>NO ACTION</code> 一样，有引用时拒绝操作</td>
+</tr>
+<tr>
+<td><code>CASCADE</code></td>
+<td>删除父表记录时一并删除对应子表记录，更新父表的键值时同步更新子表外键</td>
+</tr>
+<tr>
+<td><code>SET NULL</code></td>
+<td>删除父表记录或更新父表键值时，把对应子表外键设为 <code>NULL</code>，要求子表外键列允许为空</td>
+</tr>
+<tr>
+<td><code>SET DEFAULT</code></td>
+<td>含义是把子表外键设为默认值，MySQL 默认配置下不可用</td>
+</tr>
+</tbody></table>
+<p>例如，把刚才的外键改成级联更新和删除。部门编号从 <code>10</code> 改成 <code>20</code> 后，员工的部门编号也会变成 <code>20</code>。再删除部门 <code>20</code>，对应的员工记录也会被删除。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE employee_constraint_demo DROP FOREIGN KEY fk_employee_demo_dept;</span><br><span class="line"></span><br><span class="line">ALTER TABLE employee_constraint_demo</span><br><span class="line">ADD CONSTRAINT fk_employee_demo_dept</span><br><span class="line">FOREIGN KEY (dept_id) REFERENCES department_constraint_demo (id)</span><br><span class="line">ON UPDATE CASCADE ON DELETE CASCADE;</span><br><span class="line"></span><br><span class="line">UPDATE department_constraint_demo SET id = 20 WHERE id = 10;</span><br><span class="line">SELECT name, dept_id FROM employee_constraint_demo WHERE workno = &#x27;00001&#x27;;  -- dept_id 为 20</span><br><span class="line"></span><br><span class="line">-- 要观察级联删除，可以再单独执行下面两条语句。</span><br><span class="line">-- DELETE FROM department_constraint_demo WHERE id = 20;</span><br><span class="line">-- SELECT name, dept_id FROM employee_constraint_demo WHERE workno = &#x27;00001&#x27;;  -- 查不到记录</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/11/11/SQL-%E5%87%BD%E6%95%B0%E4%B8%8E%E7%BA%A6%E6%9D%9F/">http://gazettm.github.io/2026/11/11/SQL-%E5%87%BD%E6%95%B0%E4%B8%8E%E7%BA%A6%E6%9D%9F/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/SQL/"># SQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2026/11/12/SQL-%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2%E4%B8%8E%E4%BA%8B%E7%89%A9/">SQL:多表查询与事务</a>
+            
+            
+            <a class="next" rel="next" href="/2026/11/09/SQL-%E5%9F%BA%E6%9C%AC%E8%AF%AD%E5%8F%A5/">SQL:基本语句</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

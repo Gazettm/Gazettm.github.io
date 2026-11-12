@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>SQL:多表查询与事务 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">SQL:多表查询与事务</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 12, 2026&nbsp;&nbsp;19:47:05</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/SQL/">SQL</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="SQL-多表查询与事务"><a href="#SQL-多表查询与事务" class="headerlink" title="SQL 多表查询与事务"></a>SQL 多表查询与事务</h1><h2 id="多表关系"><a href="#多表关系" class="headerlink" title="多表关系"></a>多表关系</h2><p>设计表结构时，可以根据数据之间的关系决定把外键放在哪张表里。</p>
+<table>
+<thead>
+<tr>
+<th>关系</th>
+<th>例子</th>
+<th>实现方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一对多（多对一）</td>
+<td>一个部门可以有多名员工，每名员工最多属于一个部门</td>
+<td>在员工表中放部门编号，作为指向部门表主键的外键</td>
+</tr>
+<tr>
+<td>多对多</td>
+<td>一个学生可以选多门课，一门课也可以有多名学生</td>
+<td>建立选课表，用两个外键分别引用学生和课程的主键，两列可以组成联合主键，防止重复选课</td>
+</tr>
+<tr>
+<td>一对一</td>
+<td>一个用户最多有一条详情记录，一条详情记录只属于一个用户</td>
+<td>把基础信息和详情分开，详情表的用户编号同时作为主键和外键</td>
+</tr>
+</tbody></table>
+<h2 id="多表查询"><a href="#多表查询" class="headerlink" title="多表查询"></a>多表查询</h2><p>下面用部门表和员工表演示连接、联合查询和子查询。先选中一个练习数据库，再建表和插入数据。员工表的 <code>dept_id</code> 表示部门编号，<code>manager_id</code> 表示上级的员工编号。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE dept_query_demo (</span><br><span class="line">    id INT PRIMARY KEY,</span><br><span class="line">    name VARCHAR(20) NOT NULL</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">CREATE TABLE emp_query_demo (</span><br><span class="line">    id INT PRIMARY KEY,</span><br><span class="line">    name VARCHAR(20) NOT NULL,</span><br><span class="line">    salary INT,</span><br><span class="line">    dept_id INT,</span><br><span class="line">    manager_id INT,</span><br><span class="line">    FOREIGN KEY (dept_id) REFERENCES dept_query_demo (id)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">INSERT INTO dept_query_demo (id, name) VALUES</span><br><span class="line">    (10, &#x27;销售部&#x27;), (20, &#x27;市场部&#x27;), (30, &#x27;财务部&#x27;), (40, &#x27;人事部&#x27;);</span><br><span class="line"></span><br><span class="line">INSERT INTO emp_query_demo (id, name, salary, dept_id, manager_id) VALUES</span><br><span class="line">    (1, &#x27;Alice&#x27;, 9000, 10, NULL),</span><br><span class="line">    (2, &#x27;Bob&#x27;,   9000, 10, 1),</span><br><span class="line">    (3, &#x27;Carol&#x27;, 12000, 20, 1),</span><br><span class="line">    (4, &#x27;David&#x27;, 7000, 30, NULL),</span><br><span class="line">    (5, &#x27;Eva&#x27;,   8000, 30, 4),</span><br><span class="line">    (6, &#x27;Frank&#x27;, 6000, NULL, NULL);</span><br></pre></td></tr></table></figure>
+
+<h3 id="INNER-JOIN-内连接"><a href="#INNER-JOIN-内连接" class="headerlink" title="INNER JOIN 内连接"></a>INNER JOIN 内连接</h3><p>内连接只返回满足连接条件的行。隐式写法在 <code>FROM</code> 里用逗号列出两张表，把连接条件放在 <code>WHERE</code> 里。显式写法用 <code>INNER JOIN ... ON ...</code>，其中 <code>INNER</code> 可以省略。两种写法都能查出有部门的员工及其部门名。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-- 隐式内连接</span><br><span class="line">SELECT e.name AS employee_name, d.name AS dept_name</span><br><span class="line">FROM emp_query_demo AS e, dept_query_demo AS d</span><br><span class="line">WHERE e.dept_id = d.id;</span><br><span class="line"></span><br><span class="line">-- 显式内连接</span><br><span class="line">SELECT e.name AS employee_name, d.name AS dept_name</span><br><span class="line">FROM emp_query_demo AS e</span><br><span class="line">INNER JOIN dept_query_demo AS d ON e.dept_id = d.id;</span><br></pre></td></tr></table></figure>
+
+<p>隐式写法省略连接条件时会得到笛卡尔积，也就是每名员工和每个部门各配对一次。这里有 6 名员工和 4 个部门，会得到 24 行。</p>
+<h3 id="LEFT-JOIN-和-RIGHT-JOIN-外连接"><a href="#LEFT-JOIN-和-RIGHT-JOIN-外连接" class="headerlink" title="LEFT JOIN 和 RIGHT JOIN 外连接"></a>LEFT JOIN 和 RIGHT JOIN 外连接</h3><p><code>LEFT JOIN</code> 保留左表的所有行，右表找不到匹配时用 <code>NULL</code> 补齐。下面的第一个查询保留 Frank，他的部门名是 <code>NULL</code>。</p>
+<p><code>RIGHT JOIN</code> 保留右表的所有行，左表找不到匹配时用 <code>NULL</code> 补齐。下面的第二个查询保留人事部，员工名是 <code>NULL</code>。两种写法中的 <code>OUTER</code> 都可以省略。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-- 查询所有员工及其部门，包括没有分配部门的员工</span><br><span class="line">SELECT e.name AS employee_name, d.name AS dept_name</span><br><span class="line">FROM emp_query_demo AS e</span><br><span class="line">LEFT JOIN dept_query_demo AS d ON e.dept_id = d.id;</span><br><span class="line"></span><br><span class="line">-- 查询所有部门及其员工，包括还没有员工的部门</span><br><span class="line">SELECT d.name AS dept_name, e.name AS employee_name</span><br><span class="line">FROM emp_query_demo AS e</span><br><span class="line">RIGHT JOIN dept_query_demo AS d ON e.dept_id = d.id;</span><br></pre></td></tr></table></figure>
+
+<h3 id="自连接"><a href="#自连接" class="headerlink" title="自连接"></a>自连接</h3><p>自连接就是把同一张表连接两次，需要给两边起不同的别名。例如，员工表中 <code>e</code> 代表员工，<code>m</code> 代表上级，通过 <code>e.manager_id = m.id</code> 找到上级的姓名。这里用左连接保留没有上级的员工。只查询有上级的员工时，可以换成内连接。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT e.name AS employee_name, m.name AS manager_name</span><br><span class="line">FROM emp_query_demo AS e</span><br><span class="line">LEFT JOIN emp_query_demo AS m ON e.manager_id = m.id;</span><br></pre></td></tr></table></figure>
+
+<h3 id="UNION-和-UNION-ALL-联合查询"><a href="#UNION-和-UNION-ALL-联合查询" class="headerlink" title="UNION 和 UNION ALL 联合查询"></a>UNION 和 UNION ALL 联合查询</h3><p>联合查询把多个 <code>SELECT</code> 的结果按行合并。每个查询选出的列数必须一致，对应位置的列按相同顺序写，类型应能相互兼容。</p>
+<ul>
+<li><code>UNION ALL</code> 保留所有行，包括重复行。</li>
+<li><code>UNION</code> 对合并结果按整行去重。</li>
+</ul>
+<p>例如，把销售部员工和工资至少为 9000 的员工合并。Alice 和 Bob 同时满足两个条件，用 <code>UNION ALL</code> 时各出现两次，用 <code>UNION</code> 时各出现一次。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT id, name FROM emp_query_demo WHERE dept_id = 10</span><br><span class="line">UNION ALL</span><br><span class="line">SELECT id, name FROM emp_query_demo WHERE salary &gt;= 9000;</span><br></pre></td></tr></table></figure>
+
+<h2 id="子查询"><a href="#子查询" class="headerlink" title="子查询"></a>子查询</h2><p>在一条 SQL 语句里嵌套另一条 <code>SELECT</code>，里面的查询就叫子查询。子查询可以用在 <code>WHERE</code> 中筛选数据、在 <code>FROM</code> 中提供一张查询结果表，或在 <code>SELECT</code> 中计算一个值。外层语句也可以是 <code>INSERT</code>、<code>UPDATE</code> 或 <code>DELETE</code>。</p>
+<h3 id="标量子查询"><a href="#标量子查询" class="headerlink" title="标量子查询"></a>标量子查询</h3><p>标量子查询返回一个值，可以用 <code>=</code>、<code>&lt;&gt;</code>、<code>&gt;</code>、<code>&gt;=</code>、<code>&lt;</code>、<code>&lt;=</code> 来比较。例如，先算出所有员工的平均工资，再查工资超过平均值的员工。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT name, salary</span><br><span class="line">FROM emp_query_demo</span><br><span class="line">WHERE salary &gt; (SELECT AVG(salary) FROM emp_query_demo);</span><br></pre></td></tr></table></figure>
+
+<h3 id="列子查询"><a href="#列子查询" class="headerlink" title="列子查询"></a>列子查询</h3><p>列子查询返回一列，可以有多行。下面先查销售部和市场部的编号，再通过 <code>IN</code> 找到这两个部门的员工。</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>IN</code></td>
+<td>匹配子查询返回的任意一个值</td>
+</tr>
+<tr>
+<td><code>NOT IN</code></td>
+<td>排除子查询返回的值</td>
+</tr>
+<tr>
+<td><code>ANY</code></td>
+<td>与任意一个值比较成立即可，例如 <code>&gt; ANY (...)</code></td>
+</tr>
+<tr>
+<td><code>SOME</code></td>
+<td>与 <code>ANY</code> 等价</td>
+</tr>
+<tr>
+<td><code>ALL</code></td>
+<td>与每个值比较都成立，例如 <code>&gt; ALL (...)</code></td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">SELECT name, dept_id</span><br><span class="line">FROM emp_query_demo</span><br><span class="line">WHERE dept_id IN (</span><br><span class="line">    SELECT id FROM dept_query_demo</span><br><span class="line">    WHERE name = &#x27;销售部&#x27; OR name = &#x27;市场部&#x27;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">-- 工资比财务部每名员工都高</span><br><span class="line">SELECT name, salary</span><br><span class="line">FROM emp_query_demo</span><br><span class="line">WHERE salary &gt; ALL (</span><br><span class="line">    SELECT salary FROM emp_query_demo WHERE dept_id = 30</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p><code>MAX</code> 会跳过 <code>NULL</code>，而 <code>ALL</code> 会逐项比较。例如，财务部的工资列如果包含 <code>7000</code>、<code>8000</code> 和 <code>NULL</code>，那么 <code>9000 &gt; MAX(...)</code> 成立，<code>9000 &gt; ALL (...)</code> 的结果是未知，在 <code>WHERE</code> 里会被过滤。用 <code>NOT IN</code> 时也要留意子查询里有没有 <code>NULL</code>。<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/all-subqueries.html">MySQL 的 ALL 子查询</a></p>
+<h3 id="行子查询"><a href="#行子查询" class="headerlink" title="行子查询"></a>行子查询</h3><p>行子查询返回一行，可以包含多个值。可以把多个字段写成 <code>(字段1, 字段2)</code> 这样的元组，用 <code>=</code> 或 <code>&lt;&gt;</code> 比较。下面根据主键查到 Alice 的部门和工资，再找同部门、同工资的其他员工，结果是 Bob。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SELECT name, dept_id, salary</span><br><span class="line">FROM emp_query_demo</span><br><span class="line">WHERE (dept_id, salary) = (</span><br><span class="line">    SELECT dept_id, salary FROM emp_query_demo WHERE id = 1</span><br><span class="line">)</span><br><span class="line">AND id &lt;&gt; 1;</span><br></pre></td></tr></table></figure>
+
+<h3 id="表子查询"><a href="#表子查询" class="headerlink" title="表子查询"></a>表子查询</h3><p>表子查询可以返回多行多列。放在 <code>FROM</code> 中时，把它当成一张临时的查询结果表来用，并给它起一个别名。也可以用多列元组和 <code>IN</code>、<code>NOT IN</code> 来判断是否匹配其中的行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">-- 先找工资至少为 9000 的员工，再查他们的部门名称</span><br><span class="line">SELECT high_salary.name, high_salary.salary, d.name AS dept_name</span><br><span class="line">FROM (</span><br><span class="line">    SELECT name, salary, dept_id FROM emp_query_demo WHERE salary &gt;= 9000</span><br><span class="line">) AS high_salary</span><br><span class="line">INNER JOIN dept_query_demo AS d ON high_salary.dept_id = d.id;</span><br><span class="line"></span><br><span class="line">-- 查询各部门工资最高的员工，最高工资并列的员工都会返回</span><br><span class="line">SELECT name, dept_id, salary</span><br><span class="line">FROM emp_query_demo</span><br><span class="line">WHERE (dept_id, salary) IN (</span><br><span class="line">    SELECT dept_id, MAX(salary)</span><br><span class="line">    FROM emp_query_demo</span><br><span class="line">    WHERE dept_id IS NOT NULL</span><br><span class="line">    GROUP BY dept_id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>事务把一组操作作为一个整体提交或撤销。例如，转账需要同时完成付款账户扣款和收款账户加款。如果其中一步没完成，就应撤销这次转账已经做的修改。</p>
+<h3 id="开启、提交和回滚"><a href="#开启、提交和回滚" class="headerlink" title="开启、提交和回滚"></a>开启、提交和回滚</h3><ul>
+<li><code>START TRANSACTION;</code> 或 <code>BEGIN;</code> 开启一个事务。</li>
+<li><code>COMMIT;</code> 提交当前事务，保存这次修改。</li>
+<li><code>ROLLBACK;</code> 回滚当前事务，撤销这次尚未提交的修改。</li>
+</ul>
+<p><code>SELECT @@autocommit;</code> 可以查看当前连接是否开启自动提交。值为 <code>1</code> 时，事务外的单条修改语句执行成功后会自动提交。用 <code>SET @@autocommit = 0;</code> 可以改为手动提交。练习后先提交或回滚，再按需要用 <code>SET @@autocommit = 1;</code> 恢复自动提交。也可以直接用 <code>START TRANSACTION</code> 开启一次事务，如下面的例子。</p>
+<h3 id="转账示例"><a href="#转账示例" class="headerlink" title="转账示例"></a>转账示例</h3><p>先在练习数据库里准备两个账户，初始余额都是 1000 元。假设账户 1 向账户 2 转 100 元，两步都成功后提交，余额分别变为 900 元和 1100 元。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE account_tx_demo (</span><br><span class="line">    id INT PRIMARY KEY,</span><br><span class="line">    balance DECIMAL(10, 2) NOT NULL</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">INSERT INTO account_tx_demo (id, balance) VALUES (1, 1000.00), (2, 1000.00);</span><br><span class="line">COMMIT;</span><br><span class="line"></span><br><span class="line">START TRANSACTION;</span><br><span class="line"></span><br><span class="line">UPDATE account_tx_demo SET balance = balance - 100 WHERE id = 1;</span><br><span class="line">UPDATE account_tx_demo SET balance = balance + 100 WHERE id = 2;</span><br><span class="line"></span><br><span class="line">COMMIT;</span><br><span class="line"></span><br><span class="line">SELECT id, balance FROM account_tx_demo ORDER BY id;</span><br></pre></td></tr></table></figure>
+
+<p>接着模拟第二次转账。扣款后发现收款账号填错，就回滚这次操作。最后两人的余额仍是 900 元和 1100 元。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">START TRANSACTION;</span><br><span class="line"></span><br><span class="line">UPDATE account_tx_demo SET balance = balance - 100 WHERE id = 1;</span><br><span class="line"></span><br><span class="line">-- 取消本次转账</span><br><span class="line">ROLLBACK;</span><br><span class="line"></span><br><span class="line">SELECT id, balance FROM account_tx_demo ORDER BY id;</span><br></pre></td></tr></table></figure>
+
+<h3 id="事务的四大特性（ACID）"><a href="#事务的四大特性（ACID）" class="headerlink" title="事务的四大特性（ACID）"></a>事务的四大特性（ACID）</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原子性（Atomicity）</td>
+<td>事务中的操作要么全部生效，要么全部撤销</td>
+</tr>
+<tr>
+<td>一致性（Consistency）</td>
+<td>事务完成后，数据仍应符合约束和业务规则，例如转账前后两个账户的余额总和保持不变</td>
+</tr>
+<tr>
+<td>隔离性（Isolation）</td>
+<td>多个事务同时运行时，隔离级别决定它们能看到彼此的哪些修改</td>
+</tr>
+<tr>
+<td>持久性（Durability）</td>
+<td>事务成功提交后，保存的修改在数据库重启后仍然存在</td>
+</tr>
+</tbody></table>
+<h3 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h3><p>并发事务中常见的三种读现象，可以用两个连接 A 和 B 来理解。</p>
+<ul>
+<li><strong>脏读</strong>。A 读到了 B 尚未提交的修改，B 随后回滚了。</li>
+<li><strong>不可重复读</strong>。A 在同一事务中两次查询同一条记录，B 在两次查询之间修改并提交了它，A 两次读到的值不同。</li>
+<li><strong>幻读</strong>。A 在同一事务中按同一个条件查了两次，B 在两次查询之间插入或删除了符合条件的记录并提交，A 两次看到的记录集合不同。</li>
+</ul>
+<p>下面按 SQL 标准列出各级别允许出现的现象，数据库的实际实现可以提供更强的隔离。<a target="_blank" rel="noopener" href="https://www.postgresql.org/docs/current/transaction-iso.html">SQL 标准的隔离级别对照表</a></p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>READ UNCOMMITTED</code>（读未提交）</td>
+<td>可能</td>
+<td>可能</td>
+<td>可能</td>
+</tr>
+<tr>
+<td><code>READ COMMITTED</code>（读已提交）</td>
+<td>避免</td>
+<td>可能</td>
+<td>可能</td>
+</tr>
+<tr>
+<td><code>REPEATABLE READ</code>（可重复读）</td>
+<td>避免</td>
+<td>避免</td>
+<td>可能</td>
+</tr>
+<tr>
+<td><code>SERIALIZABLE</code>（串行化）</td>
+<td>避免</td>
+<td>避免</td>
+<td>避免</td>
+</tr>
+</tbody></table>
+<p>MySQL 默认使用 <code>REPEATABLE READ</code>。可以查看当前连接的隔离级别，也可以用 <code>SET SESSION</code> 设置当前连接后续事务的隔离级别。换成 <code>SET GLOBAL</code> 会设置之后新连接的默认值。隔离更严格时，并发操作可能需要等待更久。<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/set-transaction.html">MySQL 的 SET TRANSACTION 语句</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT @@transaction_isolation;</span><br><span class="line"></span><br><span class="line">SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/11/12/SQL-%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2%E4%B8%8E%E4%BA%8B%E7%89%A9/">http://gazettm.github.io/2026/11/12/SQL-%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2%E4%B8%8E%E4%BA%8B%E7%89%A9/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/SQL/"># SQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/11/11/SQL-%E5%87%BD%E6%95%B0%E4%B8%8E%E7%BA%A6%E6%9D%9F/">SQL:函数与约束</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
