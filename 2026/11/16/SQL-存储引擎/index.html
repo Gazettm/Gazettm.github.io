@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>SQL:存储引擎 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">SQL:存储引擎</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 16, 2026&nbsp;&nbsp;23:00:22</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/SQL/">SQL</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="SQL-存储引擎"><a href="#SQL-存储引擎" class="headerlink" title="SQL 存储引擎"></a>SQL 存储引擎</h1><h2 id="存储引擎简介"><a href="#存储引擎简介" class="headerlink" title="存储引擎简介"></a>存储引擎简介</h2><p>存储引擎负责读写和组织表里的数据与索引。MySQL 可以给同一个数据库里的不同表指定不同的引擎。比如，员工表和部门表可以用支持外键的 <code>InnoDB</code>，一张随时可以重新生成的小型查询结果表可以用 MEMORY。</p>
+<h3 id="查看存储引擎"><a href="#查看存储引擎" class="headerlink" title="查看存储引擎"></a>查看存储引擎</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-- 查看当前 MySQL 实例的存储引擎</span><br><span class="line">SHOW ENGINES;</span><br><span class="line"></span><br><span class="line">-- 查看当前连接建普通表时使用的默认引擎</span><br><span class="line">SELECT @@SESSION.default_storage_engine AS default_engine;</span><br></pre></td></tr></table></figure>
+
+<p><code>SHOW ENGINES</code> 的结果里，<code>Support</code> 为 <code>DEFAULT</code> 表示可用且是默认引擎，为 <code>YES</code> 表示可用，为 <code>NO</code> 或 <code>DISABLED</code> 表示当前不可用。还可以看 <code>Transactions</code> 一列，确认引擎是否支持事务。</p>
+<h3 id="建表时指定存储引擎"><a href="#建表时指定存储引擎" class="headerlink" title="建表时指定存储引擎"></a>建表时指定存储引擎</h3><p>在 <code>CREATE TABLE</code> 的右括号后写 <code>ENGINE = 引擎名</code>。普通表省略这一项时，MySQL 会使用当前连接的默认存储引擎。已经建好的表可以用 <code>SHOW CREATE TABLE</code> 查看实际使用的引擎。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE account_engine_demo (</span><br><span class="line">    id INT PRIMARY KEY COMMENT &#x27;账户编号&#x27;,</span><br><span class="line">    balance DECIMAL(10, 2) NOT NULL COMMENT &#x27;余额&#x27;</span><br><span class="line">) ENGINE = InnoDB COMMENT = &#x27;存储引擎练习用账户表&#x27;;</span><br><span class="line"></span><br><span class="line">SHOW CREATE TABLE account_engine_demo;</span><br></pre></td></tr></table></figure>
+
+<h2 id="常见存储引擎"><a href="#常见存储引擎" class="headerlink" title="常见存储引擎"></a>常见存储引擎</h2><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>InnoDB</th>
+<th>MyISAM</th>
+<th>MEMORY</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>表数据存放位置</td>
+<td>磁盘</td>
+<td>磁盘</td>
+<td>内存</td>
+</tr>
+<tr>
+<td>事务</td>
+<td>支持</td>
+<td>不支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>外键</td>
+<td>支持</td>
+<td>不支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>锁的粒度</td>
+<td>支持行级锁</td>
+<td>表级锁</td>
+<td>表级锁</td>
+</tr>
+<tr>
+<td>B 树索引</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>可显式创建的哈希索引</td>
+<td>不支持</td>
+<td>不支持</td>
+<td>支持，默认使用</td>
+</tr>
+<tr>
+<td>全文索引</td>
+<td>支持（MySQL 5.6 起）</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>容量限制</td>
+<td>16 KiB 页下，表空间上限为 64 TiB，还受文件系统限制</td>
+<td>受文件大小等限制</td>
+<td>受可用内存和 <code>max_heap_table_size</code> 限制</td>
+</tr>
+</tbody></table>
+<p>表里的功能以 MySQL 8.0 为例。批量插入速度和资源占用还取决于索引数量、数据量和配置。</p>
+<h3 id="InnoDB"><a href="#InnoDB" class="headerlink" title="InnoDB"></a><code>InnoDB</code></h3><p><code>InnoDB</code> 从 MySQL 5.5 起成为默认存储引擎。前面学的事务和外键都可以用在 <code>InnoDB</code> 表上。它支持行级锁，例如两个连接分别按主键更新不同的账户记录时，可以各自锁定对应的记录，减少相互等待。</p>
+<p>前面用转账学过 <code>ROLLBACK</code>。下面复用刚建的 InnoDB 账户表，模拟扣了 100 元后又取消操作。最后查询到的余额仍是 <code>1000.00</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO account_engine_demo (id, balance) VALUES (1, 1000.00);</span><br><span class="line">COMMIT;</span><br><span class="line"></span><br><span class="line">START TRANSACTION;</span><br><span class="line">UPDATE account_engine_demo SET balance = balance - 100 WHERE id = 1;</span><br><span class="line">ROLLBACK;</span><br><span class="line"></span><br><span class="line">SELECT id, balance FROM account_engine_demo WHERE id = 1;</span><br></pre></td></tr></table></figure>
+
+<h4 id="表空间和文件"><a href="#表空间和文件" class="headerlink" title="表空间和文件"></a>表空间和文件</h4><p>启用 <code>innodb_file_per_table</code> 时，默认给新建的 InnoDB 普通表分配独立表空间。例如，账户练习表通常对应一个 <code>account_engine_demo.ibd</code> 文件，里面保存表数据和索引。表也可以使用共享表空间。MySQL 8.0 用数据字典管理表结构，并把序列化后的元数据（SDI）存入 <code>InnoDB</code> 表空间。早期 MySQL 中单独保存表定义的 <code>.frm</code> 文件属于旧的存储方式。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SHOW VARIABLES LIKE &#x27;innodb_file_per_table&#x27;;</span><br><span class="line">SHOW VARIABLES LIKE &#x27;innodb_page_size&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>截图里的逻辑结构可以按 <strong>表空间 → 段 → 区 → 页 → 行</strong> 来记。</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>表空间（Tablespace）</td>
+<td>管理表数据和索引所占用的存储空间，可以由一个或多个文件提供</td>
+</tr>
+<tr>
+<td>段（Segment）</td>
+<td>管理索引等结构使用的页，可以按区分配空间，也可以先分配少量单独的页</td>
+</tr>
+<tr>
+<td>区（Extent）</td>
+<td>一组连续的页。默认页大小为 16 KiB，此时一个 1 MiB 的区包含 64 页</td>
+</tr>
+<tr>
+<td>页（Page）</td>
+<td>InnoDB 读写和管理数据的基本单位，保存记录的页可以容纳多条记录</td>
+</tr>
+<tr>
+<td>行（Row）</td>
+<td>一条记录。截图里的 <code>Trx id</code> 记录修改该行的事务，<code>Roll pointer</code> 指向可用于找回旧版本的信息</td>
+</tr>
+</tbody></table>
+<p>例如，查询某个账户时，InnoDB 可以通过主键索引找到记录所在的页。一个页上还可能有其他账户的记录。</p>
+<h3 id="MyISAM"><a href="#MyISAM" class="headerlink" title="MyISAM"></a>MyISAM</h3><p>MyISAM 是早期 MySQL 的默认存储引擎。它使用表级锁，写入时的锁定范围覆盖整张表。它不支持事务回滚和外键，在一些以读取和追加为主、对并发写入要求较低的旧表中还能遇到。</p>
+<p>MyISAM 把数据和索引放在不同的文件里。以课件中的图书表为例，<code>tb_book.MYD</code> 保存数据，<code>tb_book.MYI</code> 保存索引。MySQL 8.0 还会为表保存一个 <code>.sdi</code> 文件，里面是表结构等元数据。</p>
+<h3 id="MEMORY"><a href="#MEMORY" class="headerlink" title="MEMORY"></a>MEMORY</h3><p>MEMORY 表的记录和索引放在内存里。对于普通的 MEMORY 表，MySQL 重启后还能找到表定义，但表里的记录会清空。课件里提到的 <code>.sdi</code> 对应的是表结构等元数据。单表大小受 <code>max_heap_table_size</code> 限制，适合少量可以重新生成的数据。</p>
+<p>MEMORY 默认用哈希索引，适合 <code>WHERE id = 1</code> 这种等值查询。需要用索引查找区间时，可以建 <code>BTREE</code> 索引。下面用一张小表保存可重新生成的部门人数统计。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE dept_count_engine_demo (</span><br><span class="line">    dept_id INT PRIMARY KEY,</span><br><span class="line">    employee_count INT NOT NULL</span><br><span class="line">) ENGINE = MEMORY;</span><br><span class="line"></span><br><span class="line">INSERT INTO dept_count_engine_demo (dept_id, employee_count)</span><br><span class="line">VALUES (10, 20), (20, 35);</span><br><span class="line"></span><br><span class="line">SELECT employee_count FROM dept_count_engine_demo WHERE dept_id = 10;</span><br><span class="line">SHOW INDEX FROM dept_count_engine_demo;</span><br></pre></td></tr></table></figure>
+
+<h2 id="怎么选择存储引擎"><a href="#怎么选择存储引擎" class="headerlink" title="怎么选择存储引擎"></a>怎么选择存储引擎</h2><ul>
+<li><strong>InnoDB</strong> 适合需要事务、外键或并发更新的业务表，例如订单表、账户表和员工表。一般的 MySQL 业务表也可以从默认的 InnoDB 开始。</li>
+<li><strong>MyISAM</strong> 常见于旧项目。维护以读和追加为主的旧表时，可以先确认它是否依赖 MyISAM 的现有行为，以及业务是否需要事务和外键。</li>
+<li><strong>MEMORY</strong> 适合体量小、可以重建的中间结果或缓存，例如上面的部门人数表。应用如果要把缓存放到 MySQL 之外，也可以用独立的 Redis 服务。补充笔记里提到的 MongoDB 属于文档数据库，选用它时还要考虑数据模型和查询需求。</li>
+</ul>
+<p>已有表也能用 <code>ALTER TABLE 表名 ENGINE = 引擎名;</code> 更换引擎。更换时，MySQL 会重建表，需要先确认目标引擎支持表当前使用的功能。例如，带外键的 InnoDB 员工表就依赖外键检查。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/11/16/SQL-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">http://gazettm.github.io/2026/11/16/SQL-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/SQL/"># SQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2026/11/16/SQL-%E7%B4%A2%E5%BC%95&%E6%80%A7%E8%83%BD&%E4%BD%BF%E7%94%A8/">SQL:索引&性能&使用</a>
+            
+            
+            <a class="next" rel="next" href="/2026/11/12/SQL-%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2%E4%B8%8E%E4%BA%8B%E7%89%A9/">SQL:多表查询与事务</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

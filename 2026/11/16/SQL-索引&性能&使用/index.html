@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>SQL:索引&amp;性能&amp;使用 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">SQL:索引&amp;性能&amp;使用</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 16, 2026&nbsp;&nbsp;23:21:46</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/SQL/">SQL</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="SQL-索引与性能分析"><a href="#SQL-索引与性能分析" class="headerlink" title="SQL 索引与性能分析"></a>SQL 索引与性能分析</h1><h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><p>索引是用来加快数据查找的数据结构。比如，按工号查询一名员工时，MySQL 可以通过工号索引定位记录，减少需要检查的行数。索引会占用额外空间，插入、删除或修改索引列时，MySQL 也要维护相应的索引。</p>
+<h3 id="索引结构"><a href="#索引结构" class="headerlink" title="索引结构"></a>索引结构</h3><p>MySQL 的索引由存储引擎实现。上一篇讲到了 InnoDB、MyISAM 和 MEMORY，它们支持的索引结构有所不同。下表以 MySQL 8.0 为例。</p>
+<table>
+<thead>
+<tr>
+<th>索引结构</th>
+<th>说明</th>
+<th>InnoDB</th>
+<th>MyISAM</th>
+<th>MEMORY</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>B+ 树索引（<code>BTREE</code>）</td>
+<td>索引键有序，可以做等值查找和范围扫描</td>
+<td>支持</td>
+<td>支持 <code>BTREE</code></td>
+<td>支持 <code>BTREE</code></td>
+</tr>
+<tr>
+<td>哈希索引（<code>HASH</code>）</td>
+<td>按索引键进行等值查找</td>
+<td>内部有自适应哈希索引</td>
+<td>—</td>
+<td>支持，默认使用</td>
+</tr>
+<tr>
+<td>空间索引（<code>SPATIAL</code>）</td>
+<td>使用 R 树组织空间数据，例如地理坐标或区域</td>
+<td>支持</td>
+<td>支持</td>
+<td>—</td>
+</tr>
+<tr>
+<td>全文索引（<code>FULLTEXT</code>）</td>
+<td>用倒排索引查找包含关键词的文本</td>
+<td>支持（MySQL 5.6 起）</td>
+<td>支持</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<p>InnoDB 的 B+ 树中，非叶子节点帮忙定位到正确的叶子页，叶子页按键的顺序相连。例如，查询编号在 10 到 20 之间的记录时，可以先定位到范围起点，再沿着叶子页向后扫描。MEMORY 的哈希索引适合 <code>id = 10</code> 这样的等值查询，范围查询需要有序的索引结构。InnoDB 的自适应哈希索引由引擎自行管理。</p>
+<h3 id="索引分类"><a href="#索引分类" class="headerlink" title="索引分类"></a>索引分类</h3><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>说明</th>
+<th>关键字</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主键索引</td>
+<td>定义主键时自动创建，一张表只有一个主键，主键可以由多列组成</td>
+<td><code>PRIMARY KEY</code></td>
+</tr>
+<tr>
+<td>唯一索引</td>
+<td>限制索引键重复，单列允许 <code>NULL</code> 时可以有多个 <code>NULL</code></td>
+<td><code>UNIQUE</code></td>
+</tr>
+<tr>
+<td>普通索引</td>
+<td>用于快速定位数据，允许键值重复</td>
+<td><code>INDEX</code></td>
+</tr>
+<tr>
+<td>全文索引</td>
+<td>用于在文本中搜索关键词</td>
+<td><code>FULLTEXT</code></td>
+</tr>
+</tbody></table>
+<h3 id="InnoDB-的聚集索引和二级索引"><a href="#InnoDB-的聚集索引和二级索引" class="headerlink" title="InnoDB 的聚集索引和二级索引"></a>InnoDB 的聚集索引和二级索引</h3><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>叶子页保存的内容</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>聚集索引（Clustered Index）</td>
+<td>保存表的行记录</td>
+<td>每张表有一个</td>
+</tr>
+<tr>
+<td>二级索引（Secondary Index）</td>
+<td>普通二级索引保存索引列的值和对应的聚集索引键，通常就是主键</td>
+<td>一张表可以有多个</td>
+</tr>
+</tbody></table>
+<p>有主键时，InnoDB 用主键作为聚集索引。没有主键时，会选第一个所有索引列都定义为 <code>NOT NULL</code> 的唯一索引。如果也没有这样的唯一索引，InnoDB 会生成内部行 ID 来建立聚集索引。</p>
+<p>例如，员工表用 <code>id</code> 做主键，<code>name</code> 上建了二级索引。假如 MySQL 选中了姓名索引来执行 <code>SELECT * FROM employee_index_demo WHERE name = &#39;Arm&#39;;</code>，查找过程可以按课件里的例子来理解。</p>
+<ol>
+<li>在姓名索引里找到 <code>Arm</code>，读到对应的主键 <code>10</code>。</li>
+<li>用主键 <code>10</code> 去聚集索引里找这一行，取出工号、工资等列。</li>
+</ol>
+<p>第二步叫<strong>回表</strong>。如果选定的索引已经包含查询所需的列，就可以直接从索引取得这些列的值。</p>
+<h3 id="创建、查看和删除索引"><a href="#创建、查看和删除索引" class="headerlink" title="创建、查看和删除索引"></a>创建、查看和删除索引</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CREATE [UNIQUE | FULLTEXT] INDEX 索引名 ON 表名 (字段1, 字段2, ...);</span><br><span class="line">SHOW INDEX FROM 表名;</span><br><span class="line">DROP INDEX 索引名 ON 表名;</span><br></pre></td></tr></table></figure>
+
+<p>方括号里的内容是可选项。省略它就创建普通索引，一次写入多个字段就创建由这些字段组成的索引。下面先在练习数据库里建一张员工表，后面的性能分析也用这张表。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE employee_index_demo (</span><br><span class="line">    id INT PRIMARY KEY,</span><br><span class="line">    workno VARCHAR(10) NOT NULL,</span><br><span class="line">    name VARCHAR(30) NOT NULL,</span><br><span class="line">    salary INT NOT NULL</span><br><span class="line">) ENGINE = InnoDB;</span><br><span class="line"></span><br><span class="line">INSERT INTO employee_index_demo (id, workno, name, salary) VALUES</span><br><span class="line">    (10, &#x27;00010&#x27;, &#x27;Arm&#x27;, 9000),</span><br><span class="line">    (11, &#x27;00011&#x27;, &#x27;Dawn&#x27;, 8000),</span><br><span class="line">    (15, &#x27;00015&#x27;, &#x27;Jack&#x27;, 10000),</span><br><span class="line">    (25, &#x27;00025&#x27;, &#x27;Lily&#x27;, 8000),</span><br><span class="line">    (30, &#x27;00030&#x27;, &#x27;Rose&#x27;, 12000);</span><br><span class="line"></span><br><span class="line">CREATE INDEX idx_employee_name ON employee_index_demo (name);</span><br><span class="line">CREATE UNIQUE INDEX uk_employee_workno ON employee_index_demo (workno);</span><br><span class="line"></span><br><span class="line">SHOW INDEX FROM employee_index_demo;</span><br></pre></td></tr></table></figure>
+
+<p>以下示例在本机的独立 MySQL 8.0.46 测试实例上执行。<code>SHOW INDEX</code> 的实际输出节选如下。</p>
+<table>
+<thead>
+<tr>
+<th>Key_name</th>
+<th>Column_name</th>
+<th>Non_unique</th>
+<th>Index_type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PRIMARY</td>
+<td>id</td>
+<td>0</td>
+<td>BTREE</td>
+</tr>
+<tr>
+<td>uk_employee_workno</td>
+<td>workno</td>
+<td>0</td>
+<td>BTREE</td>
+</tr>
+<tr>
+<td>idx_employee_name</td>
+<td>name</td>
+<td>1</td>
+<td>BTREE</td>
+</tr>
+</tbody></table>
+<p><code>Non_unique</code> 为 <code>0</code> 表示索引要求键值唯一，为 <code>1</code> 表示允许重复。下面是删除普通姓名索引的写法，等做完后面的例子再执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DROP INDEX idx_employee_name ON employee_index_demo;</span><br></pre></td></tr></table></figure>
+
+<p>删除后再次执行 <code>SHOW INDEX</code>，输出里只剩 <code>PRIMARY</code> 和 <code>uk_employee_workno</code>。</p>
+<h2 id="SQL-性能分析"><a href="#SQL-性能分析" class="headerlink" title="SQL 性能分析"></a>SQL 性能分析</h2><h3 id="查看-SQL-执行次数"><a href="#查看-SQL-执行次数" class="headerlink" title="查看 SQL 执行次数"></a>查看 SQL 执行次数</h3><p><code>SHOW GLOBAL STATUS</code> 查看整个 MySQL 实例的状态，<code>SHOW SESSION STATUS</code> 查看当前连接的状态。执行次数是累计值，例如要看一分钟里执行了多少次查询，可以在间隔一分钟的两次读数之间取差值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-- 查看实例中四类常见语句的执行次数</span><br><span class="line">SHOW GLOBAL STATUS</span><br><span class="line">WHERE Variable_name IN (&#x27;Com_select&#x27;, &#x27;Com_insert&#x27;, &#x27;Com_update&#x27;, &#x27;Com_delete&#x27;);</span><br><span class="line"></span><br><span class="line">-- 只看当前连接的 SELECT 次数</span><br><span class="line">SHOW SESSION STATUS LIKE &#x27;Com_select&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>实测时，在同一连接中执行 <code>SELECT id, name FROM employee_index_demo WHERE id = 10;</code>，前后各查一次当前连接的 <code>Com_select</code>，计数从 <code>3</code> 变成了 <code>4</code>。</p>
+<h3 id="慢查询日志"><a href="#慢查询日志" class="headerlink" title="慢查询日志"></a>慢查询日志</h3><p>慢查询日志用来找执行时间较长的 SQL。MySQL 8.0 默认关闭慢查询日志，<code>long_query_time</code> 默认是 10 秒。通常语句要超过这个时间阈值，并达到 <code>min_examined_row_limit</code> 指定的最少检查行数，才会记录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SHOW VARIABLES WHERE Variable_name IN (</span><br><span class="line">    &#x27;slow_query_log&#x27;, &#x27;long_query_time&#x27;, &#x27;slow_query_log_file&#x27;, &#x27;log_output&#x27;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>如果要按课件在练习环境里开启，可以在 MySQL 配置文件的 <code>[mysqld]</code> 段加入下面两项，再重启 MySQL。使用文件输出时，从 <code>slow_query_log_file</code> 查看本机的日志文件位置。日志里的 <code>Query_time</code> 和 <code>Rows_examined</code> 可以分别用来看耗时和检查行数。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="attr">slow_query_log</span> = <span class="literal">ON</span></span><br><span class="line"><span class="attr">long_query_time</span> = <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>在测试实例里把阈值设为 2 秒、<code>min_examined_row_limit</code> 设为 <code>0</code>，执行 <code>SELECT SLEEP(2.1);</code> 模拟一条耗时语句。慢查询日志实际记录了下面两行。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Query_time: 2.100819  Lock_time: 0.000000 Rows_sent: 1  Rows_examined: 1</span><br><span class="line">SELECT SLEEP(2.1);</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>Query_time</code> 约为 2.10 秒，超过了设置的阈值。</p>
+<h3 id="SHOW-PROFILE-查看耗时"><a href="#SHOW-PROFILE-查看耗时" class="headerlink" title="SHOW PROFILE 查看耗时"></a>SHOW PROFILE 查看耗时</h3><p>课件里的 <code>SHOW PROFILES</code> 用来查看当前连接最近执行的语句和总耗时，<code>SHOW PROFILE</code> 可以再展开某一条语句的各个执行阶段。MySQL 8.0 将这两条语句标为已弃用，这里按课程的写法记录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SELECT @@have_profiling;</span><br><span class="line">SET SESSION profiling = 1;</span><br><span class="line"></span><br><span class="line">SELECT * FROM employee_index_demo WHERE salary = 8000;</span><br><span class="line">SHOW PROFILES;</span><br><span class="line"></span><br><span class="line">-- 把 1 换成上面查到的 Query_ID</span><br><span class="line">SHOW PROFILE FOR QUERY 1;</span><br><span class="line">SHOW PROFILE CPU FOR QUERY 1;</span><br><span class="line"></span><br><span class="line">SET SESSION profiling = 0;</span><br></pre></td></tr></table></figure>
+
+<p><code>SHOW PROFILES</code> 中的 <code>Duration</code> 是语句总耗时，单位是秒。<code>SHOW PROFILE</code> 中的 <code>Status</code> 是阶段名，<code>Duration</code> 是该阶段的耗时。加上 <code>CPU</code> 后可以查看系统能提供的 CPU 时间。</p>
+<p>本次 <code>SHOW PROFILES</code> 返回了下面这条记录。</p>
+<table>
+<thead>
+<tr>
+<th>Query_ID</th>
+<th>Duration</th>
+<th>Query</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>0.00006450</td>
+<td><code>SELECT * FROM employee_index_demo WHERE salary = 8000</code></td>
+</tr>
+</tbody></table>
+<p>用 <code>SHOW PROFILE FOR QUERY 1</code> 展开，节选了几个阶段。</p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Duration（秒）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Opening tables</td>
+<td>0.000007</td>
+</tr>
+<tr>
+<td>optimizing</td>
+<td>0.000003</td>
+</tr>
+<tr>
+<td>statistics</td>
+<td>0.000004</td>
+</tr>
+<tr>
+<td>executing</td>
+<td>0.000011</td>
+</tr>
+</tbody></table>
+<p>这次总耗时约为 65 微秒，<code>executing</code> 阶段约为 11 微秒。练习表只有 5 行，这些时间适合用来学怎么看输出。</p>
+<h3 id="EXPLAIN-执行计划"><a href="#EXPLAIN-执行计划" class="headerlink" title="EXPLAIN 执行计划"></a>EXPLAIN 执行计划</h3><p>在 <code>SELECT</code> 前加 <code>EXPLAIN</code> 或 <code>DESC</code>，可以看优化器计划按什么顺序读表、用什么方式找记录。课件里的字段对应表格输出，下面显式用 <code>FORMAT=TRADITIONAL</code> 选这个格式。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN FORMAT=TRADITIONAL</span><br><span class="line">SELECT * FROM employee_index_demo WHERE id = 10;</span><br><span class="line"></span><br><span class="line">EXPLAIN FORMAT=TRADITIONAL</span><br><span class="line">SELECT * FROM employee_index_demo WHERE salary = 8000;</span><br><span class="line"></span><br><span class="line">EXPLAIN FORMAT=TRADITIONAL</span><br><span class="line">SELECT * FROM employee_index_demo WHERE name = &#x27;Arm&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>三条语句的实际执行计划节选如下。</p>
+<table>
+<thead>
+<tr>
+<th>查询条件</th>
+<th>type</th>
+<th>possible_keys</th>
+<th>key</th>
+<th>key_len</th>
+<th>rows</th>
+<th>filtered</th>
+<th>Extra</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id = 10</code></td>
+<td><code>const</code></td>
+<td><code>PRIMARY</code></td>
+<td><code>PRIMARY</code></td>
+<td>4</td>
+<td>1</td>
+<td>100.00</td>
+<td><code>NULL</code></td>
+</tr>
+<tr>
+<td><code>salary = 8000</code></td>
+<td><code>ALL</code></td>
+<td><code>NULL</code></td>
+<td><code>NULL</code></td>
+<td><code>NULL</code></td>
+<td>5</td>
+<td>20.00</td>
+<td><code>Using where</code></td>
+</tr>
+<tr>
+<td><code>name = &#39;Arm&#39;</code></td>
+<td><code>ref</code></td>
+<td><code>idx_employee_name</code></td>
+<td><code>idx_employee_name</code></td>
+<td>122</td>
+<td>1</td>
+<td>100.00</td>
+<td><code>NULL</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td><code>SELECT</code> 的编号。连接查询中的多张表可以同属一个编号，带子查询时可能出现不同编号。分析实际计划时还要结合 <code>select_type</code> 和表的读取顺序</td>
+</tr>
+<tr>
+<td><code>select_type</code></td>
+<td>查询块的类型。<code>SIMPLE</code> 表示没有子查询或 <code>UNION</code>，也可以是多表连接。<code>PRIMARY</code> 表示最外层查询，<code>SUBQUERY</code> 表示子查询中的第一个 <code>SELECT</code>，<code>UNION</code> 表示联合查询的第二个或后续 <code>SELECT</code></td>
+</tr>
+<tr>
+<td><code>table</code></td>
+<td>当前这一行计划对应的表名或别名</td>
+</tr>
+<tr>
+<td><code>partitions</code></td>
+<td>可能读取的分区，普通非分区表通常为 <code>NULL</code></td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>访问表的方式，例如按主键查一行、扫描索引范围或全表扫描</td>
+</tr>
+<tr>
+<td><code>possible_keys</code></td>
+<td>优化器可能用来定位记录的候选索引</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td>执行计划最终选中的索引。<code>NULL</code> 表示在这一步没有选用索引</td>
+</tr>
+<tr>
+<td><code>key_len</code></td>
+<td>计划使用的索引键长度，以字节为单位。结合列定义可以判断用到了索引键的哪些部分</td>
+</tr>
+<tr>
+<td><code>ref</code></td>
+<td>用于和索引键比较的常量或列，例如 <code>const</code> 表示常量</td>
+</tr>
+<tr>
+<td><code>rows</code></td>
+<td>优化器估计这一步需要检查的行数</td>
+</tr>
+<tr>
+<td><code>filtered</code></td>
+<td>估计有多少百分比的行通过这一表的条件过滤。比如 <code>rows</code> 为 100、<code>filtered</code> 为 20，估计有 20 行通过</td>
+</tr>
+<tr>
+<td><code>Extra</code></td>
+<td>补充信息，例如是否还要检查条件、排序或使用临时表</td>
+</tr>
+</tbody></table>
+<h4 id="常见的-type"><a href="#常见的-type" class="headerlink" title="常见的 type"></a>常见的 type</h4><table>
+<thead>
+<tr>
+<th>取值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>NULL</code></td>
+<td>这一步可能无需访问表，例如 <code>EXPLAIN SELECT 1;</code></td>
+</tr>
+<tr>
+<td><code>system</code></td>
+<td><code>const</code> 的特殊情况，优化器已知表中只有一行</td>
+</tr>
+<tr>
+<td><code>const</code></td>
+<td>通过主键或唯一索引与常量比较，至多匹配一行</td>
+</tr>
+<tr>
+<td><code>eq_ref</code></td>
+<td>做表连接时，前面每组记录在这张表里至多匹配一行，常见于按主键关联</td>
+</tr>
+<tr>
+<td><code>ref</code></td>
+<td>通过等值条件查索引，可能匹配多行，例如按普通姓名索引查找</td>
+</tr>
+<tr>
+<td><code>range</code></td>
+<td>扫描索引中的一个或多个范围</td>
+</tr>
+<tr>
+<td><code>index</code></td>
+<td>扫描整棵索引</td>
+</tr>
+<tr>
+<td><code>ALL</code></td>
+<td>全表扫描</td>
+</tr>
+</tbody></table>
+<h4 id="常见的-Extra"><a href="#常见的-Extra" class="headerlink" title="常见的 Extra"></a>常见的 Extra</h4><table>
+<thead>
+<tr>
+<th>取值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Using where</code></td>
+<td>还要用条件判断哪些行符合要求</td>
+</tr>
+<tr>
+<td><code>Using index</code></td>
+<td>查询所需的列可以从索引取得</td>
+</tr>
+<tr>
+<td><code>Using filesort</code></td>
+<td>需要额外做排序，排序可以在内存中完成</td>
+</tr>
+<tr>
+<td><code>Using temporary</code></td>
+<td>处理中使用了内部临时表</td>
+</tr>
+</tbody></table>
+<p>结合这次的输出，可以先看 <code>type</code> 和 <code>key</code>，再看 <code>rows</code>、<code>filtered</code> 和 <code>Extra</code>。</p>
+<ul>
+<li><strong>按主键查</strong>。<code>const</code> 配合 <code>key = PRIMARY</code>，表示 MySQL 通过主键定位记录。这里 <code>id</code> 是 <code>INT</code>，所以 <code>key_len</code> 为 4 字节。</li>
+<li><strong>按工资查</strong>。工资列上没有索引，MySQL 全表扫描，<code>Using where</code> 表示还要逐行用工资条件过滤。<code>rows = 5</code>、<code>filtered = 20.00</code> 表示优化器估计有 1 行通过，真正执行时返回了 Dawn 和 Lily 两行。</li>
+<li><strong>按姓名查</strong>。<code>ref</code> 配合 <code>key = idx_employee_name</code>，表示 MySQL 用姓名二级索引做等值查找。<code>SELECT *</code> 还需要索引里没有的 <code>workno</code> 和 <code>salary</code>，因此要用主键回表。<code>key_len = 122</code> 反映的是索引键的长度，和这次查找的字符串 <code>Arm</code> 有几个字符是两回事。</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/11/16/SQL-%E7%B4%A2%E5%BC%95&%E6%80%A7%E8%83%BD&%E4%BD%BF%E7%94%A8/">http://gazettm.github.io/2026/11/16/SQL-%E7%B4%A2%E5%BC%95&%E6%80%A7%E8%83%BD&%E4%BD%BF%E7%94%A8/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/SQL/"># SQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/11/16/SQL-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">SQL:存储引擎</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
