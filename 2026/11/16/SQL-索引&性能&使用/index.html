@@ -649,7 +649,7 @@
 <td><code>Using where</code></td>
 </tr>
 </tbody></table>
-<p>这里的「最左」看的是<strong>建索引时的列顺序</strong>。第一条把 <code>profession</code> 写在 <code>WHERE</code> 最后，仍能用三个列做等值定位。第四条跳过了 <code>age</code>，所以只能先定位到整个职业分组；<code>status</code> 仍在索引里，可以先用它筛选，再对符合条件的记录回表，这就是 <code>Using index condition</code> 所表示的索引条件下推。第五条缺少最左列，这次选了全表扫描。</p>
+<p>这里的<strong>最左</strong>看的是<strong>建索引时的列顺序</strong>。第一条把 <code>profession</code> 写在 <code>WHERE</code> 最后，仍能用三个列做等值定位。第四条跳过了 <code>age</code>，所以只能先定位到整个职业分组；<code>status</code> 仍在索引里，可以先用它筛选，再对符合条件的记录回表，这就是 <code>Using index condition</code> 所表示的索引条件下推。第五条缺少最左列，这次选了全表扫描。</p>
 <h4 id="联合索引遇到范围条件"><a href="#联合索引遇到范围条件" class="headerlink" title="联合索引遇到范围条件"></a>联合索引遇到范围条件</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span> <span class="keyword">AND</span> age <span class="operator">&gt;</span> <span class="number">40</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span> <span class="keyword">AND</span> age <span class="operator">&gt;=</span> <span class="number">40</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
 
 <table>
@@ -780,11 +780,40 @@
 </tr>
 </tbody></table>
 <p>去掉 <code>EXPLAIN</code> 执行后，<code>OR</code> 和 <code>UNION</code> 都返回 <strong>21 行</strong>。把 <code>UNION</code> 换成 <code>UNION ALL</code> 会返回 <strong>22 行</strong>，因为编号 60 的用户也正好是 40 岁。这里结果中包含主键 <code>id</code>，因此 <code>UNION</code> 去掉的是两支共同返回的同一个用户。如果只选 <code>profession</code> 之类的列，<code>UNION</code> 还可能把职业相同的不同用户合并掉。若想用 <code>UNION ALL</code> 保留原结果，这个例子可以在第二支加上 <code>AND id &lt;&gt; 60</code>，让两个分支互不重叠。</p>
-<p>拆开确实能让第一支走主键，但第二支仍然扫全表，<code>UNION</code> 还多了一步去重。有没有收益，要看两支各自的计划和实际开销。</p>
+<p>仍然只用最初的索引。在 MySQL 8.0.46 上用同一个连接预热后交替执行，每种写法计时 360 次。下表的耗时是 Performance Schema 记录的语句耗时中位数。</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th align="right">实际返回</th>
+<th align="right">每次创建的临时表</th>
+<th align="right">中位耗时（µs）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原来的 <code>OR</code></td>
+<td align="right">21 行</td>
+<td align="right">0</td>
+<td align="right">242.7</td>
+</tr>
+<tr>
+<td><code>UNION</code></td>
+<td align="right">21 行</td>
+<td align="right">1</td>
+<td align="right">265.9</td>
+</tr>
+<tr>
+<td><code>UNION ALL</code>，第二支加 <code>AND id &lt;&gt; 60</code></td>
+<td align="right">21 行</td>
+<td align="right">0</td>
+<td align="right">285.3</td>
+</tr>
+</tbody></table>
+<p>这批数据上保留原来的 <code>OR</code> 更快。<code>UNION</code> 仍要在第二支扫描 1,000 行，还要用临时表去重，耗时多了约 10%。排除重复的 <code>UNION ALL</code> 省掉了临时表，但第二支沿主键扫描了其余 999 行来筛年龄，耗时反而比原查询多约 18%。</p>
 <p>给年龄建单列索引，再看原来的 <code>OR</code>：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> INDEX idx_age <span class="keyword">ON</span> user_index_demo (age);</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">60</span> <span class="keyword">OR</span> age <span class="operator">=</span> <span class="number">40</span>;</span><br></pre></td></tr></table></figure>
 
-<p>这次 <code>type</code> 变为 <code>index_merge</code>，<code>key</code> 为 <code>PRIMARY,idx_age</code>，<code>Extra</code> 为 <code>Using union(PRIMARY,idx_age); Using where</code>。MySQL 可以分别从两个索引找出匹配记录，再合并结果。两边都有可用索引时，优化器仍会根据代价决定是否这么做。</p>
+<p>这次 <code>type</code> 变为 <code>index_merge</code>，<code>key</code> 为 <code>PRIMARY,idx_age</code>，<code>Extra</code> 为 <code>Using union(PRIMARY,idx_age); Using where</code>。<code>EXPLAIN ANALYZE</code> 显示，主键索引找到 1 条，年龄索引找到 21 条，按主键合并去重后返回 21 行。同样跑 360 次，原 <code>OR</code> 的中位耗时从 <code>242.7 µs</code> 降到 <code>83.2 µs</code>，减少约 66%。</p>
 <h3 id="数据分布会影响索引选择"><a href="#数据分布会影响索引选择" class="headerlink" title="数据分布会影响索引选择"></a>数据分布会影响索引选择</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> phone <span class="operator">&gt;=</span> <span class="string">&#x27;17799900005&#x27;</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> phone <span class="operator">&gt;=</span> <span class="string">&#x27;17799900995&#x27;</span>;</span><br></pre></td></tr></table></figure>
 
 <table>
@@ -919,7 +948,54 @@
 <td><code>Using index condition</code></td>
 </tr>
 </tbody></table>
-<p>本来联合索引已经覆盖查询。指定单列索引后，要先找到该职业的记录，再回表判断年龄和状态。最后一条则让原来选择扫表的查询改走手机号索引，但返回的还是那 996 行。提示能改变计划，是否更快需要实测。</p>
+<p>两组查询分别在同一个连接中预热后交替执行，每种写法计时 360 次。读到的行数来自 <code>EXPLAIN ANALYZE</code>，中位耗时来自实际执行 <code>SELECT</code> 时的 Performance Schema 记录。</p>
+<table>
+<thead>
+<tr>
+<th>查询</th>
+<th>写法</th>
+<th>实际读取</th>
+<th align="right">实际返回</th>
+<th align="right">中位耗时（µs）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>职业、年龄、状态</td>
+<td>不加提示</td>
+<td>联合索引 1 条，无需回表</td>
+<td align="right">1</td>
+<td align="right">62.9</td>
+</tr>
+<tr>
+<td>职业、年龄、状态</td>
+<td><code>USE INDEX (idx_prof)</code></td>
+<td>职业索引命中 50 条，再回表筛选</td>
+<td align="right">1</td>
+<td align="right">88.7</td>
+</tr>
+<tr>
+<td>职业、年龄、状态</td>
+<td><code>IGNORE INDEX (idx_prof)</code></td>
+<td>联合索引 1 条，无需回表</td>
+<td align="right">1</td>
+<td align="right">60.2</td>
+</tr>
+<tr>
+<td>手机号范围</td>
+<td>不加提示</td>
+<td>扫表 1,000 行</td>
+<td align="right">996</td>
+<td align="right">578.1</td>
+</tr>
+<tr>
+<td>手机号范围</td>
+<td><code>FORCE INDEX (idx_phone)</code></td>
+<td>手机号索引命中 996 条，再回表读取整行</td>
+<td align="right">996</td>
+<td align="right">1,050.1</td>
+</tr>
+</tbody></table>
+<p>职业查询默认就选中了覆盖查询的联合索引，<code>IGNORE INDEX</code> 也得到同一个计划。用 <code>USE INDEX</code> 指定单列索引后，MySQL 要回表检查 50 条候选记录的年龄和状态，中位耗时增加约 41%。手机号查询要拿到几乎整张表的数据，强制走二级索引时多了 996 次按主键取整行的工作，中位耗时增加约 82%。这两组查询都保留默认计划。</p>
 <h3 id="索引设计原则"><a href="#索引设计原则" class="headerlink" title="索引设计原则"></a>索引设计原则</h3><ol>
 <li>优先看数据量较大、访问频繁的表，从真正慢或频繁的查询入手。</li>
 <li>考虑常用于 <code>WHERE</code>、<code>ORDER BY</code> 和 <code>GROUP BY</code> 的列，并结合经常一起出现的条件决定联合索引的顺序。</li>
