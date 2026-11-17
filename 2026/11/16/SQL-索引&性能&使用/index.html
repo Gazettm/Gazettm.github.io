@@ -221,7 +221,7 @@
         </header>
 
         <div class="post-content">
-            <h1 id="SQL-索引与性能分析"><a href="#SQL-索引与性能分析" class="headerlink" title="SQL 索引与性能分析"></a>SQL 索引与性能分析</h1><h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><p>索引是用来加快数据查找的数据结构。比如，按工号查询一名员工时，MySQL 可以通过工号索引定位记录，减少需要检查的行数。索引会占用额外空间，插入、删除或修改索引列时，MySQL 也要维护相应的索引。</p>
+            <h1 id="SQL-索引、性能分析与使用"><a href="#SQL-索引、性能分析与使用" class="headerlink" title="SQL 索引、性能分析与使用"></a>SQL 索引、性能分析与使用</h1><h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><p>索引是用来加快数据查找的数据结构。比如，按工号查询一名员工时，MySQL 可以通过工号索引定位记录，减少需要检查的行数。索引会占用额外空间，插入、删除或修改索引列时，MySQL 也要维护相应的索引。</p>
 <h3 id="索引结构"><a href="#索引结构" class="headerlink" title="索引结构"></a>索引结构</h3><p>MySQL 的索引由存储引擎实现。上一篇讲到了 InnoDB、MyISAM 和 MEMORY，它们支持的索引结构有所不同。下表以 MySQL 8.0 为例。</p>
 <table>
 <thead>
@@ -589,6 +589,347 @@
 <li><strong>按工资查</strong>。工资列上没有索引，MySQL 全表扫描，<code>Using where</code> 表示还要逐行用工资条件过滤。<code>rows = 5</code>、<code>filtered = 20.00</code> 表示优化器估计有 1 行通过，真正执行时返回了 Dawn 和 Lily 两行。</li>
 <li><strong>按姓名查</strong>。<code>ref</code> 配合 <code>key = idx_employee_name</code>，表示 MySQL 用姓名二级索引做等值查找。<code>SELECT *</code> 还需要索引里没有的 <code>workno</code> 和 <code>salary</code>，因此要用主键回表。<code>key_len = 122</code> 反映的是索引键的长度，和这次查找的字符串 <code>Arm</code> 有几个字符是两回事。</li>
 </ul>
+<h2 id="索引使用"><a href="#索引使用" class="headerlink" title="索引使用"></a>索引使用</h2><p>前面介绍了怎么看 <code>EXPLAIN</code>。这一节用同一张用户表对照几种写法，看条件、返回列和数据分布怎样影响执行计划。</p>
+<h3 id="准备数据"><a href="#准备数据" class="headerlink" title="准备数据"></a>准备数据</h3><p>在空的练习库里建表。下面的语句生成 1,000 行，方便重复跑同一组查询。开始时只建主键、职业联合索引和手机号索引，后面按小节逐步添加其他索引。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> user_index_demo (</span><br><span class="line">    id <span class="type">INT</span> <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    profession <span class="type">VARCHAR</span>(<span class="number">24</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    age <span class="type">INT</span> <span class="keyword">NOT NULL</span>,</span><br><span class="line">    status TINYINT <span class="keyword">NOT NULL</span>,</span><br><span class="line">    phone <span class="type">VARCHAR</span>(<span class="number">11</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    email <span class="type">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    INDEX idx_prof_age_status (profession, age, status),</span><br><span class="line">    INDEX idx_phone (phone)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT INTO</span> user_index_demo (id, profession, age, status, phone, email)</span><br><span class="line"><span class="keyword">WITH</span> <span class="keyword">RECURSIVE</span> seq(n) <span class="keyword">AS</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">UNION</span> <span class="keyword">ALL</span></span><br><span class="line">    <span class="keyword">SELECT</span> n <span class="operator">+</span> <span class="number">1</span> <span class="keyword">FROM</span> seq <span class="keyword">WHERE</span> n <span class="operator">&lt;</span> <span class="number">1000</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> n,</span><br><span class="line">       <span class="keyword">CASE</span></span><br><span class="line">           <span class="keyword">WHEN</span> <span class="built_in">MOD</span>(n, <span class="number">20</span>) <span class="operator">=</span> <span class="number">0</span> <span class="keyword">THEN</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span></span><br><span class="line">           <span class="keyword">WHEN</span> <span class="built_in">MOD</span>(n, <span class="number">20</span>) <span class="operator">=</span> <span class="number">1</span> <span class="keyword">THEN</span> <span class="string">&#x27;SoftwareTester&#x27;</span></span><br><span class="line">           <span class="keyword">WHEN</span> <span class="built_in">MOD</span>(n, <span class="number">20</span>) <span class="operator">&lt;</span> <span class="number">5</span> <span class="keyword">THEN</span> <span class="string">&#x27;Designer&#x27;</span></span><br><span class="line">           <span class="keyword">ELSE</span> <span class="string">&#x27;Operations&#x27;</span></span><br><span class="line">       <span class="keyword">END</span>,</span><br><span class="line">       <span class="number">20</span> <span class="operator">+</span> <span class="built_in">MOD</span>(n DIV <span class="number">3</span>, <span class="number">45</span>),</span><br><span class="line">       <span class="built_in">MOD</span>(n DIV <span class="number">7</span>, <span class="number">2</span>),</span><br><span class="line">       CONCAT(<span class="string">&#x27;177999&#x27;</span>, LPAD(n, <span class="number">5</span>, <span class="string">&#x27;0&#x27;</span>)),</span><br><span class="line">       CONCAT(<span class="string">&#x27;u&#x27;</span>, LPAD(n, <span class="number">4</span>, <span class="string">&#x27;0&#x27;</span>), <span class="string">&#x27;@example.test&#x27;</span>)</span><br><span class="line"><span class="keyword">FROM</span> seq;</span><br><span class="line"></span><br><span class="line">ANALYZE <span class="keyword">TABLE</span> user_index_demo;</span><br></pre></td></tr></table></figure>
+
+<p>以下输出来自 MySQL 8.0.46，表格保留与例子有关的字段。<code>rows</code> 是优化器估计要检查的行数；实际返回行数会单独标出。复现时按文章顺序运行，因为后面新建的索引也会影响前面的执行计划。</p>
+<h3 id="联合索引与最左前缀"><a href="#联合索引与最左前缀" class="headerlink" title="联合索引与最左前缀"></a>联合索引与最左前缀</h3><p><code>idx_prof_age_status</code> 按 <code>profession</code>、<code>age</code>、<code>status</code> 的顺序排列。先按职业分组，同一职业内再按年龄排列，同一职业和年龄内才按状态排列。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> status <span class="operator">=</span> <span class="number">0</span> <span class="keyword">AND</span> age <span class="operator">=</span> <span class="number">40</span> <span class="keyword">AND</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span> <span class="keyword">AND</span> age <span class="operator">=</span> <span class="number">40</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">40</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th><code>type</code></th>
+<th><code>key</code></th>
+<th align="right"><code>key_len</code></th>
+<th align="right"><code>rows</code></th>
+<th><code>Extra</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>status</code> + <code>age</code> + <code>profession</code></td>
+<td><code>ref</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td align="right">103</td>
+<td align="right">1</td>
+<td><code>NULL</code></td>
+</tr>
+<tr>
+<td><code>profession</code> + <code>age</code></td>
+<td><code>ref</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td align="right">102</td>
+<td align="right">2</td>
+<td><code>NULL</code></td>
+</tr>
+<tr>
+<td>只有 <code>profession</code></td>
+<td><code>ref</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td align="right">98</td>
+<td align="right">50</td>
+<td><code>NULL</code></td>
+</tr>
+<tr>
+<td><code>profession</code> + <code>status</code></td>
+<td><code>ref</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td align="right">98</td>
+<td align="right">50</td>
+<td><code>Using index condition</code></td>
+</tr>
+<tr>
+<td><code>age</code> + <code>status</code></td>
+<td><code>ALL</code></td>
+<td><code>NULL</code></td>
+<td align="right"><code>NULL</code></td>
+<td align="right">1000</td>
+<td><code>Using where</code></td>
+</tr>
+</tbody></table>
+<p>这里的「最左」看的是<strong>建索引时的列顺序</strong>。第一条把 <code>profession</code> 写在 <code>WHERE</code> 最后，仍能用三个列做等值定位。第四条跳过了 <code>age</code>，所以只能先定位到整个职业分组；<code>status</code> 仍在索引里，可以先用它筛选，再对符合条件的记录回表，这就是 <code>Using index condition</code> 所表示的索引条件下推。第五条缺少最左列，这次选了全表扫描。</p>
+<h4 id="联合索引遇到范围条件"><a href="#联合索引遇到范围条件" class="headerlink" title="联合索引遇到范围条件"></a>联合索引遇到范围条件</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span> <span class="keyword">AND</span> age <span class="operator">&gt;</span> <span class="number">40</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span> <span class="keyword">AND</span> age <span class="operator">&gt;=</span> <span class="number">40</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>年龄条件</th>
+<th><code>type</code></th>
+<th><code>key</code></th>
+<th align="right"><code>key_len</code></th>
+<th align="right"><code>rows</code></th>
+<th><code>Extra</code></th>
+<th align="right">实际返回</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>age &gt; 40</code></td>
+<td><code>range</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td align="right">102</td>
+<td align="right">25</td>
+<td><code>Using index condition</code></td>
+<td align="right">13</td>
+</tr>
+<tr>
+<td><code>age &gt;= 40</code></td>
+<td><code>range</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td align="right">103</td>
+<td align="right">27</td>
+<td><code>Using index condition</code></td>
+<td align="right">14</td>
+</tr>
+</tbody></table>
+<p><code>age &gt; 40</code> 的扫描起点由职业和年龄决定；这次 <code>age &gt;= 40</code> 的扫描起点还用到了 <code>status</code>，因此 <code>key_len</code> 多了 1 字节。这个变化只影响范围的边界。往后读到 <code>age &gt; 40</code> 的索引项时，每个年龄下仍可能有不同的状态，仍要判断 <code>status = 0</code>。两条语句本来就差了年龄等于 40 的记录，写条件时以业务需要为准。</p>
+<h3 id="索引列上的运算、类型转换和模糊查询"><a href="#索引列上的运算、类型转换和模糊查询" class="headerlink" title="索引列上的运算、类型转换和模糊查询"></a>索引列上的运算、类型转换和模糊查询</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> phone <span class="operator">=</span> <span class="string">&#x27;17799900015&#x27;</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> phone <span class="operator">=</span> <span class="number">17799900015</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> <span class="keyword">RIGHT</span>(phone, <span class="number">2</span>) <span class="operator">=</span> <span class="string">&#x27;15&#x27;</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="keyword">LIKE</span> <span class="string">&#x27;Software%&#x27;</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="keyword">LIKE</span> <span class="string">&#x27;%Engineer&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th><code>type</code></th>
+<th><code>possible_keys</code></th>
+<th><code>key</code></th>
+<th align="right"><code>rows</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>phone = &#39;17799900015&#39;</code></td>
+<td><code>ref</code></td>
+<td><code>idx_phone</code></td>
+<td><code>idx_phone</code></td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td><code>phone = 17799900015</code></td>
+<td><code>ALL</code></td>
+<td><code>idx_phone</code></td>
+<td><code>NULL</code></td>
+<td align="right">1000</td>
+</tr>
+<tr>
+<td><code>RIGHT(phone, 2) = &#39;15&#39;</code></td>
+<td><code>ALL</code></td>
+<td><code>NULL</code></td>
+<td><code>NULL</code></td>
+<td align="right">1000</td>
+</tr>
+<tr>
+<td><code>profession LIKE &#39;Software%&#39;</code></td>
+<td><code>range</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td align="right">100</td>
+</tr>
+<tr>
+<td><code>profession LIKE &#39;%Engineer&#39;</code></td>
+<td><code>ALL</code></td>
+<td><code>NULL</code></td>
+<td><code>NULL</code></td>
+<td align="right">1000</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>类型转换</strong>：<code>phone</code> 是 <code>VARCHAR</code>。拿它和数字比较时，MySQL 会按数值规则比较，不能用原来的字符串索引做等值定位。写 SQL 时给手机号加引号；传参数时也按字符串传。</li>
+<li><strong>对列做运算</strong>：<code>idx_phone</code> 按完整手机号排序，按尾号查时无法从这个顺序找出一段连续范围。改成 <code>phone LIKE &#39;%15&#39;</code>，这次也仍然是全表扫描。按完整手机号查和按尾号查是两个不同的需求。</li>
+<li><strong>模糊查询</strong>：<code>LIKE &#39;Software%&#39;</code> 有固定开头，可以从索引中找到相应的范围。<code>LIKE &#39;%Engineer&#39;</code> 和 <code>LIKE &#39;%Engineer%&#39;</code> 都没有固定开头，普通 B+ 树索引无法据此缩小查找范围。</li>
+</ul>
+<h3 id="OR-条件与-UNION"><a href="#OR-条件与-UNION" class="headerlink" title="OR 条件与 UNION"></a>OR 条件与 UNION</h3><p>先不建年龄索引。下面两条查询都要返回「编号为 60，或者年龄为 40」的用户：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">60</span> <span class="keyword">OR</span> age <span class="operator">=</span> <span class="number">40</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">60</span></span><br><span class="line"><span class="keyword">UNION</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">40</span>;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>查询步骤</th>
+<th><code>type</code></th>
+<th><code>key</code></th>
+<th align="right"><code>rows</code></th>
+<th><code>Extra</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原来的 <code>OR</code></td>
+<td><code>ALL</code></td>
+<td><code>NULL</code></td>
+<td align="right">1000</td>
+<td><code>Using where</code></td>
+</tr>
+<tr>
+<td><code>UNION</code> 第一支：<code>id = 60</code></td>
+<td><code>const</code></td>
+<td><code>PRIMARY</code></td>
+<td align="right">1</td>
+<td><code>NULL</code></td>
+</tr>
+<tr>
+<td><code>UNION</code> 第二支：<code>age = 40</code></td>
+<td><code>ALL</code></td>
+<td><code>NULL</code></td>
+<td align="right">1000</td>
+<td><code>Using where</code></td>
+</tr>
+<tr>
+<td><code>UNION RESULT</code></td>
+<td><code>ALL</code></td>
+<td><code>NULL</code></td>
+<td align="right"><code>NULL</code></td>
+<td><code>Using temporary</code></td>
+</tr>
+</tbody></table>
+<p>去掉 <code>EXPLAIN</code> 执行后，<code>OR</code> 和 <code>UNION</code> 都返回 <strong>21 行</strong>。把 <code>UNION</code> 换成 <code>UNION ALL</code> 会返回 <strong>22 行</strong>，因为编号 60 的用户也正好是 40 岁。这里结果中包含主键 <code>id</code>，因此 <code>UNION</code> 去掉的是两支共同返回的同一个用户。如果只选 <code>profession</code> 之类的列，<code>UNION</code> 还可能把职业相同的不同用户合并掉。若想用 <code>UNION ALL</code> 保留原结果，这个例子可以在第二支加上 <code>AND id &lt;&gt; 60</code>，让两个分支互不重叠。</p>
+<p>拆开确实能让第一支走主键，但第二支仍然扫全表，<code>UNION</code> 还多了一步去重。有没有收益，要看两支各自的计划和实际开销。</p>
+<p>给年龄建单列索引，再看原来的 <code>OR</code>：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> INDEX idx_age <span class="keyword">ON</span> user_index_demo (age);</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">60</span> <span class="keyword">OR</span> age <span class="operator">=</span> <span class="number">40</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这次 <code>type</code> 变为 <code>index_merge</code>，<code>key</code> 为 <code>PRIMARY,idx_age</code>，<code>Extra</code> 为 <code>Using union(PRIMARY,idx_age); Using where</code>。MySQL 可以分别从两个索引找出匹配记录，再合并结果。两边都有可用索引时，优化器仍会根据代价决定是否这么做。</p>
+<h3 id="数据分布会影响索引选择"><a href="#数据分布会影响索引选择" class="headerlink" title="数据分布会影响索引选择"></a>数据分布会影响索引选择</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> phone <span class="operator">&gt;=</span> <span class="string">&#x27;17799900005&#x27;</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> phone <span class="operator">&gt;=</span> <span class="string">&#x27;17799900995&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>手机号条件</th>
+<th><code>possible_keys</code></th>
+<th><code>type</code></th>
+<th><code>key</code></th>
+<th align="right"><code>rows</code></th>
+<th align="right">实际返回</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&gt;= &#39;17799900005&#39;</code></td>
+<td><code>idx_phone</code></td>
+<td><code>ALL</code></td>
+<td><code>NULL</code></td>
+<td align="right">1000</td>
+<td align="right">996</td>
+</tr>
+<tr>
+<td><code>&gt;= &#39;17799900995&#39;</code></td>
+<td><code>idx_phone</code></td>
+<td><code>range</code></td>
+<td><code>idx_phone</code></td>
+<td align="right">6</td>
+<td align="right">6</td>
+</tr>
+</tbody></table>
+<p>两条语句的写法一样，只换了起始值。第一条要取 996 行，走手机号索引后几乎每条都得回表，优化器选择直接扫表。第二条只需取 6 行，走手机号索引就能缩小查找范围。因此看到 <code>possible_keys</code> 里有索引时，还要看 <code>key</code> 最终选了哪个。</p>
+<h3 id="覆盖索引与回表"><a href="#覆盖索引与回表" class="headerlink" title="覆盖索引与回表"></a>覆盖索引与回表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> id, profession, age, status <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span> <span class="keyword">AND</span> age <span class="operator">=</span> <span class="number">40</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> id, profession, age, status, email <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span> <span class="keyword">AND</span> age <span class="operator">=</span> <span class="number">40</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">60</span>;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>返回列与条件</th>
+<th><code>type</code></th>
+<th><code>key</code></th>
+<th align="right"><code>rows</code></th>
+<th><code>Extra</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>返回 <code>id, profession, age, status</code>，按职业、年龄、状态查</td>
+<td><code>ref</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td align="right">1</td>
+<td><code>Using index</code></td>
+</tr>
+<tr>
+<td>同样的条件，多取一列 <code>email</code></td>
+<td><code>ref</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td align="right">1</td>
+<td><code>NULL</code></td>
+</tr>
+<tr>
+<td><code>SELECT *</code>，按 <code>id = 60</code> 查</td>
+<td><code>const</code></td>
+<td><code>PRIMARY</code></td>
+<td align="right">1</td>
+<td><code>NULL</code></td>
+</tr>
+</tbody></table>
+<p>InnoDB 的二级索引叶子里还存有主键 <code>id</code>。第一条要的列都能从职业联合索引拿到，这条查询就被索引覆盖了。第二条用同一个索引定位，但 <code>email</code> 不在索引里，要拿主键回到聚集索引取完整记录。第三条直接走主键，聚集索引叶子已有整行，可以直接取出。</p>
+<p><strong><code>Using index</code> 表示查询所需的列能从索引取得；<code>Using index condition</code> 表示先用索引里的值过滤，符合条件的记录还要读取整行。</strong> 第二条即使 <code>Extra</code> 为 <code>NULL</code>，也可以根据所选索引和返回列判断它要回表。业务只需要部分列时，把它们写出来更容易用上覆盖索引；本例如果通过职业二级索引执行 <code>SELECT *</code>，就需要回表。</p>
+<h3 id="前缀索引"><a href="#前缀索引" class="headerlink" title="前缀索引"></a>前缀索引</h3><p>字符串很长时，可以只给开头的一部分建索引，缩小索引占用的空间。语法是在索引列后写 <code>列名(前缀长度)</code>。例如，<code>email(5)</code> 对 <code>VARCHAR</code> 列保存前 5 个字符。</p>
+<p>前缀越短越省空间，但相同前缀的记录可能越多。可以先算选择性：<strong>不同键值的个数 ÷ 总行数</strong>。下面对比完整邮箱和三种前缀长度：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="keyword">DISTINCT</span> email) <span class="operator">/</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> full_value,</span><br><span class="line">       <span class="built_in">COUNT</span>(<span class="keyword">DISTINCT</span> <span class="keyword">LEFT</span>(email, <span class="number">3</span>)) <span class="operator">/</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> prefix_3,</span><br><span class="line">       <span class="built_in">COUNT</span>(<span class="keyword">DISTINCT</span> <span class="keyword">LEFT</span>(email, <span class="number">4</span>)) <span class="operator">/</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> prefix_4,</span><br><span class="line">       <span class="built_in">COUNT</span>(<span class="keyword">DISTINCT</span> <span class="keyword">LEFT</span>(email, <span class="number">5</span>)) <span class="operator">/</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> prefix_5</span><br><span class="line"><span class="keyword">FROM</span> user_index_demo;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="right">完整邮箱</th>
+<th align="right">前 3 个字符</th>
+<th align="right">前 4 个字符</th>
+<th align="right">前 5 个字符</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">1.0000</td>
+<td align="right">0.0110</td>
+<td align="right">0.1010</td>
+<td align="right">1.0000</td>
+</tr>
+</tbody></table>
+<p>这批练习数据的差异都在邮箱开头，用 5 个字符就能区分所有记录。建索引后再查完整邮箱：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> INDEX idx_email_prefix <span class="keyword">ON</span> user_index_demo (email(<span class="number">5</span>));</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> email <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> email <span class="operator">=</span> <span class="string">&#x27;u0060@example.test&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>实测 <code>type = ref</code>、<code>key = idx_email_prefix</code>、<code>rows = 1</code>、<code>Extra = Using where</code>。索引先定位到 <code>u0060</code>，MySQL 仍需读取记录核对并返回完整的邮箱。前缀索引只保存一部分字符，不能覆盖返回完整 <code>email</code> 的查询。</p>
+<h3 id="单列索引、联合索引和-SQL-提示"><a href="#单列索引、联合索引和-SQL-提示" class="headerlink" title="单列索引、联合索引和 SQL 提示"></a>单列索引、联合索引和 SQL 提示</h3><p>单列索引只包含一列，联合索引包含多列。如果查询经常同时按职业、年龄和状态筛选，<code>(profession, age, status)</code> 可以一次用三个条件定位。但如果经常单独按年龄查，<code>(age)</code> 仍然有用，因为 <code>age</code> 在原联合索引中不是最左列。</p>
+<p>再给 <code>profession</code> 单独建一个索引。这样，同一条查询既可以用单列索引，也可以用联合索引。可以把索引提示写在表名后面来做对照：</p>
+<ul>
+<li><code>USE INDEX (索引名)</code>：把可用来找行的索引限制在指定列表里，优化器仍可选择扫表。</li>
+<li><code>IGNORE INDEX (索引名)</code>：排除指定索引。</li>
+<li><code>FORCE INDEX (索引名)</code>：限制可用索引，并让优化器把全表扫描视为代价很高的选择。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> INDEX idx_prof <span class="keyword">ON</span> user_index_demo (profession);</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> id, profession, age, status <span class="keyword">FROM</span> user_index_demo <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span> <span class="keyword">AND</span> age <span class="operator">=</span> <span class="number">40</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> id, profession, age, status <span class="keyword">FROM</span> user_index_demo USE INDEX (idx_prof) <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span> <span class="keyword">AND</span> age <span class="operator">=</span> <span class="number">40</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> id, profession, age, status <span class="keyword">FROM</span> user_index_demo IGNORE INDEX (idx_prof) <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;SoftwareEngineer&#x27;</span> <span class="keyword">AND</span> age <span class="operator">=</span> <span class="number">40</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_index_demo FORCE INDEX (idx_phone) <span class="keyword">WHERE</span> phone <span class="operator">&gt;=</span> <span class="string">&#x27;17799900005&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th><code>type</code></th>
+<th><code>key</code></th>
+<th><code>Extra</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>职业、年龄、状态查询，不加提示</td>
+<td><code>ref</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td><code>Using index</code></td>
+</tr>
+<tr>
+<td><code>USE INDEX (idx_prof)</code></td>
+<td><code>ref</code></td>
+<td><code>idx_prof</code></td>
+<td><code>Using where</code></td>
+</tr>
+<tr>
+<td><code>IGNORE INDEX (idx_prof)</code></td>
+<td><code>ref</code></td>
+<td><code>idx_prof_age_status</code></td>
+<td><code>Using index</code></td>
+</tr>
+<tr>
+<td>对返回 996 行的手机号查询用 <code>FORCE INDEX (idx_phone)</code></td>
+<td><code>range</code></td>
+<td><code>idx_phone</code></td>
+<td><code>Using index condition</code></td>
+</tr>
+</tbody></table>
+<p>本来联合索引已经覆盖查询。指定单列索引后，要先找到该职业的记录，再回表判断年龄和状态。最后一条则让原来选择扫表的查询改走手机号索引，但返回的还是那 996 行。提示能改变计划，是否更快需要实测。</p>
+<h3 id="索引设计原则"><a href="#索引设计原则" class="headerlink" title="索引设计原则"></a>索引设计原则</h3><ol>
+<li>优先看数据量较大、访问频繁的表，从真正慢或频繁的查询入手。</li>
+<li>考虑常用于 <code>WHERE</code>、<code>ORDER BY</code> 和 <code>GROUP BY</code> 的列，并结合经常一起出现的条件决定联合索引的顺序。</li>
+<li>区分度高的列通常更容易用来缩小查找范围。性别一类的列取值少，如果两类各占一半，单独建索引往往收益有限；如果分布很不均匀，查询少数值仍可能从索引获益。只有业务需要保证值不重复时才建唯一索引。</li>
+<li>长字符串可以比较不同前缀长度的选择性，选一个够用的长度，再看查询是否需要完整的列值。</li>
+<li>多条件查询可以优先考虑联合索引，同时检查是否存在覆盖查询、是否还需要单独按其中某一列查询。</li>
+<li>控制索引数量。多一个索引就多一份空间开销，增删记录或修改索引列时也多一份维护成本。对于列重复的索引，先看查询用途再决定是否保留。</li>
+<li>业务上必填的字段用 <code>NOT NULL</code> 明确约束，允许缺失的字段保留 <code>NULL</code>。可空列也能建索引，不能仅凭是否可空判断查询会不会用它。</li>
+</ol>
+<p>排查时可以按这个顺序看：<strong>先查条件能否缩小索引范围，再看优化器是否选了该索引，最后看需要的列会不会让查询回表。</strong></p>
 
         </div>
 
