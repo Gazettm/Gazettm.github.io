@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>SQL:SQL优化 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">SQL:SQL优化</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 19, 2026&nbsp;&nbsp;16:01:57</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/SQL/">SQL</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="SQL优化"><a href="#SQL优化" class="headerlink" title="SQL优化"></a>SQL优化</h1><h2 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h2><h3 id="批量插入与手动提交事务"><a href="#批量插入与手动提交事务" class="headerlink" title="批量插入与手动提交事务"></a>批量插入与手动提交事务</h3><p>先看这样一张表。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> insert_demo (</span><br><span class="line">    id <span class="type">INT</span> <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    name <span class="type">VARCHAR</span>(<span class="number">30</span>) <span class="keyword">NOT NULL</span></span><br><span class="line">) ENGINE <span class="operator">=</span> InnoDB;</span><br></pre></td></tr></table></figure>
+
+<p>假设我们需要插入三条数据，可以写三次<code>INSERT</code>，也可以一次写进去。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> insert_demo <span class="keyword">VALUES</span></span><br><span class="line">    (<span class="number">1</span>, <span class="string">&#x27;Tom&#x27;</span>), (<span class="number">2</span>, <span class="string">&#x27;Cat&#x27;</span>), (<span class="number">3</span>, <span class="string">&#x27;Jerry&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如果每插入一条就执行一次语句，除了插入数据本身，每次还要发送、解析SQL。在自动提交开启时，每条语句还会单独提交事务。因此我们可以把多条数据放进一条语句，也可以把多条语句放进同一个事务。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT INTO</span> insert_demo <span class="keyword">VALUES</span> (<span class="number">4</span>, <span class="string">&#x27;Tom&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT INTO</span> insert_demo <span class="keyword">VALUES</span> (<span class="number">5</span>, <span class="string">&#x27;Cat&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT INTO</span> insert_demo <span class="keyword">VALUES</span> (<span class="number">6</span>, <span class="string">&#x27;Jerry&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里把三次事务提交合成了一次。批量插入和手动提交也可以一起使用，例如每条<code>INSERT</code>放1,000行，每执行几条语句提交一次。</p>
+<p>下面用2,000条数据比较。每次先清空测试表，主键从1到2,000递增，姓名都为<code>Tom</code>。每种方式执行三次，取中位数。计时从第一条插入前开始，到最后提交完成后结束。</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th align="right">插入行数</th>
+<th align="right">耗时中位数（ms）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>每条<code>INSERT</code>一行，自动提交</td>
+<td align="right">2000</td>
+<td align="right">1545.921</td>
+</tr>
+<tr>
+<td>每条<code>INSERT</code>一行，放在同一事务中</td>
+<td align="right">2000</td>
+<td align="right">76.735</td>
+</tr>
+<tr>
+<td>每条<code>INSERT</code>一千行，自动提交，共两条</td>
+<td align="right">2000</td>
+<td align="right">17.753</td>
+</tr>
+<tr>
+<td><code>LOAD DATA LOCAL INFILE</code>导入</td>
+<td align="right">2000</td>
+<td align="right">19.509</td>
+</tr>
+</tbody></table>
+<p>这里手动提交比逐条自动提交少用了约95%的时间，批量插入又省去了大量语句往返和解析。对于这2,000行数据，直接分两批插入最快。</p>
+<p>测试使用MySQL 8.0.46，<code>innodb_flush_log_at_trx_commit = 1</code>。所有测试都在独立实例中完成，后面的查询示例也使用这个版本。</p>
+<h3 id="LOAD-DATA"><a href="#LOAD-DATA" class="headerlink" title="LOAD DATA"></a>LOAD DATA</h3><p>已经有数据文件时，可以直接导入。</p>
+<p>假设<code>users.csv</code>中的内容如下，文件使用UTF-8编码，以换行符<code>\n</code>分隔记录。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1,Tom</span><br><span class="line">2,Cat</span><br><span class="line">3,Jerry</span><br></pre></td></tr></table></figure>
+
+<p>客户端连接时开启<code>LOCAL</code>支持。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql --local-infile=1 -u root -p</span><br></pre></td></tr></table></figure>
+
+<p>然后在MySQL中执行。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 保存原来的开关，导入后恢复</span></span><br><span class="line"><span class="keyword">SET</span> <span class="variable">@old_local_infile</span> <span class="operator">=</span> @<span class="variable">@GLOBAL</span>.local_infile;</span><br><span class="line"><span class="keyword">SET</span> <span class="keyword">GLOBAL</span> local_infile <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">LOAD DATA <span class="keyword">LOCAL</span> INFILE <span class="string">&#x27;C:/learn/Blog/users.csv&#x27;</span></span><br><span class="line"><span class="keyword">INTO</span> <span class="keyword">TABLE</span> insert_demo</span><br><span class="line"><span class="keyword">CHARACTER SET</span> utf8mb4</span><br><span class="line">FIELDS TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;,&#x27;</span></span><br><span class="line">LINES TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;\n&#x27;</span></span><br><span class="line">(id, name);</span><br><span class="line"></span><br><span class="line"><span class="keyword">SET</span> <span class="keyword">GLOBAL</span> local_infile <span class="operator">=</span> <span class="variable">@old_local_infile</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>LOCAL</code>表示文件由客户端读取。上面的测试使用单独生成的2,000行文件，导入后<code>COUNT(*)</code>也是2,000。导入前需要保证表内没有相同主键。</p>
+<h2 id="主键优化"><a href="#主键优化" class="headerlink" title="主键优化"></a>主键优化</h2><p>InnoDB的聚集索引叶子存着完整记录，记录按主键的顺序组织。这个顺序是B+树中的逻辑顺序，数据页在磁盘上的位置还由引擎分配。</p>
+<p>我们设想这样一个场景，一个页已经放了主键<code>10、20、30、40</code>。现在插入<code>25</code>，它要进入20与30之间。如果页已经满了，就要分裂，分配新页并调整记录。主键一直递增时，插入位置集中在索引右端，减少了在已有页中间插入的情况。</p>
+<p>因此在普通单库的用户表、订单表里，可以使用自增整数作为主键。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> orders (</span><br><span class="line">    id <span class="type">BIGINT</span> UNSIGNED <span class="keyword">PRIMARY KEY</span> AUTO_INCREMENT,</span><br><span class="line">    order_no <span class="type">VARCHAR</span>(<span class="number">32</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    amount <span class="type">DECIMAL</span>(<span class="number">10</span>, <span class="number">2</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    <span class="keyword">UNIQUE</span> INDEX uk_order_no (order_no)</span><br><span class="line">) ENGINE <span class="operator">=</span> InnoDB;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT INTO</span> orders (order_no, amount)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="string">&#x27;202611190001&#x27;</span>, <span class="number">99.90</span>);</span><br></pre></td></tr></table></figure>
+
+<p>业务查询订单号就走<code>uk_order_no</code>，表内部通过整数主键组织。</p>
+<p>主键还会出现在二级索引叶子中。假设一张表有五个二级索引，用很长的字符串做主键，这五个索引也都要保存这段主键。整数主键既减少了聚集索引键的长度，也减少了二级索引的占用。</p>
+<p>所以主键可以按下面几个方向设计。</p>
+<ol>
+<li>长度尽量短，数值范围够用时选择整数。</li>
+<li>插入时尽量保持递增，常用<code>AUTO_INCREMENT</code>。</li>
+<li>随机UUID会把插入位置分散到整棵树。身份证号等业务字段可以另外建唯一索引，内部主键保持简单稳定。</li>
+<li>避免修改主键。修改后既要调整聚集索引中的位置，又要维护二级索引中的主键值。</li>
+</ol>
+<h2 id="准备查询数据"><a href="#准备查询数据" class="headerlink" title="准备查询数据"></a>准备查询数据</h2><p>后面用同一张表看排序、分组、分页和计数。每行放一段500字符的内容，这样能看出扫描完整记录与扫描索引的开销差别。</p>
+<p>在空的练习库中执行下面的语句，生成20,000行。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> tb_user (</span><br><span class="line">    id <span class="type">INT</span> <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    profession <span class="type">VARCHAR</span>(<span class="number">20</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    age <span class="type">INT</span> <span class="keyword">NOT NULL</span>,</span><br><span class="line">    status TINYINT <span class="keyword">NOT NULL</span>,</span><br><span class="line">    phone <span class="type">VARCHAR</span>(<span class="number">11</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    email <span class="type">VARCHAR</span>(<span class="number">80</span>) <span class="keyword">NULL</span>,</span><br><span class="line">    padding <span class="type">VARCHAR</span>(<span class="number">500</span>) <span class="keyword">NOT NULL</span></span><br><span class="line">) ENGINE <span class="operator">=</span> InnoDB <span class="keyword">DEFAULT</span> CHARSET <span class="operator">=</span> utf8mb4;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SET</span> SESSION cte_max_recursion_depth <span class="operator">=</span> <span class="number">25000</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT INTO</span> tb_user</span><br><span class="line"><span class="keyword">WITH</span> <span class="keyword">RECURSIVE</span> seq(n) <span class="keyword">AS</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">UNION</span> <span class="keyword">ALL</span></span><br><span class="line">    <span class="keyword">SELECT</span> n <span class="operator">+</span> <span class="number">1</span> <span class="keyword">FROM</span> seq <span class="keyword">WHERE</span> n <span class="operator">&lt;</span> <span class="number">20000</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> n,</span><br><span class="line">       ELT(<span class="number">1</span> <span class="operator">+</span> <span class="built_in">MOD</span>(n, <span class="number">4</span>), <span class="string">&#x27;Engineer&#x27;</span>, <span class="string">&#x27;Teacher&#x27;</span>, <span class="string">&#x27;Doctor&#x27;</span>, <span class="string">&#x27;Student&#x27;</span>),</span><br><span class="line">       <span class="number">20</span> <span class="operator">+</span> <span class="built_in">MOD</span>(n, <span class="number">50</span>),</span><br><span class="line">       <span class="built_in">MOD</span>(n, <span class="number">2</span>),</span><br><span class="line">       CONCAT(<span class="string">&#x27;177&#x27;</span>, LPAD(n, <span class="number">8</span>, <span class="string">&#x27;0&#x27;</span>)),</span><br><span class="line">       IF(<span class="built_in">MOD</span>(n, <span class="number">5</span>) <span class="operator">=</span> <span class="number">0</span>, <span class="keyword">NULL</span>, CONCAT(<span class="string">&#x27;u&#x27;</span>, n, <span class="string">&#x27;@example.test&#x27;</span>)),</span><br><span class="line">       REPEAT(<span class="string">&#x27;x&#x27;</span>, <span class="number">500</span>)</span><br><span class="line"><span class="keyword">FROM</span> seq;</span><br><span class="line"></span><br><span class="line">ANALYZE <span class="keyword">TABLE</span> tb_user;</span><br></pre></td></tr></table></figure>
+
+<p>下面的查询耗时取自<code>EXPLAIN ANALYZE</code>最外层节点读完结果的时间，单位为ms。每个查询先执行一次预热，再执行11次取中位数。这个时间包含执行计划分析的开销，计量的是服务端执行过程。</p>
+<h2 id="ORDER-BY优化"><a href="#ORDER-BY优化" class="headerlink" title="ORDER BY优化"></a>ORDER BY优化</h2><h3 id="利用索引顺序"><a href="#利用索引顺序" class="headerlink" title="利用索引顺序"></a>利用索引顺序</h3><p>先在没有二级索引时执行。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> id, age, phone <span class="keyword">FROM</span> tb_user <span class="keyword">ORDER</span> <span class="keyword">BY</span> age, phone;</span><br><span class="line"></span><br><span class="line">EXPLAIN ANALYZE</span><br><span class="line"><span class="keyword">SELECT</span> id, age, phone <span class="keyword">FROM</span> tb_user <span class="keyword">ORDER</span> <span class="keyword">BY</span> age, phone;</span><br></pre></td></tr></table></figure>
+
+<p>输出节选如下。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Sort: tb_user.age, tb_user.phone</span><br><span class="line">   (actual time=11.1..11.6 rows=20000 loops=1)</span><br><span class="line">    -&gt; Table scan on tb_user</span><br><span class="line">       (actual time=0.216..4.16 rows=20000 loops=1)</span><br></pre></td></tr></table></figure>
+
+<p>MySQL先读出20,000行，再按年龄和手机号排序。普通<code>EXPLAIN</code>的<code>Extra</code>显示<code>Using filesort</code>，表示需要额外排序。排序可以在内存里完成。</p>
+<p>现在给这两列建联合索引。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> INDEX idx_age_phone <span class="keyword">ON</span> tb_user (age, phone);</span><br><span class="line"><span class="keyword">CREATE</span> INDEX idx_pro_age_sta <span class="keyword">ON</span> tb_user (profession, age, status);</span><br><span class="line">ANALYZE <span class="keyword">TABLE</span> tb_user;</span><br><span class="line"></span><br><span class="line">EXPLAIN ANALYZE</span><br><span class="line"><span class="keyword">SELECT</span> id, age, phone <span class="keyword">FROM</span> tb_user <span class="keyword">ORDER</span> <span class="keyword">BY</span> age, phone;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Covering index scan on tb_user using idx_age_phone</span><br><span class="line">   (actual time=0.145..2.36 rows=20000 loops=1)</span><br></pre></td></tr></table></figure>
+
+<p>同一年龄内的手机号已经有序，索引中又包含<code>id</code>，因此顺着索引读取就能得到结果。</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>读取方式</th>
+<th><code>Extra</code></th>
+<th align="right">耗时中位数（ms）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>没有联合索引</td>
+<td>扫表后排序</td>
+<td><code>Using filesort</code></td>
+<td align="right">11.90</td>
+</tr>
+<tr>
+<td>有<code>(age, phone)</code>索引</td>
+<td>覆盖索引扫描</td>
+<td><code>Using index</code></td>
+<td align="right">2.37</td>
+</tr>
+</tbody></table>
+<p>建索引后，这条查询的执行时间减少约80%。</p>
+<h3 id="排序方向"><a href="#排序方向" class="headerlink" title="排序方向"></a>排序方向</h3><p>同一个<code>(age, phone)</code>升序索引，还能倒着读取。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> id, age, phone</span><br><span class="line"><span class="keyword">FROM</span> tb_user <span class="keyword">ORDER</span> <span class="keyword">BY</span> age <span class="keyword">DESC</span>, phone <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里<code>Extra</code>是<code>Backward index scan; Using index</code>，耗时中位数为3.23 ms。</p>
+<p>但是如果年龄升序、手机号降序，整个索引倒过来也无法满足。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> id, age, phone</span><br><span class="line"><span class="keyword">FROM</span> tb_user <span class="keyword">ORDER</span> <span class="keyword">BY</span> age <span class="keyword">ASC</span>, phone <span class="keyword">DESC</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> INDEX idx_age_phone_ad <span class="keyword">ON</span> tb_user (age <span class="keyword">ASC</span>, phone <span class="keyword">DESC</span>);</span><br><span class="line"></span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> id, age, phone</span><br><span class="line"><span class="keyword">FROM</span> tb_user <span class="keyword">ORDER</span> <span class="keyword">BY</span> age <span class="keyword">ASC</span>, phone <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th><code>Extra</code></th>
+<th align="right">耗时中位数（ms）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>只有<code>(age ASC, phone ASC)</code></td>
+<td><code>Using index; Using filesort</code></td>
+<td align="right">9.71</td>
+</tr>
+<tr>
+<td>增加<code>(age ASC, phone DESC)</code></td>
+<td><code>Using index</code></td>
+<td align="right">2.24</td>
+</tr>
+</tbody></table>
+<p>第二个索引的方向和查询一致，省掉了额外排序，时间减少约77%。</p>
+<p>这里还能看到<code>Using index</code>和<code>Using filesort</code>同时出现。<code>Using index</code>说明返回列被索引覆盖，判断有没有额外排序要看<code>Using filesort</code>及实际计划里的<code>Sort</code>节点。</p>
+<h3 id="sort-buffer-size"><a href="#sort-buffer-size" class="headerlink" title="sort_buffer_size"></a>sort_buffer_size</h3><p>如果排序无法通过索引完成，可以查看当前连接的排序缓冲区。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> SESSION VARIABLES <span class="keyword">LIKE</span> <span class="string">&#x27;sort_buffer_size&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>本机输出为<code>262144</code>，即256 KiB。需要调整时可以只修改当前连接。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> <span class="variable">@old_sort_buffer_size</span> <span class="operator">=</span> @<span class="variable">@SESSION</span>.sort_buffer_size;</span><br><span class="line"><span class="keyword">SET</span> SESSION sort_buffer_size <span class="operator">=</span> <span class="number">1048576</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 执行需要排序的查询</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">SET</span> SESSION sort_buffer_size <span class="operator">=</span> <span class="variable">@old_sort_buffer_size</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里的排序对照都保持256 KiB，性能提升来自索引。排序缓冲区属于连接执行排序时使用的内存，并发连接一起排序时也会一起增加内存占用。</p>
+<h2 id="GROUP-BY优化"><a href="#GROUP-BY优化" class="headerlink" title="GROUP BY优化"></a>GROUP BY优化</h2><p>一开始没有联合索引时，我们执行了下面的查询。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> profession, <span class="built_in">COUNT</span>(<span class="operator">*</span>)</span><br><span class="line"><span class="keyword">FROM</span> tb_user</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> profession;</span><br></pre></td></tr></table></figure>
+
+<p><code>EXPLAIN ANALYZE</code>的输出中有这样两步。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Table scan on &lt;temporary&gt;</span><br><span class="line">    -&gt; Aggregate using temporary table</span><br><span class="line">        -&gt; Table scan on tb_user</span><br></pre></td></tr></table></figure>
+
+<p>建好<code>idx_pro_age_sta(profession, age, status)</code>之后，再看同一条查询。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN ANALYZE</span><br><span class="line"><span class="keyword">SELECT</span> profession, <span class="built_in">COUNT</span>(<span class="operator">*</span>)</span><br><span class="line"><span class="keyword">FROM</span> tb_user</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> profession;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Group aggregate: count(0)</span><br><span class="line">    -&gt; Covering index scan on tb_user using idx_pro_age_sta</span><br></pre></td></tr></table></figure>
+
+<p>同一职业的数据已经排在一起，读取一个职业的所有记录就能算出这一组的数量。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>实际处理</th>
+<th align="right">耗时中位数（ms）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>没有职业联合索引</td>
+<td>扫20,000行，借助临时表聚合</td>
+<td align="right">8.26</td>
+</tr>
+<tr>
+<td>有职业联合索引</td>
+<td>扫20,000条索引记录，按职业分组</td>
+<td align="right">3.53</td>
+</tr>
+</tbody></table>
+<p>两种写法都得到四组，每组5,000人。索引没有减少这次计数所需读取的记录数，但扫描的内容更少，也省掉了临时表聚合，时间减少约57%。</p>
+<p>联合索引还可以用于前两列的分组。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> profession, age, <span class="built_in">COUNT</span>(<span class="operator">*</span>)</span><br><span class="line"><span class="keyword">FROM</span> tb_user</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> profession, age;</span><br></pre></td></tr></table></figure>
+
+<p>实测返回100组，中位耗时3.92 ms，<code>Extra</code>为<code>Using index</code>。</p>
+<p>再试一下跳过职业，只按年龄分组。这里指定职业联合索引，方便单独看它的表现。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN <span class="keyword">SELECT</span> age, <span class="built_in">COUNT</span>(<span class="operator">*</span>)</span><br><span class="line"><span class="keyword">FROM</span> tb_user USE INDEX (idx_pro_age_sta)</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> age;</span><br></pre></td></tr></table></figure>
+
+<p><code>Extra</code>变为<code>Using index; Using temporary</code>，返回50组，中位耗时4.07 ms。年龄在各个职业内分别排列，同一年龄的数据分散在不同职业段中，因此还要借助临时表聚合。结合前面的<code>(age, phone)</code>索引，单独按年龄分组则可以按年龄的索引顺序处理。</p>
+<p><code>GROUP BY</code>负责分组。需要保证结果顺序时，在查询中另写<code>ORDER BY</code>。</p>
+<h2 id="LIMIT优化"><a href="#LIMIT优化" class="headerlink" title="LIMIT优化"></a>LIMIT优化</h2><p>页数很靠后时，即使每页只取十行，也要先处理前面被跳过的记录。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> tb_user</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> age, phone</span><br><span class="line">LIMIT <span class="number">19000</span>, <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里跳过19,000行，再返回十行。<code>phone</code>在这批数据中唯一，因此<code>age, phone</code>也确定了每条记录的顺序。</p>
+<p>实际计划节选如下。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Limit/Offset: 10/19000 row(s)</span><br><span class="line">    -&gt; Sort: tb_user.age, tb_user.phone,</span><br><span class="line">       limit input to 19010 row(s) per chunk</span><br><span class="line">        -&gt; Table scan on tb_user</span><br><span class="line">           (... rows=20000 loops=1)</span><br></pre></td></tr></table></figure>
+
+<p>我们虽然建了年龄、手机号索引，但是<code>SELECT *</code>还要取邮箱和500字符的内容。这次优化器选了扫描整表后排序。</p>
+<p>可以先在覆盖索引里找出这一页的主键，再取完整记录。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> u.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> tb_user <span class="keyword">AS</span> u</span><br><span class="line"><span class="keyword">JOIN</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> id, age, phone</span><br><span class="line">    <span class="keyword">FROM</span> tb_user</span><br><span class="line">    <span class="keyword">ORDER</span> <span class="keyword">BY</span> age, phone</span><br><span class="line">    LIMIT <span class="number">19000</span>, <span class="number">10</span></span><br><span class="line">) <span class="keyword">AS</span> p <span class="keyword">ON</span> u.id <span class="operator">=</span> p.id</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> p.age, p.phone;</span><br></pre></td></tr></table></figure>
+
+<p>子查询先沿<code>idx_age_phone</code>读取19,010条索引记录，跳过前面的19,000条，得到十个主键。然后根据这十个主键回表，取出十条完整记录。外层<code>ORDER BY</code>保证最终输出顺序。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Nested loop inner join</span><br><span class="line">    -&gt; Sort: p.age, p.phone</span><br><span class="line">        -&gt; Table scan on p</span><br><span class="line">            -&gt; Materialize</span><br><span class="line">                -&gt; Limit/Offset: 10/19000 row(s)</span><br><span class="line">                    -&gt; Covering index scan on tb_user</span><br><span class="line">                       using idx_age_phone</span><br><span class="line">                       (... rows=19010 loops=1)</span><br><span class="line">    -&gt; Single-row index lookup on u using PRIMARY (id=p.id)</span><br><span class="line">       (... rows=1 loops=10)</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>主要工作</th>
+<th align="right">耗时中位数（ms）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>直接<code>SELECT *</code>分页</td>
+<td>扫20,000条完整记录，再排序、跳过</td>
+<td align="right">31.00</td>
+</tr>
+<tr>
+<td>覆盖索引加子查询</td>
+<td>扫19,010条索引记录，只回表十次</td>
+<td align="right">2.66</td>
+</tr>
+</tbody></table>
+<p>结果都是同一页的十行，改写后时间减少约91%。子查询仍然要跳过前面的索引记录，这次省下的是大量完整行的读取和排序。</p>
+<h2 id="COUNT优化"><a href="#COUNT优化" class="headerlink" title="COUNT优化"></a>COUNT优化</h2><h3 id="几种写法"><a href="#几种写法" class="headerlink" title="几种写法"></a>几种写法</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>), <span class="built_in">COUNT</span>(<span class="number">1</span>), <span class="built_in">COUNT</span>(id), <span class="built_in">COUNT</span>(age), <span class="built_in">COUNT</span>(email)</span><br><span class="line"><span class="keyword">FROM</span> tb_user;</span><br></pre></td></tr></table></figure>
+
+<p>输出如下。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">COUNT(*)  COUNT(1)  COUNT(id)  COUNT(age)  COUNT(email)</span><br><span class="line">20000     20000     20000     20000       16000</span><br></pre></td></tr></table></figure>
+
+<p><code>COUNT(*)</code>统计行数，<code>COUNT(1)</code>也是每行计一次。<code>COUNT(字段)</code>只统计该字段不为<code>NULL</code>的记录。表中的<code>id</code>和<code>age</code>都有<code>NOT NULL</code>约束，所以也得到20,000；邮箱每五行有一个<code>NULL</code>，因此得到16,000。</p>
+<p>再分别执行五条计数语句，看看它们怎么读取数据。</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>执行计划</th>
+<th align="right">计数结果</th>
+<th align="right">耗时中位数（ms）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>COUNT(*)</code></td>
+<td><code>Count rows in tb_user</code></td>
+<td align="right">20000</td>
+<td align="right">1.85</td>
+</tr>
+<tr>
+<td><code>COUNT(1)</code></td>
+<td><code>Count rows in tb_user</code></td>
+<td align="right">20000</td>
+<td align="right">1.60</td>
+</tr>
+<tr>
+<td><code>COUNT(id)</code></td>
+<td><code>Count rows in tb_user</code></td>
+<td align="right">20000</td>
+<td align="right">1.86</td>
+</tr>
+<tr>
+<td><code>COUNT(age)</code></td>
+<td><code>Count rows in tb_user</code></td>
+<td align="right">20000</td>
+<td align="right">2.15</td>
+</tr>
+<tr>
+<td><code>COUNT(email)</code></td>
+<td>扫表后<code>Aggregate: count(tb_user.email)</code></td>
+<td align="right">16000</td>
+<td align="right">4.14</td>
+</tr>
+</tbody></table>
+<p>前四条普通<code>EXPLAIN</code>都显示使用<code>idx_age_phone</code>，并有<code>Using index</code>，<code>EXPLAIN ANALYZE</code>都使用相同的行数计数节点。这里<code>COUNT(id)</code>也没有按主键扫描整张宽表，二级索引里已有主键值。</p>
+<p>邮箱没有索引，且允许<code>NULL</code>，所以MySQL扫描完整记录并判断邮箱值，耗时明显增加。<strong>统计总行数就写<code>COUNT(*)</code>，统计某列有值的记录就写<code>COUNT(列)</code>。</strong> 这组测试中，前三种总行数写法都走了同一个计数计划，不能把<code>COUNT(主键)</code>固定排成更慢的一档。</p>
+<h3 id="存储引擎的区别"><a href="#存储引擎的区别" class="headerlink" title="存储引擎的区别"></a>存储引擎的区别</h3><p>MyISAM保存了整张表的行数，单表、没有<code>WHERE</code>的<code>COUNT(*)</code>可以直接取得这个数字。带条件统计时仍然要找出符合条件的记录。</p>
+<p>InnoDB中，不同事务能看到的记录可能不同，精确计数需要统计当前事务可见的记录。因此表越大，反复计算全表行数的工作也越多。</p>
+<p>如果页面总是要显示同一个总数，可以额外维护一张计数表。新增记录时在同一事务中让计数加一，删除成功时让计数减一。这样读取总数只需查询一条记录，计数与原表的修改也一起提交或回滚。</p>
+<h2 id="UPDATE优化"><a href="#UPDATE优化" class="headerlink" title="UPDATE优化"></a>UPDATE优化</h2><h3 id="按索引定位"><a href="#按索引定位" class="headerlink" title="按索引定位"></a>按索引定位</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> lock_demo (</span><br><span class="line">    id <span class="type">INT</span> <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    name <span class="type">VARCHAR</span>(<span class="number">20</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    <span class="keyword">no</span> <span class="type">VARCHAR</span>(<span class="number">20</span>)</span><br><span class="line">) ENGINE <span class="operator">=</span> InnoDB;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT INTO</span> lock_demo <span class="keyword">VALUES</span></span><br><span class="line">    (<span class="number">1</span>, <span class="string">&#x27;Tom&#x27;</span>, <span class="string">&#x27;001&#x27;</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="string">&#x27;Cat&#x27;</span>, <span class="string">&#x27;002&#x27;</span>),</span><br><span class="line">    (<span class="number">3</span>, <span class="string">&#x27;Jerry&#x27;</span>, <span class="string">&#x27;003&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>先开两个连接。连接A执行下面的语句，保持事务未提交。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"></span><br><span class="line"><span class="keyword">UPDATE</span> lock_demo <span class="keyword">SET</span> <span class="keyword">no</span> <span class="operator">=</span> <span class="string">&#x27;101&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>连接B更新第二条记录。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> SESSION innodb_lock_wait_timeout <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">UPDATE</span> lock_demo <span class="keyword">SET</span> <span class="keyword">no</span> <span class="operator">=</span> <span class="string">&#x27;202&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"><span class="keyword">SELECT</span> ROW_COUNT();</span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br></pre></td></tr></table></figure>
+
+<p>连接B正常完成，<code>ROW_COUNT()</code>为1。这时从<code>performance_schema.data_locks</code>看到连接A持有的锁如下。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LOCK_TYPE  LOCK_MODE       INDEX_NAME  LOCK_DATA</span><br><span class="line">RECORD     X,REC_NOT_GAP   PRIMARY     1</span><br><span class="line">TABLE      IX             NULL        NULL</span><br></pre></td></tr></table></figure>
+
+<p><code>RECORD</code>是索引记录锁，<code>X</code>表示排他锁，<code>REC_NOT_GAP</code>表示只锁住这条记录。<code>TABLE IX</code>是表级的意向排他锁，它与这里连接B更新另一条记录兼容。</p>
+<h3 id="没有索引时"><a href="#没有索引时" class="headerlink" title="没有索引时"></a>没有索引时</h3><p>连接A先<code>ROLLBACK</code>，然后换成按姓名更新。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"></span><br><span class="line"><span class="keyword">UPDATE</span> lock_demo <span class="keyword">SET</span> <span class="keyword">no</span> <span class="operator">=</span> <span class="string">&#x27;101&#x27;</span> <span class="keyword">WHERE</span> name <span class="operator">=</span> <span class="string">&#x27;Tom&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>name</code>没有索引。连接A要扫描表，测试使用默认的<code>REPEATABLE READ</code>隔离级别，此时看到的锁如下。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">LOCK_TYPE  LOCK_MODE  INDEX_NAME  LOCK_DATA</span><br><span class="line">RECORD     X          PRIMARY     1</span><br><span class="line">RECORD     X          PRIMARY     2</span><br><span class="line">RECORD     X          PRIMARY     3</span><br><span class="line">RECORD     X          PRIMARY     supremum pseudo-record</span><br><span class="line">TABLE      IX         NULL        NULL</span><br></pre></td></tr></table></figure>
+
+<p>三条主键记录都被锁住，还能看到代表索引末端的伪记录锁。这里的记录锁连同间隙构成next-key锁，用来保护扫描到的索引范围。</p>
+<p>连接B再执行刚才更新<code>id = 2</code>的语句，结果如下。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction</span><br></pre></td></tr></table></figure>
+
+<p>连接A虽然只修改了Tom，扫描过程却扩大了锁定范围，使Cat也无法被另一连接更新。两边最后都执行<code>ROLLBACK</code>，恢复原值。</p>
+<p>所以更新时应该让条件通过主键或合适的索引定位，缩小扫描和锁定范围。课件中“行锁升级为表锁”这句话需要改一下，这次实际看到的是大量索引记录和间隙被锁定，表级锁仍然是<code>IX</code>。InnoDB没有因为记录锁增多就自动升级成整表排他锁。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/11/19/SQL-SQL%E4%BC%98%E5%8C%96/">http://gazettm.github.io/2026/11/19/SQL-SQL%E4%BC%98%E5%8C%96/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/SQL/"># SQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/11/16/SQL-%E7%B4%A2%E5%BC%95&%E6%80%A7%E8%83%BD&%E4%BD%BF%E7%94%A8/">SQL:索引&性能&使用</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
