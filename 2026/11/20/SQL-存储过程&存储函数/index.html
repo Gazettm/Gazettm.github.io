@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>SQL:存储过程&amp;存储函数 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">SQL:存储过程&amp;存储函数</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 20, 2026&nbsp;&nbsp;18:41:40</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/SQL/">SQL</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="存储过程与存储函数"><a href="#存储过程与存储函数" class="headerlink" title="存储过程与存储函数"></a>存储过程与存储函数</h1><p>假设我们经常要查某个年龄以下的用户。有时要看名单，有时要统计人数。SQL 可以存到数据库里，调用时把年龄传进去，这就是存储过程的一种用法。如果只想把一个值算出来，比如把两百分制换成百分制，也可以写一个存储函数，放到 <code>SELECT</code> 里调用。</p>
+<p>下面都在同一个练习库里做。输出来自 MySQL 8.0.46。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> DATABASE routine_demo <span class="keyword">CHARACTER SET</span> utf8mb4;</span><br><span class="line">USE routine_demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE TABLE</span> users (</span><br><span class="line">    id <span class="type">INT</span> <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    uname <span class="type">VARCHAR</span>(<span class="number">30</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    uprofession <span class="type">VARCHAR</span>(<span class="number">30</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    age <span class="type">INT</span> <span class="keyword">NOT NULL</span></span><br><span class="line">) ENGINE <span class="operator">=</span> InnoDB;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT INTO</span> users <span class="keyword">VALUES</span></span><br><span class="line">    (<span class="number">1</span>, <span class="string">&#x27;Tom&#x27;</span>,   <span class="string">&#x27;Engineer&#x27;</span>, <span class="number">23</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="string">&#x27;Cat&#x27;</span>,   <span class="string">&#x27;Teacher&#x27;</span>,  <span class="number">28</span>),</span><br><span class="line">    (<span class="number">3</span>, <span class="string">&#x27;Jerry&#x27;</span>, <span class="string">&#x27;Engineer&#x27;</span>, <span class="number">25</span>),</span><br><span class="line">    (<span class="number">4</span>, <span class="string">&#x27;Lily&#x27;</span>,  <span class="string">&#x27;Designer&#x27;</span>, <span class="number">20</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="存储过程"><a href="#存储过程" class="headerlink" title="存储过程"></a>存储过程</h2><h3 id="创建和调用"><a href="#创建和调用" class="headerlink" title="创建和调用"></a>创建和调用</h3><p>先写一个按年龄上限查名单的过程。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> list_users_by_age(<span class="keyword">IN</span> p_max_age <span class="type">INT</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span> id, uname, age</span><br><span class="line">    <span class="keyword">FROM</span> users</span><br><span class="line">    <span class="keyword">WHERE</span> age <span class="operator">&lt;=</span> p_max_age</span><br><span class="line">    <span class="keyword">ORDER</span> <span class="keyword">BY</span> id;</span><br><span class="line"><span class="keyword">END</span><span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CALL</span> list_users_by_age(<span class="number">25</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">id  uname  age</span><br><span class="line">1   Tom    23</span><br><span class="line">3   Jerry  25</span><br><span class="line">4   Lily   20</span><br></pre></td></tr></table></figure>
+
+<p><code>CREATE PROCEDURE</code> 把查询保存下来，<code>CALL</code> 执行它。这里的 <code>25</code> 是调用时传进去的，过程里的 <code>SELECT</code> 直接把结果集交给调用方。如果原来需要客户端发几条请求才能完成一项操作，也可以把几条 SQL 放到一个过程里，用一次 <code>CALL</code> 发过去。</p>
+<p><code>DELIMITER //</code> 是 <code>mysql</code> 命令行客户端的命令。过程体里有分号，客户端需要等读到 <code>END//</code> 才把整条创建语句交给服务器。建完后用 <code>DELIMITER ;</code> 改回去。这里的 <code>BEGIN ... END</code> 用于把语句放在同一个块里，开启事务则用 <code>START TRANSACTION</code>。</p>
+<h3 id="查看定义和已有的过程"><a href="#查看定义和已有的过程" class="headerlink" title="查看定义和已有的过程"></a>查看定义和已有的过程</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> list_users_by_age;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> ROUTINE_NAME, ROUTINE_TYPE</span><br><span class="line"><span class="keyword">FROM</span> INFORMATION_SCHEMA.ROUTINES</span><br><span class="line"><span class="keyword">WHERE</span> ROUTINE_SCHEMA <span class="operator">=</span> DATABASE() <span class="keyword">AND</span> ROUTINE_TYPE <span class="operator">=</span> <span class="string">&#x27;PROCEDURE&#x27;</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> ROUTINE_NAME;</span><br></pre></td></tr></table></figure>
+
+<p><code>SHOW CREATE PROCEDURE</code> 可以看到过程的定义。<code>INFORMATION_SCHEMA.ROUTINES</code> 里同时有过程和函数，所以这里加上了 <code>ROUTINE_TYPE = &#39;PROCEDURE&#39;</code>。执行到这一步，输出只有一行。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ROUTINE_NAME       ROUTINE_TYPE</span><br><span class="line">list_users_by_age  PROCEDURE</span><br></pre></td></tr></table></figure>
+
+<p>删除时用 <code>DROP PROCEDURE IF EXISTS list_users_by_age;</code>。这个过程后面会和其他例子一起清理。</p>
+<h2 id="三种变量"><a href="#三种变量" class="headerlink" title="三种变量"></a>三种变量</h2><h3 id="系统变量"><a href="#系统变量" class="headerlink" title="系统变量"></a>系统变量</h3><p><code>@@</code> 用来读系统变量。以 <code>sql_safe_updates</code> 为例，它有全局值和当前连接的值。先保存会话原值，打开它看一眼，再恢复。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> <span class="variable">@old_safe_updates</span> <span class="operator">=</span> @<span class="variable">@SESSION</span>.sql_safe_updates;</span><br><span class="line"><span class="keyword">SET</span> SESSION sql_safe_updates <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SHOW</span> SESSION VARIABLES <span class="keyword">LIKE</span> <span class="string">&#x27;sql_safe_updates&#x27;</span>;</span><br><span class="line"><span class="keyword">SELECT</span> @<span class="variable">@SESSION</span>.sql_safe_updates <span class="keyword">AS</span> session_value,</span><br><span class="line">       @<span class="variable">@GLOBAL</span>.sql_safe_updates <span class="keyword">AS</span> global_value;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SET</span> SESSION sql_safe_updates <span class="operator">=</span> <span class="variable">@old_safe_updates</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Variable_name     Value</span><br><span class="line">sql_safe_updates  ON</span><br><span class="line"></span><br><span class="line">session_value  global_value</span><br><span class="line">1              0</span><br></pre></td></tr></table></figure>
+
+<p><code>SET SESSION</code> 只改当前连接。对于这类同时有全局和会话值的变量，<code>SET GLOBAL</code> 改的是新连接取到的初始值，已经连接的会话保留各自的值。<code>SET GLOBAL</code> 要有权限，设置本身也不会跨重启保留，长期配置可以写进 MySQL 配置文件。</p>
+<p><code>SHOW GLOBAL VARIABLES LIKE &#39;sql_safe_updates&#39;;</code> 可以单独看全局值。对这个变量，直接写 <code>@@sql_safe_updates</code> 读到的是会话值。</p>
+<h3 id="用户变量"><a href="#用户变量" class="headerlink" title="用户变量"></a>用户变量</h3><p>一个 <code>@</code> 开头的是用户变量，用 <code>SET</code> 赋值就能在当前连接里使用。也可以用 <code>SELECT ... INTO</code> 把一行查询结果放进去。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> <span class="variable">@max_age</span> <span class="operator">=</span> <span class="number">25</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">INTO</span> <span class="variable">@young_users</span></span><br><span class="line"><span class="keyword">FROM</span> users</span><br><span class="line"><span class="keyword">WHERE</span> age <span class="operator">&lt;=</span> <span class="variable">@max_age</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="variable">@max_age</span> <span class="keyword">AS</span> max_age, <span class="variable">@young_users</span> <span class="keyword">AS</span> young_users;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">max_age  young_users</span><br><span class="line">25       3</span><br></pre></td></tr></table></figure>
+
+<p>另开一个连接执行同样的 <code>SELECT @max_age AS max_age, @young_users AS young_users;</code>，两个值都是 <code>NULL</code>。后面接收过程的输出时，<code>CALL</code> 和查 <code>@变量</code> 的语句也要放在同一个连接里。</p>
+<p><code>SET @max_age := 25;</code> 也能赋值。旧代码中还可能见到 <code>SELECT @max_age := 25;</code>，单纯赋值时用 <code>SET</code> 就够了。</p>
+<h3 id="局部变量"><a href="#局部变量" class="headerlink" title="局部变量"></a>局部变量</h3><p>过程里的临时值可以用 <code>DECLARE</code> 声明。它要放在 <code>BEGIN ... END</code> 块的开头，可以加 <code>DEFAULT</code>，省略时初始值是 <code>NULL</code>。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> count_users_by_age(<span class="keyword">IN</span> p_max_age <span class="type">INT</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">DECLARE</span> v_count <span class="type">BIGINT</span> <span class="keyword">DEFAULT</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">INTO</span> v_count</span><br><span class="line">    <span class="keyword">FROM</span> users</span><br><span class="line">    <span class="keyword">WHERE</span> age <span class="operator">&lt;=</span> p_max_age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">SELECT</span> v_count <span class="keyword">AS</span> young_users;</span><br><span class="line"><span class="keyword">END</span><span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CALL</span> count_users_by_age(<span class="number">25</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">young_users</span><br><span class="line">3</span><br></pre></td></tr></table></figure>
+
+<p><code>v_count</code> 只在这个块里使用，每次调用都重新声明。参数 <code>p_max_age</code> 在过程的参数列表中定义。这里用 <code>p_</code> 和 <code>v_</code> 区分参数和局部变量，后面写游标查询时能少踩一个同名的坑。</p>
+<h2 id="参数和分支"><a href="#参数和分支" class="headerlink" title="参数和分支"></a>参数和分支</h2><h3 id="IN、OUT和INOUT"><a href="#IN、OUT和INOUT" class="headerlink" title="IN、OUT和INOUT"></a>IN、OUT和INOUT</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>调用时怎么用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>IN</code></td>
+<td>传值给过程。省略方向时默认是 <code>IN</code></td>
+</tr>
+<tr>
+<td><code>OUT</code></td>
+<td>过程写结果，调用结束后从传入的变量里读出来</td>
+</tr>
+<tr>
+<td><code>INOUT</code></td>
+<td>变量先带一个值进去，过程改完再把值写回去</td>
+</tr>
+</tbody></table>
+<p>我们写两个例子。第一个传入分数，通过 <code>OUT</code> 拿到等级。第二个把两百分制的分数除以二，再写回原变量。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> grade_score(<span class="keyword">IN</span> p_score <span class="type">INT</span>, <span class="keyword">OUT</span> p_grade <span class="type">VARCHAR</span>(<span class="number">10</span>))</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    IF p_score <span class="keyword">IS</span> <span class="keyword">NULL</span> <span class="keyword">THEN</span></span><br><span class="line">        <span class="keyword">SET</span> p_grade <span class="operator">=</span> <span class="string">&#x27;missing&#x27;</span>;</span><br><span class="line">    ELSEIF p_score <span class="operator">&gt;=</span> <span class="number">85</span> <span class="keyword">THEN</span></span><br><span class="line">        <span class="keyword">SET</span> p_grade <span class="operator">=</span> <span class="string">&#x27;excellent&#x27;</span>;</span><br><span class="line">    ELSEIF p_score <span class="operator">&gt;=</span> <span class="number">60</span> <span class="keyword">THEN</span></span><br><span class="line">        <span class="keyword">SET</span> p_grade <span class="operator">=</span> <span class="string">&#x27;pass&#x27;</span>;</span><br><span class="line">    <span class="keyword">ELSE</span></span><br><span class="line">        <span class="keyword">SET</span> p_grade <span class="operator">=</span> <span class="string">&#x27;fail&#x27;</span>;</span><br><span class="line">    <span class="keyword">END</span> IF;</span><br><span class="line"><span class="keyword">END</span><span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> rescale_score(<span class="keyword">INOUT</span> p_score <span class="type">DECIMAL</span>(<span class="number">6</span>,<span class="number">2</span>))</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SET</span> p_score <span class="operator">=</span> p_score <span class="operator">/</span> <span class="number">2</span>;</span><br><span class="line"><span class="keyword">END</span><span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CALL</span> grade_score(<span class="number">85</span>, <span class="variable">@grade_85</span>);</span><br><span class="line"><span class="keyword">CALL</span> grade_score(<span class="number">60</span>, <span class="variable">@grade_60</span>);</span><br><span class="line"><span class="keyword">CALL</span> grade_score(<span class="number">59</span>, <span class="variable">@grade_59</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">SET</span> <span class="variable">@score</span> <span class="operator">=</span> <span class="number">198</span>;</span><br><span class="line"><span class="keyword">CALL</span> rescale_score(<span class="variable">@score</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="variable">@grade_85</span> <span class="keyword">AS</span> score_85, <span class="variable">@grade_60</span> <span class="keyword">AS</span> score_60,</span><br><span class="line">       <span class="variable">@grade_59</span> <span class="keyword">AS</span> score_59, <span class="variable">@score</span> <span class="keyword">AS</span> rescaled_score;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">score_85   score_60  score_59  rescaled_score</span><br><span class="line">excellent  pass      fail      99.00</span><br></pre></td></tr></table></figure>
+
+<p><code>IF</code> 会从上往下找第一个成立的条件。这里先判断 <code>&gt;= 85</code>，再判断 <code>&gt;= 60</code>，所以 85 分会进入优秀档。<code>@grade_85</code> 只接收输出，调用前可以不赋值。<code>@score</code> 还要提供输入，就先设成 198。</p>
+<h3 id="CASE的两种写法"><a href="#CASE的两种写法" class="headerlink" title="CASE的两种写法"></a>CASE的两种写法</h3><p>考试类型只有几个固定值，可以写 <code>CASE p_exam_type</code>。分数按区间判断，则用 <code>CASE WHEN 条件</code>。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> describe_score(<span class="keyword">IN</span> p_score <span class="type">INT</span>, <span class="keyword">IN</span> p_exam_type <span class="type">CHAR</span>(<span class="number">1</span>))</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">DECLARE</span> v_exam <span class="type">VARCHAR</span>(<span class="number">10</span>);</span><br><span class="line">    <span class="keyword">DECLARE</span> v_band <span class="type">VARCHAR</span>(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">CASE</span> p_exam_type</span><br><span class="line">        <span class="keyword">WHEN</span> <span class="string">&#x27;M&#x27;</span> <span class="keyword">THEN</span> <span class="keyword">SET</span> v_exam <span class="operator">=</span> <span class="string">&#x27;Midterm&#x27;</span>;</span><br><span class="line">        <span class="keyword">WHEN</span> <span class="string">&#x27;F&#x27;</span> <span class="keyword">THEN</span> <span class="keyword">SET</span> v_exam <span class="operator">=</span> <span class="string">&#x27;Final&#x27;</span>;</span><br><span class="line">        <span class="keyword">ELSE</span> <span class="keyword">SET</span> v_exam <span class="operator">=</span> <span class="string">&#x27;Unknown&#x27;</span>;</span><br><span class="line">    <span class="keyword">END</span> <span class="keyword">CASE</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">CASE</span></span><br><span class="line">        <span class="keyword">WHEN</span> p_score <span class="operator">&gt;=</span> <span class="number">85</span> <span class="keyword">THEN</span> <span class="keyword">SET</span> v_band <span class="operator">=</span> <span class="string">&#x27;excellent&#x27;</span>;</span><br><span class="line">        <span class="keyword">WHEN</span> p_score <span class="operator">&gt;=</span> <span class="number">60</span> <span class="keyword">THEN</span> <span class="keyword">SET</span> v_band <span class="operator">=</span> <span class="string">&#x27;pass&#x27;</span>;</span><br><span class="line">        <span class="keyword">WHEN</span> p_score <span class="operator">&lt;</span> <span class="number">60</span> <span class="keyword">THEN</span> <span class="keyword">SET</span> v_band <span class="operator">=</span> <span class="string">&#x27;fail&#x27;</span>;</span><br><span class="line">        <span class="keyword">ELSE</span> <span class="keyword">SET</span> v_band <span class="operator">=</span> <span class="string">&#x27;missing&#x27;</span>;</span><br><span class="line">    <span class="keyword">END</span> <span class="keyword">CASE</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">SELECT</span> v_exam <span class="keyword">AS</span> exam, v_band <span class="keyword">AS</span> grade;</span><br><span class="line"><span class="keyword">END</span><span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CALL</span> describe_score(<span class="number">72</span>, <span class="string">&#x27;F&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exam   grade</span><br><span class="line">Final  pass</span><br></pre></td></tr></table></figure>
+
+<p>两个 <code>CASE</code> 的分支里都能执行 <code>SET</code> 等语句，最后用 <code>END CASE</code> 收尾。平时在 <code>SELECT</code> 里写的 <code>CASE ... END</code> 是取值表达式，结尾少一个 <code>CASE</code>。</p>
+<h2 id="WHILE、REPEAT和LOOP"><a href="#WHILE、REPEAT和LOOP" class="headerlink" title="WHILE、REPEAT和LOOP"></a>WHILE、REPEAT和LOOP</h2><p>用同一个 <code>n</code> 来试三种循环。前两种把 1 到 <code>n</code> 相加，最后一种只加奇数。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> sum_demo(<span class="keyword">IN</span> p_n <span class="type">INT</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">DECLARE</span> v_n <span class="type">BIGINT</span> <span class="keyword">DEFAULT</span> <span class="built_in">COALESCE</span>(p_n, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">DECLARE</span> v_while <span class="type">BIGINT</span> <span class="keyword">DEFAULT</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">DECLARE</span> v_repeat <span class="type">BIGINT</span> <span class="keyword">DEFAULT</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">DECLARE</span> v_odd <span class="type">BIGINT</span> <span class="keyword">DEFAULT</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">DECLARE</span> v_repeat_runs <span class="type">BIGINT</span> <span class="keyword">DEFAULT</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    WHILE v_n <span class="operator">&gt;</span> <span class="number">0</span> DO</span><br><span class="line">        <span class="keyword">SET</span> v_while <span class="operator">=</span> v_while <span class="operator">+</span> v_n;</span><br><span class="line">        <span class="keyword">SET</span> v_n <span class="operator">=</span> v_n <span class="operator">-</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">END</span> WHILE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">SET</span> v_n <span class="operator">=</span> GREATEST(<span class="built_in">COALESCE</span>(p_n, <span class="number">0</span>), <span class="number">0</span>);</span><br><span class="line">    REPEAT</span><br><span class="line">        <span class="keyword">SET</span> v_repeat <span class="operator">=</span> v_repeat <span class="operator">+</span> v_n;</span><br><span class="line">        <span class="keyword">SET</span> v_repeat_runs <span class="operator">=</span> v_repeat_runs <span class="operator">+</span> <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">SET</span> v_n <span class="operator">=</span> v_n <span class="operator">-</span> <span class="number">1</span>;</span><br><span class="line">    UNTIL v_n <span class="operator">&lt;=</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">END</span> REPEAT;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">SET</span> v_n <span class="operator">=</span> <span class="built_in">COALESCE</span>(p_n, <span class="number">0</span>);</span><br><span class="line">    sum_odd: LOOP</span><br><span class="line">        IF v_n <span class="operator">&lt;=</span> <span class="number">0</span> <span class="keyword">THEN</span></span><br><span class="line">            LEAVE sum_odd;</span><br><span class="line">        <span class="keyword">END</span> IF;</span><br><span class="line"></span><br><span class="line">        IF <span class="built_in">MOD</span>(v_n, <span class="number">2</span>) <span class="operator">=</span> <span class="number">0</span> <span class="keyword">THEN</span></span><br><span class="line">            <span class="keyword">SET</span> v_n <span class="operator">=</span> v_n <span class="operator">-</span> <span class="number">1</span>;</span><br><span class="line">            ITERATE sum_odd;</span><br><span class="line">        <span class="keyword">END</span> IF;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">SET</span> v_odd <span class="operator">=</span> v_odd <span class="operator">+</span> v_n;</span><br><span class="line">        <span class="keyword">SET</span> v_n <span class="operator">=</span> v_n <span class="operator">-</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">END</span> LOOP sum_odd;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">SELECT</span> v_while <span class="keyword">AS</span> while_sum, v_repeat <span class="keyword">AS</span> repeat_sum,</span><br><span class="line">           v_repeat_runs <span class="keyword">AS</span> repeat_runs, v_odd <span class="keyword">AS</span> odd_sum;</span><br><span class="line"><span class="keyword">END</span><span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CALL</span> sum_demo(<span class="number">100</span>);</span><br><span class="line"><span class="keyword">CALL</span> sum_demo(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">while_sum  repeat_sum  repeat_runs  odd_sum</span><br><span class="line">5050       5050        100          2500</span><br><span class="line"></span><br><span class="line">while_sum  repeat_sum  repeat_runs  odd_sum</span><br><span class="line">0          0           1            0</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>WHILE</code> 先判断。传入 0 时，循环体一次也不执行。</li>
+<li><code>REPEAT</code> 先执行一轮，再判断 <code>UNTIL</code>。传入 0 时，虽然加起来还是 0，<code>repeat_runs</code> 已经变成了 1。</li>
+<li><code>LOOP</code> 的退出条件写在循环体里。<code>LEAVE sum_odd</code> 跳出循环，<code>ITERATE sum_odd</code> 跳到下一轮。遇到偶数时，要先减一再 <code>ITERATE</code>，否则下一轮又会读到同一个偶数。</li>
+</ul>
+<h2 id="游标和条件处理程序"><a href="#游标和条件处理程序" class="headerlink" title="游标和条件处理程序"></a>游标和条件处理程序</h2><h3 id="把符合年龄条件的用户逐行取出来"><a href="#把符合年龄条件的用户逐行取出来" class="headerlink" title="把符合年龄条件的用户逐行取出来"></a>把符合年龄条件的用户逐行取出来</h3><p>假设要从 <code>users</code> 中取出年龄不超过 25 的用户，把编号、姓名和职业放进一张表。游标可以把查询结果一行一行交给过程。这里先在当前连接里建一张临时表，后面的 <code>CALL</code> 也在这个连接里执行。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> TEMPORARY <span class="keyword">TABLE</span> t_user_profession (</span><br><span class="line">    user_id <span class="type">INT</span> <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    name <span class="type">VARCHAR</span>(<span class="number">30</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    profession <span class="type">VARCHAR</span>(<span class="number">30</span>) <span class="keyword">NOT NULL</span></span><br><span class="line">) ENGINE <span class="operator">=</span> InnoDB;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> collect_user_professions(<span class="keyword">IN</span> p_max_age <span class="type">INT</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">DECLARE</span> v_id <span class="type">INT</span>;</span><br><span class="line">    <span class="keyword">DECLARE</span> v_name <span class="type">VARCHAR</span>(<span class="number">30</span>);</span><br><span class="line">    <span class="keyword">DECLARE</span> v_profession <span class="type">VARCHAR</span>(<span class="number">30</span>);</span><br><span class="line">    <span class="keyword">DECLARE</span> v_done <span class="type">BOOLEAN</span> <span class="keyword">DEFAULT</span> <span class="literal">FALSE</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">DECLARE</span> user_cur <span class="keyword">CURSOR</span> <span class="keyword">FOR</span></span><br><span class="line">        <span class="keyword">SELECT</span> u.id, u.uname, u.uprofession</span><br><span class="line">        <span class="keyword">FROM</span> users <span class="keyword">AS</span> u</span><br><span class="line">        <span class="keyword">WHERE</span> u.age <span class="operator">&lt;=</span> p_max_age</span><br><span class="line">        <span class="keyword">ORDER</span> <span class="keyword">BY</span> u.id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">DECLARE</span> CONTINUE HANDLER <span class="keyword">FOR</span> <span class="keyword">NOT</span> FOUND <span class="keyword">SET</span> v_done <span class="operator">=</span> <span class="literal">TRUE</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">DELETE</span> <span class="keyword">FROM</span> t_user_profession;</span><br><span class="line">    <span class="keyword">OPEN</span> user_cur;</span><br><span class="line"></span><br><span class="line">    read_users: LOOP</span><br><span class="line">        <span class="keyword">FETCH</span> user_cur <span class="keyword">INTO</span> v_id, v_name, v_profession;</span><br><span class="line">        IF v_done <span class="keyword">THEN</span></span><br><span class="line">            LEAVE read_users;</span><br><span class="line">        <span class="keyword">END</span> IF;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">INSERT INTO</span> t_user_profession (user_id, name, profession)</span><br><span class="line">        <span class="keyword">VALUES</span> (v_id, v_name, v_profession);</span><br><span class="line">    <span class="keyword">END</span> LOOP read_users;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">CLOSE</span> user_cur;</span><br><span class="line"><span class="keyword">END</span><span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+
+<p>这里有四步。<code>DECLARE ... CURSOR FOR</code> 指定查询，<code>OPEN</code> 打开游标，<code>FETCH ... INTO</code> 按列顺序把下一行交给变量，最后用 <code>CLOSE</code> 关闭。声明放在开头，顺序是局部变量、游标、处理程序，再写实际要执行的语句。</p>
+<h3 id="FETCH读到末尾怎么办"><a href="#FETCH读到末尾怎么办" class="headerlink" title="FETCH读到末尾怎么办"></a>FETCH读到末尾怎么办</h3><p><code>FETCH</code> 没有下一行时会产生 <code>NOT FOUND</code>（<code>SQLSTATE &#39;02000&#39;</code>）。我们用 <code>CONTINUE HANDLER</code> 把 <code>v_done</code> 置为真，然后回到 <code>FETCH</code> 后面的 <code>IF</code>。一定要在处理这一行之前检查标志，读完后就直接跳出循环。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CALL</span> collect_user_professions(<span class="number">25</span>);</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> t_user_profession <span class="keyword">ORDER</span> <span class="keyword">BY</span> user_id;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CALL</span> collect_user_professions(<span class="number">19</span>);</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> copied_rows <span class="keyword">FROM</span> t_user_profession;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">user_id  name   profession</span><br><span class="line">1        Tom    Engineer</span><br><span class="line">3        Jerry  Engineer</span><br><span class="line">4        Lily   Designer</span><br><span class="line"></span><br><span class="line">copied_rows</span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+
+<p>把年龄上限改成 19，一开始就没有行可读。第一次 <code>FETCH</code> 后直接退出，临时表中是 0 行。</p>
+<p><code>CONTINUE</code> 执行完处理语句后继续运行，<code>EXIT</code> 执行完会退出声明它的 <code>BEGIN ... END</code> 块。比如写 <code>DECLARE EXIT HANDLER FOR NOT FOUND CLOSE user_cur;</code>，在这个过程的最外层遇到游标末尾时，就会关掉游标并结束整个块。上面的版本用 <code>CONTINUE</code>，于是正常关闭游标的语句可以统一放到循环后面。</p>
+<p>处理程序也可以按具体 <code>SQLSTATE</code> 写条件。几个常用的分类是 <code>SQLWARNING</code>（以 <code>01</code> 开头）、<code>NOT FOUND</code>（以 <code>02</code> 开头）和 <code>SQLEXCEPTION</code>（除成功、警告和未找到之外的异常）。</p>
+<h3 id="列名和局部变量同名"><a href="#列名和局部变量同名" class="headerlink" title="列名和局部变量同名"></a>列名和局部变量同名</h3><p>游标的查询里，我把列写成了 <code>u.uname</code>、<code>u.uprofession</code>。如果在过程中声明了一个也叫 <code>uname</code> 的局部变量，裸写 <code>SELECT uname</code> 时，MySQL 会把它当成变量。</p>
+<p>我用 <code>SELECT uname, u.uname FROM users AS u WHERE u.id = 1</code> 给游标读同一行，局部变量 <code>uname</code> 没有赋初值，两列的输出如下。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">unqualified  qualified</span><br><span class="line">NULL         Tom</span><br></pre></td></tr></table></figure>
+
+<p>所以接收变量用 <code>v_name</code>、<code>v_profession</code>，取表里的列就加表别名。</p>
+<h3 id="如果只需要复制这几列"><a href="#如果只需要复制这几列" class="headerlink" title="如果只需要复制这几列"></a>如果只需要复制这几列</h3><p>这个例子里的每一行都做同一件事，可以直接改用 <code>INSERT ... SELECT</code>。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> t_user_profession;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT INTO</span> t_user_profession (user_id, name, profession)</span><br><span class="line"><span class="keyword">SELECT</span> u.id, u.uname, u.uprofession</span><br><span class="line"><span class="keyword">FROM</span> users <span class="keyword">AS</span> u</span><br><span class="line"><span class="keyword">WHERE</span> u.age <span class="operator">&lt;=</span> <span class="number">25</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> t_user_profession <span class="keyword">ORDER</span> <span class="keyword">BY</span> user_id;</span><br></pre></td></tr></table></figure>
+
+<p>得到的还是 Tom、Jerry、Lily 这三行。只做条件筛选和复制时，这里用一条 <code>INSERT ... SELECT</code> 就够了。游标更适合每取一行都要接着做不同判断的情况。</p>
+<h2 id="存储函数"><a href="#存储函数" class="headerlink" title="存储函数"></a>存储函数</h2><p>前面的百分制换算用 <code>INOUT</code> 时，要先准备一个变量，再 <code>CALL</code>。如果要把换算结果直接放在一条查询里，用函数比较顺手。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> score_to_percent(p_score <span class="type">DECIMAL</span>(<span class="number">6</span>,<span class="number">2</span>))</span><br><span class="line"><span class="keyword">RETURNS</span> <span class="type">DECIMAL</span>(<span class="number">6</span>,<span class="number">2</span>)</span><br><span class="line"><span class="keyword">DETERMINISTIC</span></span><br><span class="line"><span class="keyword">NO</span> <span class="keyword">SQL</span></span><br><span class="line"><span class="keyword">RETURN</span> p_score <span class="operator">/</span> <span class="number">2</span><span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> count_profession(p_profession <span class="type">VARCHAR</span>(<span class="number">30</span>))</span><br><span class="line"><span class="keyword">RETURNS</span> <span class="type">BIGINT</span></span><br><span class="line"><span class="keyword">READS</span> <span class="keyword">SQL</span> DATA</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">DECLARE</span> v_count <span class="type">BIGINT</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">INTO</span> v_count</span><br><span class="line">    <span class="keyword">FROM</span> users <span class="keyword">AS</span> u</span><br><span class="line">    <span class="keyword">WHERE</span> u.uprofession <span class="operator">=</span> p_profession;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">RETURN</span> v_count;</span><br><span class="line"><span class="keyword">END</span><span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> score_to_percent(<span class="number">198</span>) <span class="keyword">AS</span> percent_score,</span><br><span class="line">       count_profession(<span class="string">&#x27;Engineer&#x27;</span>) <span class="keyword">AS</span> engineer_count;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">percent_score  engineer_count</span><br><span class="line">99.00          2</span><br></pre></td></tr></table></figure>
+
+<p>函数的参数都是输入参数，定义时直接写名称和类型。<code>RETURNS</code> 指定返回值的类型，<code>RETURN</code> 给出这次调用的结果，所以函数可以直接出现在 <code>SELECT</code> 的表达式里。过程通过 <code>CALL</code> 执行，可以返回结果集，也可以通过 <code>OUT</code> 或 <code>INOUT</code> 传回值。</p>
+<p><code>score_to_percent</code> 只做除法。同一个输入总得到同一个结果，所以声明为 <code>DETERMINISTIC</code>，也用 <code>NO SQL</code> 标明它只计算、不访问表。<code>count_profession</code> 有查询但没有写入，用 <code>READS SQL DATA</code>。人数会随表数据变化，因此这里没有给它声明 <code>DETERMINISTIC</code>。</p>
+<p>做完例子可以用 <code>SHOW CREATE FUNCTION</code> 看定义，并删除练习时创建的过程和函数。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> score_to_percent;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">FUNCTION</span> IF <span class="keyword">EXISTS</span> score_to_percent;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">FUNCTION</span> IF <span class="keyword">EXISTS</span> count_profession;</span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> IF <span class="keyword">EXISTS</span> list_users_by_age;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> IF <span class="keyword">EXISTS</span> count_users_by_age;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> IF <span class="keyword">EXISTS</span> grade_score;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> IF <span class="keyword">EXISTS</span> rescale_score;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> IF <span class="keyword">EXISTS</span> describe_score;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> IF <span class="keyword">EXISTS</span> sum_demo;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> IF <span class="keyword">EXISTS</span> collect_user_professions;</span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> TEMPORARY <span class="keyword">TABLE</span> IF <span class="keyword">EXISTS</span> t_user_profession;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/11/20/SQL-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B&%E5%AD%98%E5%82%A8%E5%87%BD%E6%95%B0/">http://gazettm.github.io/2026/11/20/SQL-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B&%E5%AD%98%E5%82%A8%E5%87%BD%E6%95%B0/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/SQL/"># SQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/11/20/SQL-%E8%A7%86%E5%9B%BE/">SQL:视图</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

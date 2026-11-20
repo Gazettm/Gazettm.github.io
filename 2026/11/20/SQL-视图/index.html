@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>SQL:视图 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">SQL:视图</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 20, 2026&nbsp;&nbsp;18:27:59</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/SQL/">SQL</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h1><p>假设我们在做一个班级名单页面。学生表有姓名、班级和邮箱，页面只需要一班学生的编号和姓名。可以把这条查询保存成一个视图，以后直接查视图，页面就不用每次都写一遍筛选条件。</p>
+<p>MySQL 的普通视图保存的是查询定义。读视图时，MySQL 根据这份定义去读原表，因此原表中的结果变了，视图查出来的结果也会跟着变。</p>
+<h2 id="创建、查询和修改视图"><a href="#创建、查询和修改视图" class="headerlink" title="创建、查询和修改视图"></a>创建、查询和修改视图</h2><p>先在 MySQL 中建一个练习库。下面的输出来自 MySQL 8.0.46。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> DATABASE view_demo;</span><br><span class="line">USE view_demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE TABLE</span> student (</span><br><span class="line">    id <span class="type">INT</span> <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    name <span class="type">VARCHAR</span>(<span class="number">30</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    class_id <span class="type">INT</span> <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="number">1</span>,</span><br><span class="line">    email <span class="type">VARCHAR</span>(<span class="number">80</span>)</span><br><span class="line">) ENGINE <span class="operator">=</span> InnoDB;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT INTO</span> student (id, name, class_id, email) <span class="keyword">VALUES</span></span><br><span class="line">    (<span class="number">5</span>,  <span class="string">&#x27;Tom&#x27;</span>,   <span class="number">1</span>, <span class="string">&#x27;tom@example.test&#x27;</span>),</span><br><span class="line">    (<span class="number">12</span>, <span class="string">&#x27;Cat&#x27;</span>,   <span class="number">1</span>, <span class="string">&#x27;cat@example.test&#x27;</span>),</span><br><span class="line">    (<span class="number">18</span>, <span class="string">&#x27;Jerry&#x27;</span>, <span class="number">2</span>, <span class="string">&#x27;jerry@example.test&#x27;</span>),</span><br><span class="line">    (<span class="number">24</span>, <span class="string">&#x27;Dawn&#x27;</span>,  <span class="number">2</span>, <span class="string">&#x27;dawn@example.test&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>现在给一班创建名单视图。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> v_student (student_id, student_name) <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> class_id <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">VIEW</span> v_student;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> v_student <span class="keyword">ORDER</span> <span class="keyword">BY</span> student_id;</span><br></pre></td></tr></table></figure>
+
+<p><code>SHOW CREATE VIEW</code>可以看到创建语句和视图选项，<code>SELECT</code>查到的是数据。这里指定了列名，所以查出来叫<code>student_id</code>和<code>student_name</code>。省略括号里的列名时，就使用查询结果的列名。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">student_id  student_name</span><br><span class="line">5           Tom</span><br><span class="line">12          Cat</span><br></pre></td></tr></table></figure>
+
+<p>如果名单改为显示二班，可以用<code>ALTER VIEW</code>调整定义。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">VIEW</span> v_student (student_id, student_name) <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> class_id <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> v_student <span class="keyword">ORDER</span> <span class="keyword">BY</span> student_id;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">student_id  student_name</span><br><span class="line">18          Jerry</span><br><span class="line">24          Dawn</span><br></pre></td></tr></table></figure>
+
+<p>也可以用<code>CREATE OR REPLACE VIEW</code>。同名视图已存在就替换定义，第一次执行则创建视图。这里用它改回一班。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> REPLACE <span class="keyword">VIEW</span> v_student (student_id, student_name) <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> class_id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="通过视图修改数据"><a href="#通过视图修改数据" class="headerlink" title="通过视图修改数据"></a>通过视图修改数据</h2><p>上面的视图每一行都能对应到原表的一条学生记录。我们在视图里把 Cat 改名，再去查原表。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"></span><br><span class="line"><span class="keyword">UPDATE</span> v_student</span><br><span class="line"><span class="keyword">SET</span> student_name <span class="operator">=</span> <span class="string">&#x27;Kitty&#x27;</span></span><br><span class="line"><span class="keyword">WHERE</span> student_id <span class="operator">=</span> <span class="number">12</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">12</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id  name</span><br><span class="line">12  Kitty</span><br></pre></td></tr></table></figure>
+
+<p>这条<code>UPDATE</code>改的就是<code>student.name</code>。最后回滚，后面的例子仍然用 Cat。这个视图也支持插入和删除。插入时还要满足原表的约束，比如主键不能重复，视图里没列出来的必填字段要有可用的默认值。</p>
+<p>删掉视图后，学生表里仍有四行。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">VIEW</span> IF <span class="keyword">EXISTS</span> v_student;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> student_rows <span class="keyword">FROM</span> student;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">student_rows</span><br><span class="line">4</span><br></pre></td></tr></table></figure>
+
+<h2 id="WITH-CHECK-OPTION"><a href="#WITH-CHECK-OPTION" class="headerlink" title="WITH CHECK OPTION"></a>WITH CHECK OPTION</h2><p>这里有一个问题。如果一个视图只显示<code>id &gt;= 10</code>的学生，我们通过视图插入<code>id = 8</code>，MySQL 会不会接受？</p>
+<p>对可更新视图，可以用<code>WITH CHECK OPTION</code>来检查<code>INSERT</code>的新行和<code>UPDATE</code>修改后的行。比如设置了<code>id &gt;= 10</code>的检查，写入后<code>id = 8</code>就会报错。多层视图中，还要看检查会走到哪一层。</p>
+<h3 id="CASCADED和LOCAL"><a href="#CASCADED和LOCAL" class="headerlink" title="CASCADED和LOCAL"></a>CASCADED和LOCAL</h3><p>用同一个<code>v1</code>做两张视图，<code>WHERE</code>写成一样，只换检查选项。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> v1 <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> id <span class="operator">&lt;=</span> <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> v_local <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> v1 <span class="keyword">WHERE</span> id <span class="operator">&gt;=</span> <span class="number">10</span></span><br><span class="line"><span class="keyword">WITH</span> <span class="keyword">LOCAL</span> <span class="keyword">CHECK</span> OPTION;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> v_cascaded <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> v1 <span class="keyword">WHERE</span> id <span class="operator">&gt;=</span> <span class="number">10</span></span><br><span class="line"><span class="keyword">WITH</span> <span class="keyword">CASCADED</span> <span class="keyword">CHECK</span> OPTION;</span><br></pre></td></tr></table></figure>
+
+<p>这两张视图查询时都只显示<code>10 &lt;= id &lt;= 20</code>。下面的语句有预期的报错，可以在同一连接中逐条执行。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT INTO</span> v_cascaded <span class="keyword">VALUES</span> (<span class="number">25</span>, <span class="string">&#x27;Alice&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT INTO</span> v_local <span class="keyword">VALUES</span> (<span class="number">25</span>, <span class="string">&#x27;Alice&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> id, name, class_id <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">25</span>;</span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> v_local <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">25</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一条<code>INSERT</code>的报错如下。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR 1369 (HY000): CHECK OPTION failed &#x27;view_demo.v_cascaded&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>第二条成功。查询<code>student</code>得到了下面这一行，查询<code>v_local</code>则是空结果。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id  name   class_id</span><br><span class="line">25  Alice  1</span><br></pre></td></tr></table></figure>
+
+<p>为什么插进去了却看不到？<code>v1</code>的<code>id &lt;= 20</code>一直参与查询。通过<code>v_local</code>写入时，MySQL 检查了这一层的<code>id &gt;= 10</code>，而<code>v1</code>没开启检查选项，所以<code>25</code>可以写入。<code>v_cascaded</code>会把检查传到<code>v1</code>，即使<code>v1</code>的定义没写检查选项，<code>25</code>也会被挡住。</p>
+<ul>
+<li><code>LOCAL</code>检查当前视图。沿着依赖继续往下时，各层按自己的检查选项处理。</li>
+<li><code>CASCADED</code>检查当前视图，并把检查传到所有下层视图。只写<code>WITH CHECK OPTION</code>时，默认就是<code>CASCADED</code>。</li>
+</ul>
+<p>保持事务打开，再试两个会失败的操作。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> v_local <span class="keyword">VALUES</span> (<span class="number">8</span>, <span class="string">&#x27;Bob&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">UPDATE</span> v_cascaded <span class="keyword">SET</span> id <span class="operator">=</span> <span class="number">26</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">12</span>;</span><br></pre></td></tr></table></figure>
+
+<p>插入<code>8</code>违反了本层的<code>id &gt;= 10</code>，把<code>12</code>改成<code>26</code>违反了<code>v1</code>的<code>id &lt;= 20</code>。两条语句都返回<code>ERROR 1369</code>，原表中的<code>id = 12</code>还是 Cat。</p>
+<p>删除是另一回事。它会从视图中可见的行里找目标。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> v_cascaded <span class="keyword">WHERE</span> id <span class="keyword">IN</span> (<span class="number">5</span>, <span class="number">12</span>);</span><br><span class="line"><span class="keyword">SELECT</span> ROW_COUNT() <span class="keyword">AS</span> deleted_rows;</span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> id <span class="keyword">IN</span> (<span class="number">5</span>, <span class="number">12</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br></pre></td></tr></table></figure>
+
+<p>实测<code>deleted_rows</code>为1，原表中就剩<code>5 Tom</code>符合最后一条查询。编号5原本就不在视图的范围内，所以这次只删了12。回滚后两条记录都在原表里。</p>
+<h3 id="外层视图没写CHECK-OPTION"><a href="#外层视图没写CHECK-OPTION" class="headerlink" title="外层视图没写CHECK OPTION"></a>外层视图没写CHECK OPTION</h3><p>再套一层视图。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> v3 <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> v_cascaded <span class="keyword">WHERE</span> id <span class="operator">&lt;=</span> <span class="number">15</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT INTO</span> v3 <span class="keyword">VALUES</span> (<span class="number">21</span>, <span class="string">&#x27;Eve&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT INTO</span> v3 <span class="keyword">VALUES</span> (<span class="number">16</span>, <span class="string">&#x27;Eve&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> v_cascaded <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">16</span>;</span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> v3 <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br></pre></td></tr></table></figure>
+
+<p>插入<code>21</code>时，MySQL 仍会执行<code>v_cascaded</code>传下去的检查，遇到<code>v1</code>的<code>id &lt;= 20</code>就报<code>ERROR 1369</code>。插入<code>16</code>成功，在<code>v_cascaded</code>里能查到<code>16 Eve</code>，在<code>v3</code>里查不到。<code>v3</code>自己的<code>id &lt;= 15</code>只负责筛选，这一层没开启写入检查。</p>
+<h2 id="哪些视图不能更新"><a href="#哪些视图不能更新" class="headerlink" title="哪些视图不能更新"></a>哪些视图不能更新</h2><p>前面的名单能更新，因为改一行名单，可以找到它对应的学生。我们再看一个统计每班人数的视图。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> v_class_size <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> class_id, <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> student_count</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> class_id;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> v_class_size <span class="keyword">ORDER</span> <span class="keyword">BY</span> class_id;</span><br><span class="line"></span><br><span class="line"><span class="keyword">UPDATE</span> v_class_size <span class="keyword">SET</span> student_count <span class="operator">=</span> <span class="number">3</span> <span class="keyword">WHERE</span> class_id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">class_id  student_count</span><br><span class="line">1         2</span><br><span class="line">2         2</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR 1288 (HY000): The target table v_class_size of the UPDATE is not updatable</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>2</code>来自两条学生记录的计数。直接改成<code>3</code>，MySQL 没有一条对应的原表记录可改。要让一班多一人，应该在学生表里增加一条一班的记录。</p>
+<p>使用聚合函数、窗口函数、<code>DISTINCT</code>、<code>GROUP BY</code>、<code>HAVING</code>、<code>UNION</code>或<code>UNION ALL</code>的视图都不可更新。已经建好的视图可以到<code>INFORMATION_SCHEMA.VIEWS</code>里看。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> TABLE_NAME, IS_UPDATABLE</span><br><span class="line"><span class="keyword">FROM</span> INFORMATION_SCHEMA.VIEWS</span><br><span class="line"><span class="keyword">WHERE</span> TABLE_SCHEMA <span class="operator">=</span> DATABASE()</span><br><span class="line">  <span class="keyword">AND</span> TABLE_NAME <span class="keyword">IN</span> (<span class="string">&#x27;v1&#x27;</span>, <span class="string">&#x27;v_class_size&#x27;</span>)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> TABLE_NAME;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TABLE_NAME    IS_UPDATABLE</span><br><span class="line">v1            YES</span><br><span class="line">v_class_size  NO</span><br></pre></td></tr></table></figure>
+
+<h2 id="什么时候用视图"><a href="#什么时候用视图" class="headerlink" title="什么时候用视图"></a>什么时候用视图</h2><ol>
+<li><strong>省掉重复的查询。</strong> 比如班级名单的筛选和列名统一写进视图，页面有额外条件时，再在视图外面加<code>WHERE</code>。</li>
+<li><strong>限制调用方能看到的数据。</strong> 给名单账号授予视图的<code>SELECT</code>权限，让有权限的定义者访问原表（<code>SQL SECURITY DEFINER</code>），并确保名单账号没有直接读原表的权限，它就只能读到名单视图提供的行和列。MySQL 也支持对原表按列授权。需要同时限制行范围时，可以把筛选条件写在视图里。</li>
+<li><strong>让查询方继续使用同一组列名。</strong> 假设原表以后把<code>name</code>改叫<code>full_name</code>，维护者可以更新名单视图的定义，仍然对外提供<code>student_name</code>。用视图的页面就可以继续用原来的查询。</li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/11/20/SQL-%E8%A7%86%E5%9B%BE/">http://gazettm.github.io/2026/11/20/SQL-%E8%A7%86%E5%9B%BE/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/SQL/"># SQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2026/11/20/SQL-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B&%E5%AD%98%E5%82%A8%E5%87%BD%E6%95%B0/">SQL:存储过程&存储函数</a>
+            
+            
+            <a class="next" rel="next" href="/2026/11/19/SQL-SQL%E4%BC%98%E5%8C%96/">SQL:SQL优化</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
