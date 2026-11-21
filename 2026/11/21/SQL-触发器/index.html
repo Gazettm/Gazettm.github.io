@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Gazettm">
+
+
+
+
+
+<title>SQL:触发器 | Gazettm&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Gazettm&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Gazettm&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">SQL:触发器</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Gazettm</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 21, 2026&nbsp;&nbsp;17:21:03</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/SQL/">SQL</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="触发器"><a href="#触发器" class="headerlink" title="触发器"></a>触发器</h1><p>假设我们有一张课程表，想知道一门课什么时候被新增、改名或者删除。可以在应用里每次改完课程再补一条日志，但如果有人直接在 MySQL 里改表，这条日志就漏了。这里可以把写日志的操作放进触发器，表里的行一有变化，MySQL 就会自动执行对应的语句。</p>
+<p>前面写的存储过程要用 <code>CALL</code> 调用。触发器绑在表上，执行 <code>INSERT</code>、<code>UPDATE</code> 或 <code>DELETE</code> 时会触发。<code>BEFORE</code> 和 <code>AFTER</code> 分别表示在当前行操作之前和之后。MySQL 的触发器是<strong>按行执行</strong>的，<code>FOR EACH ROW</code> 就是这个意思。</p>
+<h2 id="记录课程的增删改"><a href="#记录课程的增删改" class="headerlink" title="记录课程的增删改"></a>记录课程的增删改</h2><p>先建课程表和日志表。下面的例子在 MySQL 8.0.46 上跑过。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> DATABASE trigger_demo;</span><br><span class="line">USE trigger_demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE TABLE</span> course (</span><br><span class="line">    id <span class="type">INT</span> <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    name <span class="type">VARCHAR</span>(<span class="number">50</span>) <span class="keyword">NOT NULL</span></span><br><span class="line">) ENGINE <span class="operator">=</span> InnoDB;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE TABLE</span> course_log (</span><br><span class="line">    log_id <span class="type">INT</span> AUTO_INCREMENT <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    course_id <span class="type">INT</span> <span class="keyword">NOT NULL</span>,</span><br><span class="line">    action_type <span class="type">VARCHAR</span>(<span class="number">10</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    old_name <span class="type">VARCHAR</span>(<span class="number">50</span>),</span><br><span class="line">    new_name <span class="type">VARCHAR</span>(<span class="number">50</span>),</span><br><span class="line">    changed_at <span class="type">TIMESTAMP</span> <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span></span><br><span class="line">) ENGINE <span class="operator">=</span> InnoDB;</span><br></pre></td></tr></table></figure>
+
+<p>这里日志只存课程编号，没有给它加外键。课程删掉以后，这个编号还要留在日志里，方便查到该课程的历史记录。</p>
+<h3 id="OLD和NEW"><a href="#OLD和NEW" class="headerlink" title="OLD和NEW"></a>OLD和NEW</h3><p>触发器里面可以用 <code>OLD.列名</code> 和 <code>NEW.列名</code> 读当前这一行的数据。</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th><code>OLD</code></th>
+<th><code>NEW</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>INSERT</code></td>
+<td>无</td>
+<td>新插入的行</td>
+</tr>
+<tr>
+<td><code>UPDATE</code></td>
+<td>修改前的行</td>
+<td>修改后的行</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td>删除前的行</td>
+<td>无</td>
+</tr>
+</tbody></table>
+<p>比如把 <code>Spring</code> 改成 <code>Spring Boot</code>，在更新触发器里，<code>OLD.name</code> 是 <code>Spring</code>，<code>NEW.name</code> 是 <code>Spring Boot</code>。我们可以把两个值都写进日志。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> trg_course_ai</span><br><span class="line">AFTER <span class="keyword">INSERT</span> <span class="keyword">ON</span> course</span><br><span class="line"><span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="type">ROW</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> course_log (course_id, action_type, new_name)</span><br><span class="line"><span class="keyword">VALUES</span> (NEW.id, <span class="string">&#x27;INSERT&#x27;</span>, NEW.name);</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> trg_course_au</span><br><span class="line">AFTER <span class="keyword">UPDATE</span> <span class="keyword">ON</span> course</span><br><span class="line"><span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="type">ROW</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> course_log (course_id, action_type, old_name, new_name)</span><br><span class="line"><span class="keyword">VALUES</span> (NEW.id, <span class="string">&#x27;UPDATE&#x27;</span>, OLD.name, NEW.name);</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> trg_course_ad</span><br><span class="line">AFTER <span class="keyword">DELETE</span> <span class="keyword">ON</span> course</span><br><span class="line"><span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="type">ROW</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> course_log (course_id, action_type, old_name)</span><br><span class="line"><span class="keyword">VALUES</span> (OLD.id, <span class="string">&#x27;DELETE&#x27;</span>, OLD.name);</span><br></pre></td></tr></table></figure>
+
+<p>这里每个触发器的主体都只有一条 <code>INSERT</code>，直接写在 <code>FOR EACH ROW</code> 后面就行。下面的校验要写多条语句，就用 <code>BEGIN ... END</code> 把它们包起来。</p>
+<h3 id="插入前处理课程名"><a href="#插入前处理课程名" class="headerlink" title="插入前处理课程名"></a>插入前处理课程名</h3><p>有时从表单拿到的名字前后带空格。这里再加一个 <code>BEFORE INSERT</code> 触发器，在存入之前用 <code>TRIM</code> 去掉首尾空格。如果处理完只剩空字符串，就用 <code>SIGNAL</code> 报错。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> trg_course_bi</span><br><span class="line">BEFORE <span class="keyword">INSERT</span> <span class="keyword">ON</span> course</span><br><span class="line"><span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="type">ROW</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SET</span> NEW.name <span class="operator">=</span> <span class="built_in">TRIM</span>(NEW.name);</span><br><span class="line"></span><br><span class="line">    IF NEW.name <span class="operator">=</span> <span class="string">&#x27;&#x27;</span> <span class="keyword">THEN</span></span><br><span class="line">        SIGNAL <span class="keyword">SQLSTATE</span> <span class="string">&#x27;45000&#x27;</span></span><br><span class="line">            <span class="keyword">SET</span> MESSAGE_TEXT <span class="operator">=</span> <span class="string">&#x27;Course name cannot be empty&#x27;</span>;</span><br><span class="line">    <span class="keyword">END</span> IF;</span><br><span class="line"><span class="keyword">END</span><span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+
+<p><code>OLD</code> 是只读的。这个例子能写 <code>SET NEW.name</code>，是因为插入还没发生。<code>AFTER INSERT</code> 读到的 <code>NEW.name</code> 已经是处理过的值。</p>
+<p>这和写存储过程时一样，<code>DELIMITER //</code> 让 <code>mysql</code> 客户端等到 <code>END//</code> 再把整条定义发给服务器。定义结束后把分隔符恢复为分号。</p>
+<h3 id="跑一下"><a href="#跑一下" class="headerlink" title="跑一下"></a>跑一下</h3><p>一次插入两门课，再修改和删除第二门课。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> course (id, name)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="number">1</span>, <span class="string">&#x27;  JavaEE  &#x27;</span>), (<span class="number">2</span>, <span class="string">&#x27;Spring&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">UPDATE</span> course <span class="keyword">SET</span> name <span class="operator">=</span> <span class="string">&#x27;Spring Boot&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> course <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> course <span class="keyword">ORDER</span> <span class="keyword">BY</span> id;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> course_id, action_type, old_name, new_name</span><br><span class="line"><span class="keyword">FROM</span> course_log</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> log_id;</span><br></pre></td></tr></table></figure>
+
+<p>课程表只剩这一行。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id  name</span><br><span class="line">1   JavaEE</span><br></pre></td></tr></table></figure>
+
+<p>日志表的输出如下。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">course_id  action_type  old_name     new_name</span><br><span class="line">1          INSERT       NULL         JavaEE</span><br><span class="line">2          INSERT       NULL         Spring</span><br><span class="line">2          UPDATE       Spring       Spring Boot</span><br><span class="line">2          DELETE       Spring Boot  NULL</span><br></pre></td></tr></table></figure>
+
+<p>第一条 <code>INSERT</code> 包含两行，所以插入触发器执行了两次。编号 1 存下来的名字是 <code>JavaEE</code>，日志里也是这个值。编号 2 虽然已经删掉，日志还保留着它被插入、改名和删除的记录。</p>
+<p>再插入一个只有空格的名字。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> course (id, name) <span class="keyword">VALUES</span> (<span class="number">3</span>, <span class="string">&#x27;   &#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR 1644 (45000): Course name cannot be empty</span><br></pre></td></tr></table></figure>
+
+<p>报错发生在 <code>BEFORE INSERT</code>。接着执行下面两条查询，<code>course_rows</code> 和 <code>log_rows</code> 都是 0。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> course_rows <span class="keyword">FROM</span> course <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> log_rows <span class="keyword">FROM</span> course_log <span class="keyword">WHERE</span> course_id <span class="operator">=</span> <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="AFTER什么时候执行"><a href="#AFTER什么时候执行" class="headerlink" title="AFTER什么时候执行"></a>AFTER什么时候执行</h2><p>如果改了课程名，还没有提交事务，这时日志有没有写入？在同一个连接里可以这样看。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"></span><br><span class="line"><span class="keyword">UPDATE</span> course <span class="keyword">SET</span> name <span class="operator">=</span> <span class="string">&#x27;JavaEE 2&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> name <span class="keyword">FROM</span> course <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> log_rows <span class="keyword">FROM</span> course_log;</span><br><span class="line"></span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> name <span class="keyword">FROM</span> course <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> log_rows <span class="keyword">FROM</span> course_log;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>查询时机</th>
+<th>编号 1 的课名</th>
+<th align="right">日志条数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>更新后、回滚前</td>
+<td><code>JavaEE 2</code></td>
+<td align="right">5</td>
+</tr>
+<tr>
+<td>执行 <code>ROLLBACK</code> 后</td>
+<td><code>JavaEE</code></td>
+<td align="right">4</td>
+</tr>
+</tbody></table>
+<p>更新语句执行完，当前连接已经可以查到新日志。两张表都是 InnoDB，触发器写日志和修改课程在同一个事务里，回滚时一起撤销。这里的 <code>AFTER</code> 指行操作之后，所以它记录的是能随事务一起保留的改动。想保留失败或被回滚的尝试，就要在事务之外另外记录。</p>
+<h2 id="查看和删除触发器"><a href="#查看和删除触发器" class="headerlink" title="查看和删除触发器"></a>查看和删除触发器</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> TRIGGERS;</span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> trg_course_bi;</span><br></pre></td></tr></table></figure>
+
+<p><code>SHOW TRIGGERS</code> 列出当前数据库的触发器。这里只保留和例子有关的几列。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Trigger        Event   Table   Timing</span><br><span class="line">trg_course_bi  INSERT  course  BEFORE</span><br><span class="line">trg_course_ai  INSERT  course  AFTER</span><br><span class="line">trg_course_au  UPDATE  course  AFTER</span><br><span class="line">trg_course_ad  DELETE  course  AFTER</span><br></pre></td></tr></table></figure>
+
+<p>要看某一个触发器的完整定义，可以用 <code>SHOW CREATE TRIGGER</code>。练习结束后可以把这四个触发器删掉。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TRIGGER</span> IF <span class="keyword">EXISTS</span> trg_course_ai;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TRIGGER</span> IF <span class="keyword">EXISTS</span> trg_course_au;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TRIGGER</span> IF <span class="keyword">EXISTS</span> trg_course_ad;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TRIGGER</span> IF <span class="keyword">EXISTS</span> trg_course_bi;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SHOW</span> TRIGGERS;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> log_rows <span class="keyword">FROM</span> course_log;</span><br></pre></td></tr></table></figure>
+
+<p><code>DROP TRIGGER</code> 可以写成 <code>DROP TRIGGER IF EXISTS trigger_demo.trg_course_ai;</code>，省略库名时就从当前数据库里找。删除后 <code>SHOW TRIGGERS</code> 返回空结果，日志表里仍有 4 条记录。删除触发器只会停止后续的自动操作，之前写下来的日志还在表里。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Gazettm</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://gazettm.github.io/2026/11/21/SQL-%E8%A7%A6%E5%8F%91%E5%99%A8/">http://gazettm.github.io/2026/11/21/SQL-%E8%A7%A6%E5%8F%91%E5%99%A8/</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/SQL/"># SQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/11/20/SQL-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B&%E5%AD%98%E5%82%A8%E5%87%BD%E6%95%B0/">SQL:存储过程&存储函数</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Gazettm | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
