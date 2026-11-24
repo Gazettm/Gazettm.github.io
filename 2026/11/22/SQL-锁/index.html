@@ -264,293 +264,159 @@
 
 <p>我另外在 A 把<code>id = 20</code>的<code>note</code>改成<code>editing</code>、保持未提交时执行了快照导出。备份成功，导出里这行的<code>note</code>仍然是已提交的<code>b</code>。<code>--single-transaction</code>给的是事务表的一致视图，MyISAM 等非事务表没有这个快照。导出过程中还要避开对导出表的<code>ALTER TABLE</code>、<code>DROP TABLE</code>和<code>TRUNCATE TABLE</code>等结构操作。</p>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>全局读锁影响同一实例里的各个库。上面的<code>lock_other</code>虽然和正在读的预约表不在一个库，写入仍然被挡住。只备份 InnoDB 表时，可以用事务快照保留一致性，让普通写入继续。</p>
-<h2 id="表级锁"><a href="#表级锁" class="headerlink" title="表级锁"></a>表级锁</h2><h3 id="显式表锁"><a href="#显式表锁" class="headerlink" title="显式表锁"></a>显式表锁</h3><p>MyISAM 主要靠表锁协调并发。下面用 InnoDB 的预约表演示，显式表锁可以用 <code>LOCK TABLES</code> 手动申请。先让 A 锁住预约表用于读。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 A</span></span><br><span class="line">LOCK TABLES booking READ;</span><br><span class="line"><span class="keyword">SELECT</span> note <span class="keyword">FROM</span> booking <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span>;</span><br><span class="line"><span class="keyword">UPDATE</span> booking <span class="keyword">SET</span> note <span class="operator">=</span> <span class="string">&#x27;editing&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span>;</span><br></pre></td></tr></table></figure>
-
-<p>A 查到<code>b</code>。A 自己的<code>UPDATE</code>也会立即报<code>ERROR 1099</code>，提示这张表以<code>READ</code>模式锁住，不能更新。B 执行同样的查询也得到<code>b</code>，尝试写入则等待，最后报<code>ERROR 1205</code>。试完后在 A 执行<code>UNLOCK TABLES;</code>。</p>
-<p>再换成写锁。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 A</span></span><br><span class="line">LOCK TABLES booking WRITE;</span><br><span class="line"><span class="keyword">UPDATE</span> booking <span class="keyword">SET</span> note <span class="operator">=</span> <span class="string">&#x27;b_locked&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span>;</span><br><span class="line"><span class="keyword">SELECT</span> note <span class="keyword">FROM</span> booking <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span>;</span><br></pre></td></tr></table></figure>
-
-<p>A 查到刚改的<code>b_locked</code>。这时 B 对同一张表执行普通<code>SELECT</code>或<code>UPDATE</code>，都等到报<code>ERROR 1205</code>。</p>
-<table>
-<thead>
-<tr>
-<th>A 持有的锁</th>
-<th>A 读表</th>
-<th>A 写表</th>
-<th>B 读同一张表</th>
-<th>B 写同一张表</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>READ</code></td>
-<td>可以</td>
-<td>报错</td>
-<td>可以</td>
-<td>等待</td>
-</tr>
-<tr>
-<td><code>WRITE</code></td>
-<td>可以</td>
-<td>可以</td>
-<td>等待</td>
-<td>等待</td>
-</tr>
-</tbody></table>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 A</span></span><br><span class="line"><span class="keyword">UPDATE</span> booking <span class="keyword">SET</span> note <span class="operator">=</span> <span class="string">&#x27;b&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span>;</span><br><span class="line">UNLOCK TABLES;</span><br></pre></td></tr></table></figure>
-
-<p>这里先把数据复原，再解锁，后面的例子继续用同一份数据。</p>
-<h3 id="元数据锁（MDL）"><a href="#元数据锁（MDL）" class="headerlink" title="元数据锁（MDL）"></a>元数据锁（MDL）</h3><p>先用预约表区分一下<strong>数据</strong>和<strong>元数据</strong>。<code>id = 20</code>这行的<code>note</code>是<code>b</code>，这个<code>b</code>是数据。<code>note</code>叫这个名字、类型是<code>VARCHAR(32)</code>、不允许存<code>NULL</code>，这些是表的定义，也就是元数据。把这一行的<code>note</code>改成<code>editing</code>是在改数据。用<code>ALTER TABLE</code>增加一列是在改表的定义。</p>
-<p><strong>元数据锁（Metadata Lock，MDL）保护的是表的定义。</strong> MySQL 在访问表时会自动申请它。假设 A 的事务已经用了<code>booking</code>，B 此时想删掉<code>note</code>列，MySQL 会先让 B 等，直到 A 用完目前的表定义。下面用添加一列复现这个等待。</p>
-<h4 id="普通SELECT为什么会挡住ALTER-TABLE"><a href="#普通SELECT为什么会挡住ALTER-TABLE" class="headerlink" title="普通SELECT为什么会挡住ALTER TABLE"></a>普通SELECT为什么会挡住ALTER TABLE</h4><p><strong>第一步。</strong> A 开事务，查一条记录。先记下连接编号，等会儿用它来认锁表里的行。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 A</span></span><br><span class="line"><span class="keyword">SELECT</span> CONNECTION_ID();</span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">SELECT</span> note <span class="keyword">FROM</span> booking <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span>;</span><br></pre></td></tr></table></figure>
-
-<p>查询返回了<code>b</code>。先停在这里，保留事务。<code>SELECT</code>执行完和事务结束是两件事。这里显式开启了事务，表上的 MDL 要等到<code>COMMIT</code>或<code>ROLLBACK</code>才释放。</p>
-<p><strong>第二步。</strong> B 也查自己的连接编号，再试着给表加一列。把等待时间临时设长一点，留够时间切换窗口。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 B</span></span><br><span class="line"><span class="keyword">SELECT</span> CONNECTION_ID();</span><br><span class="line"><span class="keyword">SET</span> SESSION lock_wait_timeout <span class="operator">=</span> <span class="number">60</span>;</span><br><span class="line"><span class="keyword">ALTER TABLE</span> booking <span class="keyword">ADD</span> <span class="keyword">COLUMN</span> marker <span class="type">INT</span> <span class="keyword">NULL</span>;</span><br></pre></td></tr></table></figure>
-
-<p>B 的<code>ALTER TABLE</code>停在这里。趁它还在等，切到 C 执行第三步。</p>
-<p><strong>第三步。</strong> C 查元数据锁。<code>metadata_locks</code>用<code>OWNER_THREAD_ID</code>标识持有或申请这把锁的线程。连上<code>threads</code>表，可以换成刚才<code>CONNECTION_ID()</code>查出的连接编号。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> t.PROCESSLIST_ID <span class="keyword">AS</span> connection_id,</span><br><span class="line">       m.LOCK_TYPE, m.LOCK_DURATION, m.LOCK_STATUS</span><br><span class="line"><span class="keyword">FROM</span> performance_schema.metadata_locks <span class="keyword">AS</span> m</span><br><span class="line"><span class="keyword">JOIN</span> performance_schema.threads <span class="keyword">AS</span> t</span><br><span class="line">  <span class="keyword">ON</span> t.THREAD_ID <span class="operator">=</span> m.OWNER_THREAD_ID</span><br><span class="line"><span class="keyword">WHERE</span> m.OBJECT_TYPE <span class="operator">=</span> <span class="string">&#x27;TABLE&#x27;</span></span><br><span class="line">  <span class="keyword">AND</span> m.OBJECT_SCHEMA <span class="operator">=</span> <span class="string">&#x27;lock_demo&#x27;</span></span><br><span class="line">  <span class="keyword">AND</span> m.OBJECT_NAME <span class="operator">=</span> <span class="string">&#x27;booking&#x27;</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> connection_id, m.LOCK_STATUS, m.LOCK_TYPE;</span><br></pre></td></tr></table></figure>
-
-<p>我这次跑出来的 A 是 8，B 是 9。你看到的编号会随连接变化。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">connection_id  LOCK_TYPE          LOCK_DURATION  LOCK_STATUS</span><br><span class="line">8              SHARED_READ        TRANSACTION    GRANTED</span><br><span class="line">9              SHARED_UPGRADABLE  TRANSACTION    GRANTED</span><br><span class="line">9              EXCLUSIVE          TRANSACTION    PENDING</span><br></pre></td></tr></table></figure>
-
+<h2 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>表级锁，每次操作锁住整张表，锁定粒度大，发生锁冲突的概率最高，并发度最低。应用在MyISAM，InnoDB，BDB等存储引擎中</p>
+<p>主要有以下三类</p>
 <ul>
-<li><strong>A 的<code>SHARED_READ</code>已经拿到了。</strong> <code>GRANTED</code>表示锁已授予，<code>TRANSACTION</code>表示按事务释放。A 虽然已经查出了结果，事务仍在使用这张表。</li>
-<li><strong>B 已拿到可升级的锁，还在等排他锁。</strong> <code>SHARED_UPGRADABLE</code>是它为改表先取得的 MDL。真正变更表定义时还需要<code>EXCLUSIVE</code>，这把锁与 A 持有的<code>SHARED_READ</code>冲突，所以状态是<code>PENDING</code>。</li>
+<li>表锁</li>
+<li>元数据锁 meta data lock （MDL）</li>
+<li>意向锁</li>
 </ul>
-<p>我同时到<code>performance_schema.data_locks</code>查了同一张表，得到 0 条 InnoDB 数据锁。这就能看出问题出在哪一层了。A 只做了普通查询，仍然能靠它持有的 MDL 挡住 B 改表。</p>
-<p><strong>第四步。</strong> 回到 A 执行<code>COMMIT;</code>。B 会接着完成改表。回到 B 确认新列，并恢复超时设置。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 B，等 ALTER TABLE 完成后再执行</span></span><br><span class="line"><span class="keyword">SHOW</span> COLUMNS <span class="keyword">FROM</span> booking <span class="keyword">LIKE</span> <span class="string">&#x27;marker&#x27;</span>;</span><br><span class="line"><span class="keyword">SET</span> SESSION lock_wait_timeout <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-<p><code>SHOW COLUMNS</code>实际返回了<code>marker</code>，类型为<code>int</code>，允许为<code>NULL</code>。如果等到 B 自己报了<code>ERROR 1205</code>才提交 A，B 需要重新执行<code>ALTER TABLE</code>。</p>
-<p>再想一个常见的情况。假如 A 开着自动提交，直接执行这条<code>SELECT</code>，查询结束也就是这次事务结束。我重新按这种方式查了一次，返回<code>b</code>后让 C 再查同一张表，已经看不到这条 MDL。平时碰到改表一直等，可以先找有没有查完数据却还没结束的事务。</p>
-<h3 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h3><p>现在把问题换一下。A 要改预约编号 20，B 要改编号 30。两个人想锁的是不同的记录，可以各改各的。如果此时又有一个事务想给整张表加锁，InnoDB 怎么知道表里已经有人在锁记录？</p>
-<p>InnoDB 在申请记录上的锁之前，会先在表上放一把<strong>意向锁</strong>。这让整表锁的申请者先在表这一层判断冲突，省去逐个检查记录的工作。</p>
-<p>这里先认识两个缩写。<code>S</code>是共享锁，多个事务可以在同一条记录上同时持有。<code>X</code>是排他锁，拿到它以后，其他事务就要等这把锁释放，才能在这条记录上取得<code>S</code>或<code>X</code>。加上表示意向的<code>I</code>，就是下面这两种表级锁。</p>
+<h3 id="表锁-1"><a href="#表锁-1" class="headerlink" title="表锁"></a>表锁</h3><p>对于表锁，分为</p>
+<ul>
+<li>表共享读锁 read lock</li>
+<li>表独占写锁 write lock</li>
+</ul>
+<p>语法：</p>
+<ul>
+<li>加锁： lock tables name.. read&#x2F;write</li>
+<li>unlock tables</li>
+</ul>
+<p>对于表共享读锁，客户端A加了表共享读锁，那么客户端A能够对这张表进行读操作DQL，但是不能进行DDL和DML操作，客户端B也能够对这张表机型读操作DQL，同样不能进行DDL和DML操作。</p>
+<p>对于表共享写锁，客户端A加了表共享写锁，那么客户端A能够对这行表进行读操作DQL，也可以进行DDL和DML操作，而客户端B的操作都会被阻塞。</p>
+<h3 id="元数据锁"><a href="#元数据锁" class="headerlink" title="元数据锁"></a>元数据锁</h3><p>MDL加锁的过程是系统自动控制的，无需显示使用，在访问一张表的时候会在自动加上，MDL锁的主要作用是维护表元数据的数据一致性，在表上有活动事物的时候，不可以对元数据进行写入操作。</p>
 <table>
 <thead>
 <tr>
-<th>InnoDB在表上加的锁</th>
-<th>事务接下来要在记录上申请</th>
-<th>另一事务申请整表<code>S</code></th>
-<th>另一事务申请整表<code>X</code></th>
+<th>对应SQL</th>
+<th>锁类型</th>
+<th>说明</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>IS</code>，意向共享锁</td>
-<td><code>S</code></td>
+<td>lock tables xxx read&#x2F;write</td>
+<td>SHARED_READ_ONLY&#x2F;SHARED_NO_READ_WRITE</td>
+<td></td>
+</tr>
+<tr>
+<td>select, select … lock in share mode</td>
+<td>SHARED_READ</td>
+<td>与SHARED_READ, SHARED_WRITE兼容，与EXCLUSIVE互斥</td>
+</tr>
+<tr>
+<td>insert, update, delete, select … for update</td>
+<td>SHARED_WRITE</td>
+<td>与SHARED_READ, SHARED_WRITE兼容，与EXCLUSIVE互斥</td>
+</tr>
+<tr>
+<td>alter table …</td>
+<td>EXCLUSIVE</td>
+<td>与其他MDL都互斥</td>
+</tr>
+</tbody></table>
+<p>查看元数据锁：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select object_type, object_schema, object_name, lock_type, lock_duration from performance_schema.metadata_locks;</span><br></pre></td></tr></table></figure>
+
+<p>共享读锁与共享写锁之间是相互兼容的，而EXCLUSIVE因为涉及到修改表结构因此与其他锁是互斥的。</p>
+<h3 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h3><p>意向锁为了避免MDL在执行的时候，加的行锁与表锁的冲突，使得表锁无需检查每行数据是否枷锁，使用意向锁来减少表锁的检查。</p>
+<p>也就是说意向锁是一个管家，每一行看作一个房间，当表锁询问的时候只需要看意向锁这个管家有没有，是什么类型就知道现在是什么状态了，无需进入没一个行锁的房间。</p>
+<p>对于意向锁分为两类：</p>
+<ul>
+<li>意向共享锁（IS）：与表锁共享锁兼容，与表锁排他锁互斥</li>
+<li>意向排他锁（IX）：与表锁共享锁和排他锁都互斥，意向锁之间不会互斥。</li>
+</ul>
+<h2 id="行锁"><a href="#行锁" class="headerlink" title="行锁"></a>行锁</h2><h3 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h3><p>行级锁，每次操作锁住对应的行数据。锁定粒度最小，发生锁冲突的概率最低，并发度最高。应用在InnoDB存储引擎中。</p>
+<p>InnoDB的数据是基于索引组织的，行锁是通过对索引上的索引项加锁来实现的，而不是对记录加的锁。对于行级锁，主要分为以下三类：</p>
+<ul>
+<li>行锁（Record Lock)：锁定单个行记录的锁，防止其他事务对此行进行update和delete。在RC、RR隔离级别下都支持。</li>
+<li>间隙锁（GapLock)：锁定索引记录间隙（不含该记录），确保索引记录间隙不变，防止其他事务在这个间隙进行insert，产生幻读。在RR隔离级别下都支持。</li>
+<li>临键锁（Next-Key Lock)：行锁和间隙锁组合，同时锁住数据，并锁住数据前面的间隙Gap。在RR隔离级别下支持。</li>
+</ul>
+<p>行锁类型：</p>
+<table>
+<thead>
+<tr>
+<th>当前锁类型&#x2F;请求锁类型</th>
+<th>S 共享锁</th>
+<th>X 排他锁</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>S 共享锁</td>
 <td>兼容</td>
 <td>冲突</td>
 </tr>
 <tr>
-<td><code>IX</code>，意向排他锁</td>
-<td><code>X</code></td>
+<td>X 排他锁</td>
 <td>冲突</td>
 <td>冲突</td>
 </tr>
 </tbody></table>
-<p><code>IX</code>的含义是这个事务要对表里的记录加排他锁，两把<code>IX</code>本身可以共存。编号 20 和 30 的例子里，A 和 B 都会有<code>IX</code>。它们在下一层分别锁自己的记录，所以能同时改。下面会在锁表里看到这些记录。</p>
-<h3 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h3><p><code>LOCK TABLES</code>是手动限制整张表的读写。MDL 保护正在使用的表定义，查完还没提交也可能挡住改表。意向锁则是 InnoDB 给行锁留下的表级信息。普通<code>UPDATE</code>就能同时用到 MDL、表级<code>IX</code>和具体的记录锁。</p>
-<h2 id="行级锁"><a href="#行级锁" class="headerlink" title="行级锁"></a>行级锁</h2><p>先看这张表的主键索引。四条记录按编号排开。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10 ────── 20 ────── 30 ────── 40</span><br></pre></td></tr></table></figure>
-
-<p>InnoDB 在索引上加锁。它可以锁一个已有的键，例如 20，也可以锁两个键之间的位置，例如 20 和 30 之间。锁已有记录会影响其他事务对这条记录加锁，锁住间隙会限制往这段位置插入新键。</p>
-<p>接下来 A、B 先用可重复读（<code>REPEATABLE READ</code>，简称 RR）。两个连接各执行一次下面的设置，后续新开的事务就使用这个隔离级别。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;</span><br></pre></td></tr></table></figure>
-
-<p>让 C 用下面的语句观察 InnoDB 数据锁。每组都在 A 或 B 持有锁时查询，等事务回滚再查，锁就已经释放了。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> LOCK_TYPE, INDEX_NAME, LOCK_MODE, LOCK_DATA</span><br><span class="line"><span class="keyword">FROM</span> performance_schema.data_locks</span><br><span class="line"><span class="keyword">WHERE</span> OBJECT_SCHEMA <span class="operator">=</span> <span class="string">&#x27;lock_demo&#x27;</span> <span class="keyword">AND</span> OBJECT_NAME <span class="operator">=</span> <span class="string">&#x27;booking&#x27;</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> LOCK_TYPE, INDEX_NAME, LOCK_DATA;</span><br></pre></td></tr></table></figure>
-
 <table>
 <thead>
 <tr>
-<th>输出列</th>
-<th>怎么读</th>
+<th>SQL</th>
+<th>行锁类型</th>
+<th>说明</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>LOCK_TYPE</code></td>
-<td><code>TABLE</code>是表级锁，例如<code>IS</code>和<code>IX</code>。<code>RECORD</code>表示用索引记录来描述锁，间隙锁也列在这一类里</td>
+<td>INSERT…</td>
+<td>排他锁</td>
+<td>自动加锁</td>
 </tr>
 <tr>
-<td><code>INDEX_NAME</code></td>
-<td><code>PRIMARY</code>是主键索引，<code>idx_room</code>是房间号索引。表级锁这里没有索引名</td>
+<td>UPDATE…</td>
+<td>排他锁</td>
+<td>自动加锁</td>
 </tr>
 <tr>
-<td><code>LOCK_MODE</code></td>
-<td>锁的模式，例如<code>S,REC_NOT_GAP</code>表示共享锁只覆盖当前记录</td>
+<td>DELETE…</td>
+<td>排他锁</td>
+<td>自动加锁</td>
 </tr>
 <tr>
-<td><code>LOCK_DATA</code></td>
-<td>用来定位这把锁的索引键。比如主键索引里的<code>30</code>，对于间隙锁，它是右边界</td>
+<td>SELECT</td>
+<td>不加任何所</td>
+<td></td>
+</tr>
+<tr>
+<td>SELECT … LOCK IN SHARE MODE</td>
+<td>共享锁</td>
+<td>需要手动加上后面字段</td>
+</tr>
+<tr>
+<td>SELECT … FOR UPDATE</td>
+<td>排他锁</td>
+<td>需要手动加上后面字段</td>
 </tr>
 </tbody></table>
-<p>B 的<code>innodb_lock_wait_timeout</code>还是 1 秒。在本例的默认配置下，<code>ERROR 1205</code>会让这一条语句失败，事务仍然开着。可以在命令行逐条执行后面的语句。每组做完都回滚，下一组继续用原来的四条预约。</p>
-<h3 id="记录锁：两个人锁同一条记录"><a href="#记录锁：两个人锁同一条记录" class="headerlink" title="记录锁：两个人锁同一条记录"></a>记录锁：两个人锁同一条记录</h3><p>先用主键等值查找<code>id = 20</code>。这是已经存在的一条记录，给它加一把共享锁。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 A</span></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">SELECT</span> id <span class="keyword">FROM</span> booking <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span> <span class="keyword">FOR</span> SHARE;</span><br></pre></td></tr></table></figure>
+<h3 id="行锁-1"><a href="#行锁-1" class="headerlink" title="行锁"></a>行锁</h3><p>默认情况下，InnoDB在REPEATABLEREAD事务隔离级别运行，InnoDB使用next-key锁进行搜索和索引扫描，以防止幻读。</p>
+<ol>
+<li>针对唯一索引进行检索时，对已存在的记录进行等值匹配时，将会自动优化为行锁。</li>
+<li>InnoDB的行锁是针对于索引加的锁，不通过索引条件检索数据，那么InnoDB将对表中的所有记录加锁，此时就会升级为表锁。</li>
+</ol>
+<p>查看意向锁及行锁的加锁情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select object_schema,object_name,indexname,lock_type,lock_mode,lock_data from performance_schema.data_locks;</span><br></pre></td></tr></table></figure>
 
-<p>A 返回 20。此时用 C 查锁。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LOCK_TYPE  INDEX_NAME  LOCK_MODE      LOCK_DATA</span><br><span class="line">RECORD     PRIMARY     S,REC_NOT_GAP  20</span><br><span class="line">TABLE      NULL        IS             NULL</span><br></pre></td></tr></table></figure>
+<h3 id="间隙锁-临键锁"><a href="#间隙锁-临键锁" class="headerlink" title="间隙锁&#x2F;临键锁"></a>间隙锁&#x2F;临键锁</h3><p>默认情况下，InnoDB在REPEATABLEREAD事务隔离级别运行，InnoDB使用next-key锁进行搜索和索引扫描，以防止幻读。</p>
+<ol>
+<li>索引上的等值查询(唯一索引)，给不存在的记录加锁时，优化为间隙锁。</li>
+<li>索引上的等值查询(普通索引l)，向右追历时最后一个值不满足查询需求时，next-keylock退化为间隙锁。</li>
+<li>索引上的范围查询(唯一索引)一会访问到不满足条件的第一个值为止。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO booking VALUES</span><br><span class="line">    (10, 101, &#x27;a&#x27;),</span><br><span class="line">    (20, 102, &#x27;b&#x27;),</span><br><span class="line">    (30, 102, &#x27;c&#x27;),</span><br><span class="line">    (40, 103, &#x27;d&#x27;);</span><br></pre></td></tr></table></figure>
 
-<p>两行分别对应表和记录。首先是表上的<code>IS</code>，表示 A 要在记录上取共享锁。然后是主键 20 的<code>S,REC_NOT_GAP</code>。<code>REC_NOT_GAP</code>表示锁的范围到这一条记录为止，前面的间隙没有被这把锁覆盖。</p>
-<p>A 先不回滚，让 B 也查 20，再尝试改同一行。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 B</span></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">SELECT</span> id <span class="keyword">FROM</span> booking <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span> <span class="keyword">FOR</span> SHARE;</span><br><span class="line"><span class="keyword">UPDATE</span> booking <span class="keyword">SET</span> note <span class="operator">=</span> <span class="string">&#x27;editing&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span>;</span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br></pre></td></tr></table></figure>
+<p>对于这样一张表，查询唯一索引id的时候，检索id为10的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update booking set note = &#x27;d&#x27; where id = 15;</span><br></pre></td></tr></table></figure>
 
-<p>B 的<code>FOR SHARE</code>也返回 20，因为两把共享锁兼容。B 接着更新时需要对 20 取得排他锁，A 的共享锁还在，所以写入等到报<code>ERROR 1205</code>。B 回滚之后，A 也执行<code>ROLLBACK;</code>。</p>
-<table>
-<thead>
-<tr>
-<th>对同一条索引记录</th>
-<th>另一事务请求共享锁 <code>S</code></th>
-<th>另一事务请求排他锁 <code>X</code></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>已有共享锁 <code>S</code></td>
-<td>兼容</td>
-<td>冲突</td>
-</tr>
-<tr>
-<td>已有排他锁 <code>X</code></td>
-<td>冲突</td>
-<td>冲突</td>
-</tr>
-</tbody></table>
-<h3 id="同一条记录被写锁住时，普通SELECT能读吗"><a href="#同一条记录被写锁住时，普通SELECT能读吗" class="headerlink" title="同一条记录被写锁住时，普通SELECT能读吗"></a>同一条记录被写锁住时，普通SELECT能读吗</h3><p>重新开启一轮。在 A 里把 20 的备注从<code>b</code>改成<code>editing</code>，先不提交。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 A</span></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">UPDATE</span> booking <span class="keyword">SET</span> note <span class="operator">=</span> <span class="string">&#x27;editing&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span>;</span><br></pre></td></tr></table></figure>
+<p>这个加的锁死在10到15的id之间加一个锁，也就是现在不能往10到15之间添加新的数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update booking set note = &#x27;e&#x27; where room = &#x27;102&#x27;</span><br></pre></td></tr></table></figure>
 
-<p>此时 C 查到 A 的表级<code>IX</code>和主键 20 上的<code>X,REC_NOT_GAP</code>。现在让 B 分别试普通读取、加锁读取，以及更新另一条记录。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 B</span></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">SELECT</span> note <span class="keyword">FROM</span> booking <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span>;</span><br><span class="line"><span class="keyword">SELECT</span> note <span class="keyword">FROM</span> booking <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">20</span> <span class="keyword">FOR</span> SHARE;</span><br><span class="line"><span class="keyword">UPDATE</span> booking <span class="keyword">SET</span> note <span class="operator">=</span> <span class="string">&#x27;other&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">30</span>;</span><br><span class="line"><span class="keyword">SELECT</span> ROW_COUNT();</span><br></pre></td></tr></table></figure>
+<p>这里room列有一个索引，且不是唯一索引，这时需要在101到102之间，102到103之间加锁。因为这里不是唯一的，所以将来可能在101到102以及102到103之间加入一个新的room为102的数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from booking where id &gt;= 30</span><br></pre></td></tr></table></figure>
 
-<table>
-<thead>
-<tr>
-<th>B 执行的操作</th>
-<th>实际结果</th>
-<th>原因</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>普通<code>SELECT</code>读 20</td>
-<td>返回<code>b</code></td>
-<td>在这轮实验中，一致性读看到此前已提交的版本，不用给 20 加数据锁</td>
-</tr>
-<tr>
-<td><code>FOR SHARE</code>读 20</td>
-<td><code>ERROR 1205</code></td>
-<td>B 要拿 20 的共享锁，与 A 的排他锁冲突</td>
-</tr>
-<tr>
-<td><code>UPDATE</code>改 30</td>
-<td><code>ROW_COUNT()</code>返回 1</td>
-<td>30 是另一条索引记录，A 没有锁住它</td>
-</tr>
-</tbody></table>
-<p>趁 B 的事务也还开着，让 C 再查一次。现在能看到两条<code>TABLE IX</code>，还有两条<code>X,REC_NOT_GAP</code>，分别落在主键 20 和 30 上。这就是前面说的意向锁兼容。最后在 B 和 A 分别执行<code>ROLLBACK;</code>。</p>
-<p>在 RR 和读已提交（<code>READ COMMITTED</code>，简称 RC）下，普通<code>SELECT</code>通常是<strong>一致性读</strong>，也就是按当前读视图选可见的版本。<code>FOR SHARE</code>和<code>FOR UPDATE</code>则是<strong>加锁读</strong>，分别申请共享锁和排他锁。<code>FOR SHARE</code>也可以写成旧语法<code>LOCK IN SHARE MODE</code>。<code>INSERT</code>、<code>UPDATE</code>、<code>DELETE</code>会对它们修改的记录加排他锁。</p>
-<h3 id="间隙锁：查不到记录，为什么插入还会等"><a href="#间隙锁：查不到记录，为什么插入还会等" class="headerlink" title="间隙锁：查不到记录，为什么插入还会等"></a>间隙锁：查不到记录，为什么插入还会等</h3><p>主键索引里有 20 和 30，没有 25。假设 A 按<code>id = 25</code>做加锁读，这时查不到现成的记录。要防止另一个事务在 A 结束前插入 25，InnoDB 可以把 25 将来会进入的位置锁住。本例中，这个位置落在<code>(20, 30)</code>，也就是大于 20、小于 30 的那段间隙。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 A，仍在 RR</span></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">SELECT</span> id <span class="keyword">FROM</span> booking <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">25</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure>
-
-<p>A 返回空结果。让 C 查锁，其中一行是<code>RECORD  PRIMARY  X,GAP  30</code>。<code>GAP</code>说明这把锁保护的是间隙，<code>30</code>是这段间隙右边的索引记录，所以输出显示 30，实际保护的是 20 和 30 之间的位置。</p>
-<p>接着让 B 在同一个间隙里查一个不存在的编号。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 B</span></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">SELECT</span> id <span class="keyword">FROM</span> booking <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">26</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure>
-
-<p>B 也立即返回空结果。此时 C 能看到两条<code>X,GAP 30</code>。这里虽然两条都带<code>X</code>，它们都是<strong>纯间隙锁</strong>，可以同时保护同一段间隙。接下来才是会产生等待的操作。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 B</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> booking (id, room, note) <span class="keyword">VALUES</span> (<span class="number">25</span>, <span class="number">102</span>, <span class="string">&#x27;new&#x27;</span>);</span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br></pre></td></tr></table></figure>
-
-<p>插入需要在间隙里放入新键，因此被 A 的间隙锁挡住，B 报<code>ERROR 1205</code>。A 也执行<code>ROLLBACK;</code>后，这一轮结束。</p>
-<h4 id="换成读已提交后再插入"><a href="#换成读已提交后再插入" class="headerlink" title="换成读已提交后再插入"></a>换成读已提交后再插入</h4><p>把 A 切到 RC，其他条件沿用刚才的例子。先由 A 查 25，再由 B 插入 25。这一轮 B 不需要再执行查 26 的语句，直接验证 A 还会不会挡住插入。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 A</span></span><br><span class="line"><span class="keyword">SET</span> SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;</span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">SELECT</span> id <span class="keyword">FROM</span> booking <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">25</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure>
-
-<p>C 这次只查到<code>TABLE IX</code>，没有主键索引上的<code>X,GAP</code>。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 B</span></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">INSERT INTO</span> booking (id, room, note) <span class="keyword">VALUES</span> (<span class="number">25</span>, <span class="number">102</span>, <span class="string">&#x27;new&#x27;</span>);</span><br><span class="line"><span class="keyword">SELECT</span> ROW_COUNT();</span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br></pre></td></tr></table></figure>
-
-<p>B 的<code>ROW_COUNT()</code>返回 1，插入成功。两边都回滚。这个对照里，RR 锁住了未命中的键所在的间隙，RC 的同一条加锁查询没有锁这段间隙。RC 的普通索引搜索和扫描一般不加间隙锁，外键检查和重复键检查仍可能用到。</p>
-<h3 id="临键锁：已有的键和它前面的间隙一起锁"><a href="#临键锁：已有的键和它前面的间隙一起锁" class="headerlink" title="临键锁：已有的键和它前面的间隙一起锁"></a>临键锁：已有的键和它前面的间隙一起锁</h3><p><strong>临键锁（next-key lock）是一把记录锁加上该记录前面的间隙锁。</strong> 比如锁住主键 20 的临键锁，范围就是<code>(10, 20]</code>，从 10 之后开始，包含键 20。其他事务既不能在 10 和 20 之间插入，也不能拿到 20 上与当前锁冲突的锁。</p>
-<p>把 A 切回 RR。这次用范围条件做加锁读，留意左边查到的记录和右边的停止位置。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 A</span></span><br><span class="line"><span class="keyword">SET</span> SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;</span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">SELECT</span> id <span class="keyword">FROM</span> booking <span class="keyword">WHERE</span> id <span class="operator">&gt;</span> <span class="number">10</span> <span class="keyword">AND</span> id <span class="operator">&lt;</span> <span class="number">30</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure>
-
-<p>查询只返回 20。C 查到的数据锁如下。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LOCK_TYPE  INDEX_NAME  LOCK_MODE  LOCK_DATA</span><br><span class="line">RECORD     PRIMARY     X          20</span><br><span class="line">RECORD     PRIMARY     X,GAP      30</span><br><span class="line">TABLE      NULL        IX         NULL</span><br></pre></td></tr></table></figure>
-
-<p>先看两条主键索引上的锁。这里没有后缀的<code>X</code>出现在<code>RECORD</code>行，表示对 20 加了临键锁。<code>X,GAP</code>只管 30 前面的间隙。两条合起来，把范围里的记录和可插入的位置都保护住了。</p>
-<table>
-<thead>
-<tr>
-<th>锁记录</th>
-<th>覆盖的键或位置</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>X 20</code></td>
-<td><code>10 &lt; id &lt;= 20</code>，里面有现成的 20，也有尚未插入的键位置</td>
-</tr>
-<tr>
-<td><code>X,GAP 30</code></td>
-<td><code>20 &lt; id &lt; 30</code>，只包含间隙，30 本身在区间外</td>
-</tr>
-</tbody></table>
-<p>让 B 试更新区间外的 30，再试往区间内插入 25。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 B</span></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">UPDATE</span> booking <span class="keyword">SET</span> note <span class="operator">=</span> <span class="string">&#x27;other&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">30</span>;</span><br><span class="line"><span class="keyword">SELECT</span> ROW_COUNT();</span><br><span class="line"><span class="keyword">INSERT INTO</span> booking (id, room, note) <span class="keyword">VALUES</span> (<span class="number">25</span>, <span class="number">102</span>, <span class="string">&#x27;new&#x27;</span>);</span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br></pre></td></tr></table></figure>
-
-<p>更新 30 成功，<code>ROW_COUNT()</code>为 1。插入 25 报<code>ERROR 1205</code>。A 最后也回滚。遇到<code>LOCK_DATA = 30</code>时，记得连<code>LOCK_MODE</code>一起看，才能知道是锁了 30，还是只锁 30 前面的位置。</p>
-<h3 id="普通索引等值匹配时，右边界是哪个键"><a href="#普通索引等值匹配时，右边界是哪个键" class="headerlink" title="普通索引等值匹配时，右边界是哪个键"></a>普通索引等值匹配时，右边界是哪个键</h3><p>再看房间号索引。两个预约可以有相同的房间号，所以 InnoDB 的二级索引在<code>room</code>相同时按主键区分记录。用<code>(room, id)</code>写出这里的键顺序。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(101, 10) ── (102, 20) ── (102, 30) ── (103, 40)</span><br></pre></td></tr></table></figure>
-
-<p>A 查<code>room = 102</code>，这次显式指定<code>idx_room</code>，方便观察同一个房间号的匹配段。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 A</span></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">SELECT</span> id, room</span><br><span class="line"><span class="keyword">FROM</span> booking FORCE INDEX (idx_room)</span><br><span class="line"><span class="keyword">WHERE</span> room <span class="operator">=</span> <span class="number">102</span></span><br><span class="line"><span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure>
-
-<p>结果是 20 和 30 两行。C 查到的锁同时出现在二级索引和主键索引上。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">LOCK_TYPE  INDEX_NAME  LOCK_MODE      LOCK_DATA</span><br><span class="line">RECORD     idx_room    X              102, 20</span><br><span class="line">RECORD     idx_room    X              102, 30</span><br><span class="line">RECORD     idx_room    X,GAP          103, 40</span><br><span class="line">RECORD     PRIMARY     X,REC_NOT_GAP  20</span><br><span class="line">RECORD     PRIMARY     X,REC_NOT_GAP  30</span><br><span class="line">TABLE      NULL        IX             NULL</span><br></pre></td></tr></table></figure>
-
-<p>沿<code>idx_room</code>往右看，两条<code>room = 102</code>的索引记录都被加了临键锁。到了第一个不匹配的<code>(103, 40)</code>，这次只加它前面的间隙锁。主键上还有 20 和 30 各自的记录锁，对应查到的两条完整记录。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 B</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> booking (id, room, note) <span class="keyword">VALUES</span> (<span class="number">35</span>, <span class="number">102</span>, <span class="string">&#x27;new&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>B 报<code>ERROR 1205</code>。插入这行除了增加主键 35，还要把<code>(102, 35)</code>放进房间号索引。它刚好夹在<code>(102, 30)</code>与<code>(103, 40)</code>之间，遇到了 A 在右边界前加的间隙锁。A 执行<code>ROLLBACK;</code>结束这一组。</p>
-<h3 id="WHERE没有索引时，为什么只改一行却挡住别的行"><a href="#WHERE没有索引时，为什么只改一行却挡住别的行" class="headerlink" title="WHERE没有索引时，为什么只改一行却挡住别的行"></a>WHERE没有索引时，为什么只改一行却挡住别的行</h3><p>最后用没有索引的<code>note</code>做条件。表里只有编号 20 的<code>note</code>是<code>b</code>。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 A，仍在 RR</span></span><br><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">UPDATE</span> booking <span class="keyword">SET</span> note <span class="operator">=</span> <span class="string">&#x27;editing&#x27;</span> <span class="keyword">WHERE</span> note <span class="operator">=</span> <span class="string">&#x27;b&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>按主键等值更新时，数据库可以直接找到目标记录。现在没有一个按<code>note</code>排列的索引可查，InnoDB 要沿聚集索引读取记录，逐条判断<code>note</code>。C 查到如下输出。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">LOCK_TYPE  INDEX_NAME  LOCK_MODE  LOCK_DATA</span><br><span class="line">RECORD     PRIMARY     X          10</span><br><span class="line">RECORD     PRIMARY     X          20</span><br><span class="line">RECORD     PRIMARY     X          30</span><br><span class="line">RECORD     PRIMARY     X          40</span><br><span class="line">RECORD     PRIMARY     X          supremum pseudo-record</span><br><span class="line">TABLE      NULL        IX         NULL</span><br></pre></td></tr></table></figure>
-
-<p><code>supremum pseudo-record</code>是索引页用于标记上界的伪记录。本例中它出现在扫描末端，锁住最大键 40 后面的间隙。真正要更新的行只有 20，锁却覆盖了这次扫描涉及的记录和间隙。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 连接 B</span></span><br><span class="line"><span class="keyword">UPDATE</span> booking <span class="keyword">SET</span> note <span class="operator">=</span> <span class="string">&#x27;other&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">40</span>;</span><br></pre></td></tr></table></figure>
-
-<p>B 更新 40 也等到报<code>ERROR 1205</code>。对照锁表就能分清原因，整张表这一层仍显示<code>IX</code>，而 B 要用的主键 40 已经有<code>X</code>。这种情形容易被叫成“升级成表锁”，实际是扫描范围扩大后锁住了很多索引记录。A 试完执行<code>ROLLBACK;</code>。</p>
-<h3 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h3><p>按主键等值查已存在的行，先看记录锁。查不到的键也有自己的插入位置，RR 下加锁查询可能保护那个间隙。范围查询和普通索引的等值查询，还要沿实际使用的索引找到左右边界。看锁表时把<code>INDEX_NAME</code>、<code>LOCK_MODE</code>和<code>LOCK_DATA</code>合起来读，就能知道一条锁记录对应哪段范围。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>同一个<code>ERROR 1205</code>在这些实验里出现了好几次。先看在等的语句是什么，再按它访问的对象去找锁。</p>
-<table>
-<thead>
-<tr>
-<th>观察到的现象</th>
-<th>例子里的原因</th>
-<th>下一步看哪里</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>换个库还是写不了</td>
-<td>A 持有全局读锁</td>
-<td>找持有<code>FLUSH TABLES WITH READ LOCK</code>的连接，确认它有没有释放</td>
-</tr>
-<tr>
-<td>同一张表连普通查询也卡住</td>
-<td>A 对该表显式加了<code>WRITE</code>锁</td>
-<td>看持锁连接有没有执行<code>UNLOCK TABLES</code></td>
-</tr>
-<tr>
-<td>查数据已经返回，改表却在等</td>
-<td>A 的事务还持有表的共享 MDL</td>
-<td>查<code>metadata_locks</code>的<code>GRANTED</code>和<code>PENDING</code></td>
-</tr>
-<tr>
-<td>同一张表能改 30，却插不进 25</td>
-<td>30 前面的间隙被锁住</td>
-<td>查<code>data_locks</code>里的索引名、锁模式和边界值</td>
-</tr>
-</tbody></table>
-
+<p>这个语句进行范围查询，当使用这个语句的时候，那么id为30的会被行锁锁住，且30到40之间会加一个间隙锁，以及40到无穷大会加一个间隙锁。</p>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3>
         </div>
 
         
